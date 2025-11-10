@@ -49,7 +49,7 @@ try {
     $iv = substr($decodedInput, 0, $ivLength);
     $encryptedPayload = substr($decodedInput, $ivLength);
 
-    $decryptedPayload = decryptData($encryptedPayload, ENCRYPTION_KEY, $iv);
+    $decryptedPayload = decryptData($encryptedPayload, hex2bin(ENCRYPTION_KEY), $iv);
     $requestData = json_decode($decryptedPayload, true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
@@ -78,10 +78,10 @@ try {
 
 } catch (Exception $e) {
     http_response_code(500);
-    $response = ['success' => false, 'message' => 'An exception occurred: ' . $e->getMessage(), 'trace' => $e->getTraceAsString()];
+    $response = ['success' => false, 'message' => 'An exception occurred: ' . $e->getMessage()];
 } catch (PDOException $e) {
     http_response_code(500);
-    $response = ['success' => false, 'message' => 'Database error: ' . $e->getMessage(), 'trace' => $e->getTraceAsString()];
+    $response = ['success' => false, 'message' => 'Database error: ' . $e->getMessage()];
 }
 
 echo json_encode($response);
