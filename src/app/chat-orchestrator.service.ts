@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ApiService } from './api';
+import { DatabaseService } from './database.service';
 import { APPLICANT_TABLE_SCHEMA } from './schemas';
 import {
   BREAKDOWN_PROMPT_INSTRUCTIONS,
@@ -43,7 +44,7 @@ export class ChatOrchestratorService {
 
   private stateMachine = new Subject<State>();
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private databaseService: DatabaseService) {
     this.stateMachine.subscribe(state => {
       this.currentAiRole = state.role;
       switch (state.role) {
@@ -77,7 +78,7 @@ export class ChatOrchestratorService {
 
   public loadChatHistory(): void {
     const query = 'SELECT message, reply FROM chat_history ORDER BY timestamp ASC LIMIT 20';
-    this.apiService.executeQuery(query, []).subscribe({
+    this.databaseService.query(query, []).subscribe({
       next: (response: any) => {
         this.messages = [];
         if (response && response.data) {
