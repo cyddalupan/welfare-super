@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && mkdir -p live/api && cp -R dist/welfareph/browser/. live/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false --browsers=ChromeHeadless --progress=false",
     "testci": "CHROME_BIN=/usr/bin/chromium-browser ng test --watch=false --browsers=ChromeHeadlessCI --progress=false",
