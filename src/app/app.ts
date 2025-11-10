@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { DatabaseService } from './database.service';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +9,20 @@ import { RouterModule } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrl: './app.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'welfare-super';
+
+  constructor(private databaseService: DatabaseService) {}
+
+  ngOnInit(): void {
+    this.databaseService.query('SELECT * FROM user').subscribe({
+      next: (response) => {
+        console.log('Database query successful:', response);
+      },
+      error: (error) => {
+        console.error('Database query failed:', error);
+      }
+    });
+  }
 }
  
