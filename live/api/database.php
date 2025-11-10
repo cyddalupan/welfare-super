@@ -78,10 +78,10 @@ try {
 
 } catch (Exception $e) {
     http_response_code(500);
-    $response = ['success' => false, 'message' => $e->getMessage()];
+    $response = ['success' => false, 'message' => 'An exception occurred: ' . $e->getMessage(), 'trace' => $e->getTraceAsString()];
 } catch (PDOException $e) {
     http_response_code(500);
-    $response = ['success' => false, 'message' => 'Database error: ' . $e->getMessage()];
+    $response = ['success' => false, 'message' => 'Database error: ' . $e->getMessage(), 'trace' => $e->getTraceAsString()];
 }
 
 echo json_encode($response);
