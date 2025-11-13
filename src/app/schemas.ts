@@ -1,3 +1,8 @@
+export interface ChatMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
 export const APPLICANT_TABLE_SCHEMA = `
 Table: applicant
 Columns:
