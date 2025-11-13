@@ -1,13 +1,12 @@
 Get list of TODO in mac
 
 Currently Based on what I remembered:
-- add AI endpoint
 - history database
 - applicant database
-- 
+
 
 TEMPORARY DONE:
-- none yet
+- add AI endpoint
 
 TODO:
 - add error handling for all service and update GEMINI.md about this instruction
