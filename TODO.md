@@ -1,7 +1,7 @@
 # TODO
 
 TODO:
-- make chat work
+- make chat workI thino 
 - history database
 - make thinking algo
 - create admin page

@@ -89,4 +89,6 @@ This setup allows backend PHP files to persist in `live/api` across builds.
 *   **AI Workflow:** The application will use a simplified workflow where the frontend directly calls the backend AI endpoint, replacing the previous multi-step orchestrator logic.
 *   **Strict Typing:** This project enforces strict TypeScript checking. All code contributions, modifications, and generations **must** adhere to this policy.
     *   **Rule:** Avoid using the `any` type. Always define explicit types for variables, function parameters, and return values.
+    *   **Encapsulation:** Prioritize encapsulating code, data, and content within strictly typed objects to ensure proper containment, organization, and maintainability.
     *   **Rationale:** This prevents runtime errors and improves code maintainability and clarity. Refer to the `tsconfig.json` for specific compiler options.
+*   **Testing:** All testing will be performed manually by the user. Automated unit tests are not required for new features or bug fixes at this stage.

@@ -1,7 +1,8 @@
 import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ChatOrchestratorService } from '../chat-orchestrator.service';
+import { AiService } from '../ai.service'; // Import AiService
+import { ChatMessage } from '../schemas'; // Import ChatMessage interface
 
 const MAX_TEXTAREA_HEIGHT = 150;
 
@@ -18,10 +19,14 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
   @ViewChild('messageInput') private messageInput!: ElementRef;
 
-  constructor(public orchestrator: ChatOrchestratorService) { }
+  public messages: ChatMessage[] = []; // Local chat history
+  public newMessage: string = ''; // Input field binding
+  public isLoading: boolean = false; // Loading indicator
+
+  constructor(private aiService: AiService) { } // Inject AiService
 
   ngOnInit(): void {
-    this.orchestrator.loadChatHistory();
+    // No chat history loading for now, as per user's request (in-memory only)
   }
 
   ngAfterViewChecked(): void {
@@ -38,12 +43,30 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   }
 
   sendMessage(): void {
-    this.orchestrator.sendMessage();
-    this.adjustTextareaHeight();
-  }
+    if (this.newMessage.trim() === '') {
+      return;
+    }
 
-  toggleThinkingModal(): void {
-    this.orchestrator.showThinkingModal = !this.orchestrator.showThinkingModal;
+    this.isLoading = true;
+    const userMessageContent = this.newMessage;
+    this.messages.push({ role: 'user', content: userMessageContent });
+    this.newMessage = ''; // Clear input immediately
+
+    // The payload is the entire message history
+    const aiPayload: ChatMessage[] = this.messages;
+
+    this.aiService.callAi(aiPayload).subscribe({
+      next: (response: string) => {
+        this.messages.push({ role: 'assistant', content: response });
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('AI call failed:', error);
+        this.messages.push({ role: 'assistant', content: 'Error: Could not get a response from the AI.' });
+        this.isLoading = false;
+      }
+    });
+    this.adjustTextareaHeight();
   }
 
   private scrollToBottom(): void {
