@@ -1,7 +1,9 @@
 # TODO
 
 TODO:
-- change the background
+- update prompt
+- change background
+- login feature
 - history database
 - make thinking algo
 - create admin page

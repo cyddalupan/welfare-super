@@ -3,12 +3,12 @@ import { Subject } from 'rxjs';
 import { ApiService } from './api';
 import { DatabaseService } from './database.service';
 import { APPLICANT_TABLE_SCHEMA } from './schemas';
-import {
-  BREAKDOWN_PROMPT_INSTRUCTIONS,
-  BREAKDOWN_PROMPT_GOOD_EXAMPLE,
-  BREAKDOWN_PROMPT_BAD_EXAMPLE,
-  BREAKDOWN_PROMPT_SCHEMA_CONTEXT
-} from './prompts';
+// import {
+//   BREAKDOWN_PROMPT_INSTRUCTIONS,
+//   BREAKDOWN_PROMPT_GOOD_EXAMPLE,
+//   BREAKDOWN_PROMPT_BAD_EXAMPLE,
+//   BREAKDOWN_PROMPT_SCHEMA_CONTEXT
+// } from './prompts';
 
 interface Message {
   sender: 'user' | 'ai';
@@ -110,12 +110,7 @@ export class ChatOrchestratorService {
       case 'analyze':
         return `You are an Analysis AI. Your task is to summarize the user\'s intent and the clarified context from the Collaboration AI into a concise brief for the Breakdown AI. You will receive a structured context object. focus on the newer message from user. \n\n        Your output MUST be a detailed description of what the user needs.\n\n        Available Database Schema:\n        ${dbSchema}`;
       case 'breakdown':
-        return `${BREAKDOWN_PROMPT_INSTRUCTIONS}
-${BREAKDOWN_PROMPT_GOOD_EXAMPLE}
-${BREAKDOWN_PROMPT_BAD_EXAMPLE}
-${BREAKDOWN_PROMPT_SCHEMA_CONTEXT}
-
-${dbSchema}`;
+        return `You are a Breakdown AI. Your task is to break down the user's request into actionable steps.`;
       case 'execution':
         return `You are an Execution AI. Your task is to process a single step from a breakdown plan. Determine if the step requires a database query. If it does, output [[QUERY_REQUIRED]] followed by a natural language description of the query needed. If it does not, output [[STEP_COMPLETE]] followed by a confirmation or the result of the internal action. The database schema is provided for context:\n\n${APPLICANT_TABLE_SCHEMA}`;
       case 'query_generation':

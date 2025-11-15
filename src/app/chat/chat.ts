@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AiService } from '../ai.service'; // Import AiService
 import { ChatMessage } from '../schemas'; // Import ChatMessage interface
+import { SYSTEM_PROMPT_COMPLAINTS_ASSISTANT } from '../prompts'; // Import the system prompt
 
 const MAX_TEXTAREA_HEIGHT = 150;
 
@@ -19,7 +20,12 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
   @ViewChild('messageInput') private messageInput!: ElementRef;
 
-  public messages: ChatMessage[] = []; // Local chat history
+  public messages: ChatMessage[] = [
+    {
+      role: 'system',
+      content: SYSTEM_PROMPT_COMPLAINTS_ASSISTANT
+    }
+  ]; // Local chat history
   public newMessage: string = ''; // Input field binding
   public isLoading: boolean = false; // Loading indicator
 

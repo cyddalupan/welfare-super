@@ -2,17 +2,26 @@
 
 This is an Angular web application that provides a chat interface for interacting with a database. The application uses a PHP backend to handle database operations and proxy requests to an external AI service. The frontend is built with Angular and styled with Tailwind CSS.
 
-# Architecture
+# Code Organization and Architecture
 
-*   **Frontend:** Built with Angular and styled with Tailwind CSS.
-*   **Backend:** A PHP API located in the `live/api/` directory.
-*   **Build & Deployment:** The `npm run build` command compiles the Angular app into the `live/` directory, which serves as the web root for deployment. The backend PHP files reside within `live/api/` and are served from there.
+This project follows a specific architecture where the majority of the application logic resides within the Angular frontend, keeping the backend intentionally simple.
+
+*   **Frontend-Driven Logic**: All business logic, state management, and workflow orchestration are handled within the Angular application (`src/app`).
+*   **Minimalist Backend**: The backend consists of only two PHP scripts (`live/api/ai.php` and `live/api/database.php`). Their sole purpose is to act as secure proxies:
+    *   `ai.php`: Decrypts requests from the frontend and forwards them to an external AI service.
+    *   `database.php`: Decrypts requests and executes SQL queries against the database.
+    *   This design avoids scattering business logic across both the frontend and backend.
+
+To support this structure, prompts and queries are centralized in dedicated files within the frontend for easy management and reuse.
+
+*   **AI Prompts (`src/app/prompts.ts`)**: All system prompts and instructions for the AI are stored as exported constants in this file. Components and services import prompts from here rather than hardcoding them.
+*   **Database Queries (`src/app/queries.ts`)**: This file is reserved for storing all SQL query strings as exported constants. Services that interact with the `database.php` endpoint will import their queries from this file.
 
 # Backend API Endpoints
 
 *   **Database Endpoint (`api/database.php`)**
     *   **HTTP Method:** `POST`
-    *   **Functionality:** Executes SQL queries (SELECT, INSERT, UPDATE, DELETE) against the database.
+    **Functionality:** Executes SQL queries (SELECT, INSERT, UPDATE, DELETE) against the database.
     *   **Request:** The body of the request contains a single encrypted and Base64-encoded string. When decrypted, this string reveals a JSON object with two keys:
         *   `query`: The SQL query string to be executed (e.g., "SELECT * FROM user WHERE email = ?").
         *   `params`: An optional array of parameters to be bound to the prepared statement (e.g., ["user@example.com"]).
@@ -86,9 +95,43 @@ This setup allows backend PHP files to persist in `live/api` across builds.
 *   **Database Structure:** The detailed database schema is documented in `DATABASE.md`.
 *   **API Interaction:** For every interaction with the `database.php` endpoint, a dedicated Angular service should be created. These services must use strict typings for all request payloads and expected responses to ensure type safety and maintainability.
 *   **Styling:** The project uses Tailwind CSS for styling.
-*   **AI Workflow:** The application will use a simplified workflow where the frontend directly calls the backend AI endpoint, replacing the previous multi-step orchestrator logic.
+*   **AI Workflow:** The application uses a simplified workflow where the frontend directly calls the backend AI endpoint. The `AiService` encrypts the entire chat message history and sends it to `api/ai.php`, which then proxies the request to an external AI service (e.g., OpenAI).
 *   **Strict Typing:** This project enforces strict TypeScript checking. All code contributions, modifications, and generations **must** adhere to this policy.
     *   **Rule:** Avoid using the `any` type. Always define explicit types for variables, function parameters, and return values.
     *   **Encapsulation:** Prioritize encapsulating code, data, and content within strictly typed objects to ensure proper containment, organization, and maintainability.
     *   **Rationale:** This prevents runtime errors and improves code maintainability and clarity. Refer to the `tsconfig.json` for specific compiler options.
 *   **Testing:** All testing will be performed manually by the user. Automated unit tests are not required for new features or bug fixes at this stage.
+
+## Chat Functionality Details
+
+### Routing
+
+*   **Home Page (`/`)**: The main entry point of the application is the `ChatComponent` (`src/app/chat/chat.ts`), which provides the chat interface.
+*   **Admin Login (`/admin/login`)**: A separate route is defined for an admin login page, handled by `AdminLoginComponent` (`src/app/admin-login/admin-login.ts`).
+
+### Core Components and Services
+
+*   **`ChatComponent` (`src/app/chat/chat.ts`)**:
+    *   Manages the chat UI, user input, and conversation history.
+    *   Initializes the chat with a system prompt imported from `src/app/prompts.ts`.
+*   **`AiService` (`src/app/ai.service.ts`)**:
+    *   Handles communication with the backend `ai.php` endpoint.
+    *   Encrypts the chat payload using `AES-256-CBC` with a randomly generated IV for each request. The IV is prepended to the ciphertext and then Base64-encoded before sending.
+*   **`ai.php` (`live/api/ai.php`)**:
+    *   Receives the encrypted, Base64-encoded payload from the frontend.
+    *   Base64-decodes the payload, extracts the IV, and decrypts the content.
+    *   Proxies the decrypted chat messages to the OpenAI API (using the `gpt-5-mini` model).
+    *   Returns the AI's response directly to the frontend as plain text.
+
+### End-to-End Chat Workflow
+
+1.  **Initialization**: `ChatComponent` loads and initializes the message history with a system prompt from `src/app/prompts.ts`.
+2.  **User Interaction**: User types a message in `ChatComponent`.
+3.  **Frontend Processing**: `ChatComponent` adds the message to its history and calls `AiService.callAi()` with the full message history.
+4.  **Encryption**: `AiService` serializes the message history, encrypts it with a unique IV, and Base64-encodes the result.
+5.  **Backend Request**: `AiService` sends the encrypted payload via POST to `live/api/ai.php`.
+6.  **Backend Decryption**: `ai.php` decodes, extracts IV, and decrypts the payload.
+7.  **OpenAI Integration**: `ai.php` forwards the messages to the OpenAI API.
+8.  **OpenAI Response**: OpenAI processes the request and sends back a response.
+9.  **Backend Response**: `ai.php` extracts the AI's message and sends it as plain text back to the frontend.
+10. **Frontend Display**: `ChatComponent` receives the AI's message and updates the UI.
