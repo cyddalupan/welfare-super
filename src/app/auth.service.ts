@@ -23,6 +23,7 @@ export class AuthService {
     const encryptedPayload = this.encryptPayload(JSON.stringify(payload));
 
     // Send the encrypted payload directly as the request body
+    console.log('Encrypted Payload from Angular:', encryptedPayload); // ADDED FOR DEBUGGING
     return this.http.post<any>(this.apiUrl, encryptedPayload).pipe(
       map(response => {
         if (response && response.success && response.data && response.data.length > 0 && response.data[0].id) {

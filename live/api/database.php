@@ -25,21 +25,25 @@ function decryptData($encryptedData, $key, $iv) {
 $response = ['success' => false, 'message' => 'An unknown error occurred.'];
 
 try {
-    // Establish database connection
-    $pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8", $db_user, $db_pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-
     // Read and decrypt the request
     $input = file_get_contents('php://input');
+    error_log("Raw input from Angular: " . $input); // ADDED FOR DEBUGGING
+
     if (empty($input)) {
         throw new Exception('No input data received.');
     }
 
     $decodedInput = base64_decode($input);
+    error_log("Base64 decoded input (hex) from Angular: " . bin2hex($decodedInput)); // ADDED FOR DEBUGGING
+
     if ($decodedInput === false) {
         throw new Exception('Base64 decoding failed.');
     }
+
+    // Establish database connection
+    $pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8", $db_user, $db_pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
     // Extract IV from the beginning of the decoded input
     $ivLength = openssl_cipher_iv_length('aes-256-cbc');
