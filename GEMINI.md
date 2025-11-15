@@ -7,7 +7,7 @@ This is an Angular web application that provides a chat interface for interactin
 This project follows a specific architecture where the majority of the application logic resides within the Angular frontend, keeping the backend intentionally simple.
 
 *   **Frontend-Driven Logic**: All business logic, state management, workflow orchestration, and the construction of database queries and AI prompts are handled within the Angular application (`src/app`).
-*   **Minimalist Backend**: The backend consists of only two PHP scripts (`live/api/ai.php` and `live/api/database.php`). Their sole purpose is to act as secure proxies:
+*   **Minimalist Backend**: The backend consists of only two PHP scripts (`api/ai.php` and `api/database.php`). Their sole purpose is to act as secure proxies:
     *   `ai.php`: Decrypts requests from the frontend and forwards them to an external AI service.
     *   `database.php`: Decrypts requests and executes SQL queries against the database.
     *   This design avoids scattering business logic across both the frontend and backend.
@@ -15,7 +15,7 @@ This project follows a specific architecture where the majority of the applicati
 To support this structure, prompts and queries are centralized in dedicated files within the frontend for easy management and reuse.
 
 *   **AI Prompts (`src/app/prompts.ts`)**: All system prompts and instructions for the AI are stored as exported constants in this file. Components and services import prompts from here rather than hardcoding them.
-*   **Database Queries (`src/app/queries.ts`)**: This file is reserved for storing all SQL query strings as exported constants. Services that interact with the `database.php` endpoint will import their queries from this file.
+*   **Database Queries (`src/app/queries.ts`)**: This file is reserved for storing all SQL query strings as exported constants. Services that interact with the `api/database.php` endpoint will import their queries from this file.
 
 # Backend API Endpoints
 
@@ -33,8 +33,8 @@ To support this structure, prompts and queries are centralized in dedicated file
 
 # Configuration
 
-*   **`live/api/config.php`**: Contains sensitive database credentials and encryption keys (`ENCRYPTION_KEY`, `ENCRYPTION_IV`). This file is **`.gitignore`d** and should not be committed to the repository.
-*   **`live/api/config.example.php`**: A template file for `config.php`, providing an example structure with placeholder values. This file **is** committed to the repository.
+*   **`api/config.php`**: Contains sensitive database credentials and encryption keys (`ENCRYPTION_KEY`, `ENCRYPTION_IV`). This file is **`.gitignore`d` and should not be committed to the repository.
+*   **`api/config.example.php`**: A template file for `config.php`, providing an example structure with placeholder values. This file **is** committed to the repository.
 *   **`DATABASE.md`**: Documents the detailed database schema and table structures.
 
 # API Security: Request Encryption
@@ -93,7 +93,7 @@ This setup allows backend PHP files to persist in `live/api` across builds.
 # Development Conventions
 
 *   **Database Structure:** The detailed database schema is documented in `DATABASE.md`.
-*   **API Interaction:** For every interaction with the `database.php` endpoint, a dedicated Angular service should be created. These services must use strict typings for all request payloads and expected responses to ensure type safety and maintainability.
+*   **API Interaction:** For every interaction with the `api/database.php` endpoint, a dedicated Angular service should be created. These services must use strict typings for all request payloads and expected responses to ensure type safety and maintainability.
 *   **Styling:** The project uses Tailwind CSS for styling.
 *   **AI Workflow:** The application uses a simplified workflow where the frontend directly calls the backend AI endpoint. The `AiService` encrypts the entire chat message history and sends it to `api/ai.php`, which then proxies the request to an external AI service (e.g., OpenAI).
 *   **Strict Typing:** This project enforces strict TypeScript checking. All code contributions, modifications, and generations **must** adhere to this policy.
@@ -117,9 +117,9 @@ For detailed information on the chat logic, including conversational authenticat
     *   Manages the chat UI, user input, and conversation history.
     *   Initializes the chat with a system prompt imported from `src/app/prompts.ts`.
 *   **`AiService` (`src/app/ai.service.ts`)**:
-    *   Handles communication with the backend `ai.php` endpoint.
+    *   Handles communication with the backend `api/ai.php` endpoint.
     *   Encrypts the chat payload using `AES-256-CBC` with a randomly generated IV for each request. The IV is prepended to the ciphertext and then Base64-encoded before sending.
-*   **`ai.php` (`live/api/ai.php`)**:
+*   **`ai.php` (`api/ai.php`)**:
     *   Receives the encrypted, Base64-encoded payload from the frontend.
     *   Base64-decodes the payload, extracts the IV, and decrypts the content.
     *   Proxies the decrypted chat messages to the OpenAI API (using the `gpt-5-mini` model).
@@ -131,8 +131,8 @@ For detailed information on the chat logic, including conversational authenticat
 2.  **User Interaction**: User types a message in `ChatComponent`.
 3.  **Frontend Processing**: `ChatComponent` adds the message to its history and calls `AiService.callAi()` with the full message history.
 4.  **Encryption**: `AiService` serializes the message history, encrypts it with a unique IV, and Base64-encodes the result.
-5.  **Backend Request**: `AiService` sends the encrypted payload via POST to `live/api/ai.php`.
-6.  **Backend Decryption**: `ai.php` decodes, extracts IV, and decrypts the payload.
+5.  **Backend Request**: `AiService` sends the encrypted payload via POST to `api/ai.php`.
+6.  **Backend Decryption**: `ai.php` decodes, extracts IV, and decrypts the content.
 7.  **OpenAI Integration**: `ai.php` forwards the messages to the OpenAI API.
 8.  **OpenAI Response**: OpenAI processes the request and sends back a response.
 9.  **Backend Response**: `ai.php` extracts the AI's message and sends it as plain text back to the frontend.

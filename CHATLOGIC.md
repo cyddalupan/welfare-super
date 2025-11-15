@@ -37,7 +37,7 @@ The Angular frontend actively monitors AI responses for special tags that trigge
 
 *   Upon extracting the `LASTNAME` and `PASSPORT` from the `[[LOGIN]]` tag, the Angular `AuthService` will construct an SQL `SELECT` query.
 *   This query will target the `employee_employee` table (as defined in `DATABASE.md`) to find a matching record based on the provided `last_name` and `passport_number`.
-*   The query and its parameters will be encrypted using AES-256-CBC and sent via a POST request to the `live/api/database.php` endpoint.
+*   The query and its parameters will be encrypted using AES-256-CBC and sent via a POST request to the `api/database.php` endpoint.
 *   `database.php` will decrypt, execute the query using prepared statements, and return the result.
 
 ### 1.5 Login Result Handling

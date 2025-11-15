@@ -106,7 +106,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
             this.setInitialSystemPrompt(); // Update system prompt for authenticated user
             this.messages.push({ role: 'assistant', content: 'Login successful! How can I help you today?' });
           } else {
-            this.messages.push({ role: 'assistant', content: 'Account does not exist and to double check their input if its correct.' });
+            this.messages.push({ role: 'assistant', content: 'Account does not exist, please double check if input is correct.' });
           }
         },
         error: (error) => {

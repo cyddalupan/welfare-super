@@ -9,7 +9,7 @@ import { environment } from '../environments/environment'; // Import environment
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'live/api/database.php'; // Path to your PHP backend
+  private apiUrl = 'api/database.php'; // Path to your PHP backend
   private encryptionKey: string;
   private encryptionIv: string;
 
