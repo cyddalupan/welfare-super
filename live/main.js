@@ -52901,10 +52901,12 @@ var DatabaseService = class _DatabaseService {
   }
   getChatHistory(employeeId) {
     return this.query(GET_CHAT_HISTORY, [employeeId]).pipe(map((response) => {
-      if (!response) {
+      const responseData = response && response.data ? response.data : response;
+      if (!Array.isArray(responseData)) {
+        console.error("Chat history response is not a valid array:", responseData);
         return [];
       }
-      const messages = response.map((rawMsg) => ({
+      const messages = responseData.map((rawMsg) => ({
         role: rawMsg.sender === "Employee" ? "user" : "assistant",
         content: rawMsg.message
       }));
