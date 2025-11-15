@@ -6,7 +6,7 @@ This is an Angular web application that provides a chat interface for interactin
 
 This project follows a specific architecture where the majority of the application logic resides within the Angular frontend, keeping the backend intentionally simple.
 
-*   **Frontend-Driven Logic**: All business logic, state management, and workflow orchestration are handled within the Angular application (`src/app`).
+*   **Frontend-Driven Logic**: All business logic, state management, workflow orchestration, and the construction of database queries and AI prompts are handled within the Angular application (`src/app`).
 *   **Minimalist Backend**: The backend consists of only two PHP scripts (`live/api/ai.php` and `live/api/database.php`). Their sole purpose is to act as secure proxies:
     *   `ai.php`: Decrypts requests from the frontend and forwards them to an external AI service.
     *   `database.php`: Decrypts requests and executes SQL queries against the database.
@@ -35,7 +35,7 @@ To support this structure, prompts and queries are centralized in dedicated file
 
 *   **`live/api/config.php`**: Contains sensitive database credentials and encryption keys (`ENCRYPTION_KEY`, `ENCRYPTION_IV`). This file is **`.gitignore`d** and should not be committed to the repository.
 *   **`live/api/config.example.php`**: A template file for `config.php`, providing an example structure with placeholder values. This file **is** committed to the repository.
-*   **`DATABASE.md`**: Documents the database schema and table structures.
+*   **`DATABASE.md`**: Documents the detailed database schema and table structures.
 
 # API Security: Request Encryption
 
@@ -103,6 +103,8 @@ This setup allows backend PHP files to persist in `live/api` across builds.
 *   **Testing:** All testing will be performed manually by the user. Automated unit tests are not required for new features or bug fixes at this stage.
 
 ## Chat Functionality Details
+
+For detailed information on the chat logic, including conversational authentication and special tag parsing (e.g., `[[LOGIN, ...]]`), please refer to `CHATLOGIC.md`.
 
 ### Routing
 
