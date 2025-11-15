@@ -11,11 +11,8 @@ import { environment } from '../environments/environment'; // Import environment
 export class AuthService {
   private apiUrl = 'api/database.php'; // Path to your PHP backend
   private encryptionKey: string;
-  private encryptionIv: string;
-
   constructor(private http: HttpClient) {
     this.encryptionKey = environment.encryptionKey;
-    this.encryptionIv = environment.encryptionIv;
   }
 
   login(lastName: string, passportNumber: string): Observable<boolean> {
@@ -43,12 +40,17 @@ export class AuthService {
 
   private encryptPayload(payload: string): string {
     const key = CryptoJS.enc.Utf8.parse(this.encryptionKey);
-    const iv = CryptoJS.enc.Utf8.parse(this.encryptionIv);
+    // Generate a random IV for each encryption
+    const iv = CryptoJS.lib.WordArray.random(16); // 16 bytes for AES-256-CBC
+
     const encrypted = CryptoJS.AES.encrypt(payload, key, {
       iv: iv,
       mode: CryptoJS.mode.CBC,
       padding: CryptoJS.pad.Pkcs7
     });
-    return encrypted.toString();
+
+    // Concatenate IV and ciphertext, then Base64 encode
+    const combined = CryptoJS.lib.WordArray.create().concat(iv).concat(encrypted.ciphertext);
+    return combined.toString(CryptoJS.enc.Base64);
   }
 }
