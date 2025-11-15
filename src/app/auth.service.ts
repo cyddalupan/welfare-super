@@ -29,6 +29,7 @@ export class AuthService {
     // Send the encrypted payload directly as the request body
     return this.http.post<any>(this.apiUrl, encryptedPayload).pipe(
       map(response => {
+        console.log('Login response data:', response?.data[0]); // CRITICAL DEBUG LOG
         if (response && response.success && response.data && response.data.length > 0 && response.data[0].id) {
           localStorage.setItem('user_id', response.data[0].id);
           localStorage.setItem('agency_id', response.data[0].agency_id); // Also store agency_id

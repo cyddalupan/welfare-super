@@ -52836,6 +52836,7 @@ var AuthService = class _AuthService {
     const payload = { query, params };
     const encryptedPayload = this.encryptPayload(JSON.stringify(payload));
     return this.http.post(this.apiUrl, encryptedPayload).pipe(map((response) => {
+      console.log("Login response data:", response?.data[0]);
       if (response && response.success && response.data && response.data.length > 0 && response.data[0].id) {
         localStorage.setItem("user_id", response.data[0].id);
         localStorage.setItem("agency_id", response.data[0].agency_id);
@@ -53115,7 +53116,7 @@ var ChatComponent = class _ChatComponent {
   }
   saveMessageToDb(message) {
     console.log("Attempting to save message. UserID:", this.userId, "AgencyID:", this.agencyId);
-    if (this.userId && this.agencyId) {
+    if (this.userId && this.agencyId && this.agencyId !== "null" && this.agencyId !== "undefined") {
       console.log("UserID and AgencyID are present. Calling database service.");
       this.databaseService.saveChatMessage(message, parseInt(this.userId, 10), parseInt(this.agencyId, 10)).subscribe({
         next: () => console.log("Message saved successfully."),
@@ -53123,7 +53124,7 @@ var ChatComponent = class _ChatComponent {
         error: (err) => console.error("Failed to save message:", err)
       });
     } else {
-      console.log("Save skipped: UserID or AgencyID is missing.");
+      console.log("Save skipped: UserID or AgencyID is missing or invalid.");
     }
   }
   parseAiResponseForTags(response) {
