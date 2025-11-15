@@ -27,15 +27,11 @@ $response = ['success' => false, 'message' => 'An unknown error occurred.'];
 try {
     // Read and decrypt the request
     $input = file_get_contents('php://input');
-    error_log("Raw input from Angular: " . $input); // ADDED FOR DEBUGGING
-
     if (empty($input)) {
         throw new Exception('No input data received.');
     }
 
     $decodedInput = base64_decode($input);
-    error_log("Base64 decoded input (hex) from Angular: " . bin2hex($decodedInput)); // ADDED FOR DEBUGGING
-
     if ($decodedInput === false) {
         throw new Exception('Base64 decoding failed.');
     }

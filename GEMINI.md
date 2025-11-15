@@ -100,6 +100,10 @@ This setup allows backend PHP files to persist in `live/api` across builds.
     *   **Rule:** Avoid using the `any` type. Always define explicit types for variables, function parameters, and return values.
     *   **Encapsulation:** Prioritize encapsulating code, data, and content within strictly typed objects to ensure proper containment, organization, and maintainability.
     *   **Rationale:** This prevents runtime errors and improves code maintainability and clarity. Refer to the `tsconfig.json` for specific compiler options.
+*   **Input Normalization (Frontend-Driven):** When user input needs to be standardized (e.g., for case-insensitive comparison or to remove extraneous whitespace) before being sent to the backend, this normalization should primarily occur on the Angular frontend. This ensures that the data sent to the backend is already in a consistent format, simplifying backend logic. Common normalization steps include:
+    *   Trimming leading/trailing whitespace (`.trim()`).
+    *   Converting the string to a consistent case (`.toLowerCase()` or `.toUpperCase()`).
+    The PHP backend should then expect and process these already-normalized values without needing to re-apply such transformations for specific parameters.
 *   **Testing:** All testing will be performed manually by the user. Automated unit tests are not required for new features or bug fixes at this stage.
 
 ## Chat Functionality Details

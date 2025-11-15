@@ -16,14 +16,16 @@ export class AuthService {
   }
 
   login(lastName: string, passportNumber: string): Observable<boolean> {
+    const processedLastName = lastName.trim().toLowerCase();
+    const processedPassportNumber = passportNumber.trim().toLowerCase();
+
     const query = `SELECT id FROM employee_employee WHERE last_name = ? AND passport_number = ?`;
-    const params = [lastName, passportNumber];
+    const params = [processedLastName, processedPassportNumber];
 
     const payload = { query, params };
     const encryptedPayload = this.encryptPayload(JSON.stringify(payload));
 
     // Send the encrypted payload directly as the request body
-    console.log('Encrypted Payload from Angular:', encryptedPayload); // ADDED FOR DEBUGGING
     return this.http.post<any>(this.apiUrl, encryptedPayload).pipe(
       map(response => {
         if (response && response.success && response.data && response.data.length > 0 && response.data[0].id) {
