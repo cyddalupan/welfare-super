@@ -25,10 +25,11 @@ export class AuthService {
     const payload = { query, params };
     const encryptedPayload = this.encryptPayload(JSON.stringify(payload));
 
-    return this.http.post<any>(this.apiUrl, { data: encryptedPayload }).pipe(
+    // Send the encrypted payload directly as the request body
+    return this.http.post<any>(this.apiUrl, encryptedPayload).pipe(
       map(response => {
-        if (response && response.length > 0 && response[0].id) {
-          localStorage.setItem('user_id', response[0].id);
+        if (response && response.success && response.data && response.data.length > 0 && response.data[0].id) {
+          localStorage.setItem('user_id', response.data[0].id);
           return true;
         }
         return false;
