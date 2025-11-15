@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AiService } from '../ai.service'; // Import AiService
 import { AuthService } from '../auth.service'; // Import AuthService
+import { DatabaseService } from '../database.service'; // Import DatabaseService
 import { ChatMessage } from '../schemas'; // Import ChatMessage interface
 import { SYSTEM_PROMPT_COMPLAINTS_ASSISTANT, SYSTEM_PROMPT_LOGIN_ASSISTANT } from '../prompts'; // Import the system prompts
 
@@ -21,13 +22,17 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
   @ViewChild('messageInput') private messageInput!: ElementRef;
 
-  public messages: ChatMessage[] = []; // Local chat history (only user/assistant messages)
+  public messages: ChatMessage[] = []; // Local chat history
   private systemPrompt: ChatMessage; // Will be set dynamically
   public newMessage: string = ''; // Input field binding
   public isLoading: boolean = false; // Loading indicator
   public userId: string | null = null; // Stores the logged-in user's ID
 
-  constructor(private aiService: AiService, private authService: AuthService) {
+  constructor(
+    private aiService: AiService,
+    private authService: AuthService,
+    private databaseService: DatabaseService // Inject DatabaseService
+  ) {
     this.systemPrompt = {
       role: 'system',
       content: '' // Initialize with empty content, will be set in ngOnInit
@@ -37,6 +42,12 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   ngOnInit(): void {
     this.userId = localStorage.getItem('user_id');
     this.setInitialSystemPrompt();
+    if (this.userId) {
+      this.loadChatHistory();
+    } else {
+      // If user is not logged in, show a welcome message.
+      this.messages.push({ role: 'assistant', content: 'Welcome! To get started, please provide your last name and passport number so I can assist you.' });
+    }
   }
 
   private setInitialSystemPrompt(): void {
@@ -44,8 +55,22 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       // Authenticated user prompt
       this.systemPrompt.content = SYSTEM_PROMPT_COMPLAINTS_ASSISTANT;
     } else {
-      // Unauthenticated user prompt - prioritize login, but also apply complaints assistant rules
+      // Unauthenticated user prompt
       this.systemPrompt.content = SYSTEM_PROMPT_LOGIN_ASSISTANT + '\n\n' + SYSTEM_PROMPT_COMPLAINTS_ASSISTANT;
+    }
+  }
+
+  private loadChatHistory(): void {
+    if (this.userId) {
+      this.databaseService.getChatHistory(parseInt(this.userId, 10)).subscribe({
+        next: (history) => {
+          this.messages = history;
+        },
+        error: (error) => {
+          console.error('Failed to load chat history:', error);
+          this.messages.push({ role: 'assistant', content: 'Sorry, I was unable to load your previous conversation.' });
+        }
+      });
     }
   }
 
@@ -68,28 +93,43 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     }
 
     this.isLoading = true;
-    const userMessageContent = this.newMessage;
-    this.messages.push({ role: 'user', content: userMessageContent });
+    const userMessage: ChatMessage = { role: 'user', content: this.newMessage.trim() };
+    this.messages.push(userMessage);
+    this.saveMessageToDb(userMessage);
+
     this.newMessage = ''; // Clear input immediately
 
-    // The payload sent to AI includes the system prompt followed by the chat history
-    const aiPayload: ChatMessage[] = [this.systemPrompt, ...this.messages];
+    // Send only the last 10 messages for context, plus the system prompt
+    const historyForAi = this.messages.slice(-10);
+    const aiPayload: ChatMessage[] = [this.systemPrompt, ...historyForAi];
 
     this.aiService.callAi(aiPayload).subscribe({
       next: (response: string) => {
         const processedResponse = this.parseAiResponseForTags(response);
         if (processedResponse) {
-          this.messages.push({ role: 'assistant', content: processedResponse });
+          const assistantMessage: ChatMessage = { role: 'assistant', content: processedResponse };
+          this.messages.push(assistantMessage);
+          this.saveMessageToDb(assistantMessage);
         }
         this.isLoading = false;
       },
       error: (error) => {
         console.error('AI call failed:', error);
-        this.messages.push({ role: 'assistant', content: 'Error: Could not get a response from the AI.' });
+        const errorMessage: ChatMessage = { role: 'assistant', content: 'Error: Could not get a response from the AI.' };
+        this.messages.push(errorMessage);
+        this.saveMessageToDb(errorMessage);
         this.isLoading = false;
       }
     });
     this.adjustTextareaHeight();
+  }
+
+  private saveMessageToDb(message: ChatMessage): void {
+    if (this.userId) {
+      this.databaseService.saveChatMessage(message, parseInt(this.userId, 10)).subscribe({
+        error: (err) => console.error('Failed to save message:', err)
+      });
+    }
   }
 
   private parseAiResponseForTags(response: string): string {
@@ -102,19 +142,24 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       this.authService.login(lastName, passportNumber).subscribe({
         next: (success) => {
           if (success) {
-            this.userId = localStorage.getItem('user_id'); // Update userId after successful login
-            this.setInitialSystemPrompt(); // Update system prompt for authenticated user
-            this.messages.push({ role: 'assistant', content: 'Login successful! How can I help you today?' });
+            this.userId = localStorage.getItem('user_id');
+            this.setInitialSystemPrompt();
+            // Clear the "logout conversation" and load the user's chat history.
+            this.messages = [];
+            this.loadChatHistory();
           } else {
-            this.messages.push({ role: 'assistant', content: 'Account does not exist, please double check if input is correct.' });
+            const loginFailMessage: ChatMessage = { role: 'assistant', content: 'Account does not exist, please double check if input is correct.' };
+            this.messages.push(loginFailMessage);
+            this.saveMessageToDb(loginFailMessage);
           }
         },
         error: (error) => {
           console.error('Login failed:', error);
-          this.messages.push({ role: 'assistant', content: 'An error occurred during login. Please try again later.' });
+          const loginErrorMessage: ChatMessage = { role: 'assistant', content: 'An error occurred during login. Please try again later.' };
+          this.messages.push(loginErrorMessage);
+          this.saveMessageToDb(loginErrorMessage);
         }
       });
-      // Remove the tag from the response before displaying
       return response.replace(loginTagRegex, '').trim();
     }
     return response;

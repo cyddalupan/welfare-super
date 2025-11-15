@@ -1,55 +1,45 @@
 # Chat Logic Documentation
 
-This document outlines the core logic and workflow for the chat functionality within the `welfare-super` Angular application, with a specific focus on conversational authentication.
+This document outlines the core logic and workflow for the chat functionality within the `welfare-super` Angular application.
 
-## 1. Conversational Authentication Flow
+## 1. Chat Workflow and Authentication
 
-The application employs a conversational authentication method to identify and log in users. This process is entirely managed by the Angular frontend, which constructs database queries and AI prompts.
+### 1.1 Chat Initialization
 
-### 1.1 User Session Check
+The application's initial state is determined by the user's authentication status.
 
-*   Upon initialization of the `ChatComponent`, the application checks `localStorage` for a stored `user_id`.
-*   If a `user_id` is found, the user is considered authenticated, and the chat proceeds with the "Authenticated User" flow.
-*   If no `user_id` is found, the user is considered unauthenticated, and the chat initiates the "Unauthenticated User" flow.
+*   **User Session Check**: Upon initialization of the `ChatComponent`, the application checks `localStorage` for a stored `user_id`.
+*   **Unauthenticated Users**:
+    *   If no `user_id` is found, the user is considered unauthenticated.
+    *   A static welcome message is displayed: "Welcome! To get started, please provide your last name and passport number so I can assist you."
+    *   The chat then proceeds with the conversational authentication flow.
+*   **Authenticated Users**:
+    *   If a `user_id` is found, the user is considered authenticated.
+    *   The application proceeds to load the user's chat history (see "Chat History and Persistence").
 
-### 1.2 AI Prompting Strategy
+### 1.2 Conversational Authentication
 
-The Angular frontend dynamically constructs the AI's system prompt based on the user's authentication status:
+The application employs a conversational authentication method to identify and log in users. This process is entirely managed by the Angular frontend.
 
-*   **Unauthenticated User Prompt:**
-    *   The system prompt will prioritize obtaining user information for login.
-    *   It will include an explicit instruction to the AI: "In order to help in anything, we prioritize the user log in first."
-    *   The AI is expected to ask for the user's last name and passport number.
-*   **Authenticated User Prompt:**
-    *   The system prompt will be `SYSTEM_PROMPT_COMPLAINTS_ASSISTANT` (from `src/app/prompts.ts`).
-    *   This prompt ensures the AI focuses on assisting with complaints and avoids recommending government agencies.
+*   **AI Prompting Strategy**:
+    *   For unauthenticated users, the system prompt (`SYSTEM_PROMPT_LOGIN_ASSISTANT`) instructs the AI to prioritize gathering the user's last name and passport number.
+    *   For authenticated users, the prompt switches to `SYSTEM_PROMPT_COMPLAINTS_ASSISTANT`.
+    *   **Context Limit**: For every AI call, the payload includes the system prompt plus only the **10 most recent messages** from the conversation history.
 
-### 1.3 AI Response Tag Parsing
+*   **AI Response Tag Parsing**:
+    *   The frontend parses AI responses for a `[[LOGIN, LASTNAME:"...",PASSPORT:"..."]]` tag.
+    *   When this tag is detected, the `AuthService` is called to validate the credentials against the `employee_employee` table via the `api/database.php` endpoint.
 
-The Angular frontend actively monitors AI responses for special tags that trigger specific actions.
+*   **Login Result Handling**:
+    *   **Successful Login**: If a matching user is found, the `user_id` is saved to `localStorage`. The current, unsaved conversation (the "logout conversation") is **cleared from the view**. The user's existing chat history is then fetched from the database and displayed.
+    *   **Failed Login**: If no match is found, an error message is displayed, and the user remains in the unauthenticated flow.
 
-*   **`[[LOGIN, LASTNAME:"<last_name>",PASSPORT:"<passport_number>"]]` Tag:**
-    *   When the AI successfully gathers the user's last name and passport number, it is expected to embed this information within the chat response using this specific tag format.
-    *   The `ChatComponent` will parse the AI's message, detect this tag, and extract the `LASTNAME` and `PASSPORT` values.
-    *   The raw tag will *not* be displayed in the chat UI.
+## 2. Chat History and Persistence
 
-### 1.4 Authentication with Backend
+*   **Storage**: All chat messages for authenticated users are stored in the `chats_chat` database table. Messages sent during an unauthenticated session are not saved.
+*   **Saving Messages**: Once a user is authenticated, every message sent by the user or the assistant is saved to the `chats_chat` table. The `sender` column is populated with 'Employee' for user messages and 'AI' for assistant messages.
+*   **Loading History**: When an authenticated user opens the chat, the **20 most recent messages** from their conversation history are fetched from the database and displayed.
 
-*   Upon extracting the `LASTNAME` and `PASSPORT` from the `[[LOGIN]]` tag, the Angular `AuthService` will construct an SQL `SELECT` query.
-*   This query will target the `employee_employee` table (as defined in `DATABASE.md`) to find a matching record based on the provided `last_name` and `passport_number`.
-*   The query and its parameters will be encrypted using AES-256-CBC and sent via a POST request to the `api/database.php` endpoint.
-*   `database.php` will decrypt, execute the query using prepared statements, and return the result.
-
-### 1.5 Login Result Handling
-
-*   **Successful Login:**
-    *   If `database.php` returns a matching `employee_employee` record, the `user_id` (employee `id`) will be extracted.
-    *   This `user_id` will be saved to `localStorage`.
-    *   The `ChatComponent`'s state will be updated to reflect the logged-in user, transitioning to the "Authenticated User" flow.
-*   **Failed Login:**
-    *   If no matching record is found, the frontend will display the error message: "Account does not exist and to double check their input if its correct."
-    *   The user will remain in the "Unauthenticated User" flow, and the AI will continue to prompt for correct credentials.
-
-## 2. Future Tags
+## 3. Future Tags
 
 The system is designed to accommodate additional action-triggering tags in the future, such as `[[REPORT]]`, which will follow a similar parsing and action execution pattern.

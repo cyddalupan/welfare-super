@@ -1,8 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 import { environment } from '../environments/environment';
+import { ChatMessage } from './schemas';
+import { GET_CHAT_HISTORY, INSERT_CHAT_MESSAGE } from './queries';
+
+// Define a type for the raw chat history from the database
+interface RawChatMessage {
+  message: string;
+  sender: 'Employee' | 'AI';
+}
 
 @Injectable({
   providedIn: 'root'
@@ -31,5 +39,26 @@ export class DatabaseService {
     return this.http.post(this.apiUrl, base64Payload, {
       headers: { 'Content-Type': 'text/plain' }
     });
+  }
+
+  public getChatHistory(employeeId: number): Observable<ChatMessage[]> {
+    return this.query(GET_CHAT_HISTORY, [employeeId]).pipe(
+      map((response: RawChatMessage[]) => {
+        if (!response) {
+          return [];
+        }
+        const messages: ChatMessage[] = response.map(rawMsg => ({
+          role: rawMsg.sender === 'Employee' ? 'user' : 'assistant',
+          content: rawMsg.message
+        }));
+        // The query returns the latest 20, so we need to reverse them to show in chronological order
+        return messages.reverse();
+      })
+    );
+  }
+
+  public saveChatMessage(message: ChatMessage, employeeId: number): Observable<any> {
+    const sender = message.role === 'user' ? 'Employee' : 'AI';
+    return this.query(INSERT_CHAT_MESSAGE, [employeeId, message.content, sender]);
   }
 }

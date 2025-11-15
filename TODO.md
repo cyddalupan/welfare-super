@@ -6,6 +6,7 @@ TODO:
     - on load with user log history
 - history database
     - save conversation
+- user summary as reference
 - create admin page
 - report creation
 - make thinking algo
