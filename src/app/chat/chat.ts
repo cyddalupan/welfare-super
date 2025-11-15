@@ -20,12 +20,11 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
   @ViewChild('messageInput') private messageInput!: ElementRef;
 
-  public messages: ChatMessage[] = [
-    {
-      role: 'system',
-      content: SYSTEM_PROMPT_COMPLAINTS_ASSISTANT
-    }
-  ]; // Local chat history
+  public messages: ChatMessage[] = []; // Local chat history (only user/assistant messages)
+  private systemPrompt: ChatMessage = {
+    role: 'system',
+    content: SYSTEM_PROMPT_COMPLAINTS_ASSISTANT
+  };
   public newMessage: string = ''; // Input field binding
   public isLoading: boolean = false; // Loading indicator
 
@@ -58,8 +57,8 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     this.messages.push({ role: 'user', content: userMessageContent });
     this.newMessage = ''; // Clear input immediately
 
-    // The payload is the entire message history
-    const aiPayload: ChatMessage[] = this.messages;
+    // The payload sent to AI includes the system prompt followed by the chat history
+    const aiPayload: ChatMessage[] = [this.systemPrompt, ...this.messages];
 
     this.aiService.callAi(aiPayload).subscribe({
       next: (response: string) => {
