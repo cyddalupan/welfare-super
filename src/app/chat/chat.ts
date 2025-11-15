@@ -127,10 +127,15 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   }
 
   private saveMessageToDb(message: ChatMessage): void {
+    console.log('Attempting to save message. UserID:', this.userId, 'AgencyID:', this.agencyId); // DEBUG
     if (this.userId && this.agencyId) {
+      console.log('UserID and AgencyID are present. Calling database service.'); // DEBUG
       this.databaseService.saveChatMessage(message, parseInt(this.userId, 10), parseInt(this.agencyId, 10)).subscribe({
+        next: () => console.log('Message saved successfully.'), // DEBUG
         error: (err) => console.error('Failed to save message:', err)
       });
+    } else {
+      console.log('Save skipped: UserID or AgencyID is missing.'); // DEBUG
     }
   }
 
