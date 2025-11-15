@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AiService } from '../ai.service'; // Import AiService
 import { AuthService } from '../auth.service'; // Import AuthService
 import { ChatMessage } from '../schemas'; // Import ChatMessage interface
-import { SYSTEM_PROMPT_COMPLAINTS_ASSISTANT } from '../prompts'; // Import the system prompt
+import { SYSTEM_PROMPT_COMPLAINTS_ASSISTANT, SYSTEM_PROMPT_LOGIN_ASSISTANT } from '../prompts'; // Import the system prompts
 
 const MAX_TEXTAREA_HEIGHT = 150;
 
@@ -44,8 +44,8 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       // Authenticated user prompt
       this.systemPrompt.content = SYSTEM_PROMPT_COMPLAINTS_ASSISTANT;
     } else {
-      // Unauthenticated user prompt - prioritize login
-      this.systemPrompt.content = `Your goal is to get the passport number and last name of the user to confirm the identity so you can help. You are comforting to talk to. Talk in taglish. Use common words only. Keep reply short. In order to help in anything, we prioritize the user log in first.`;
+      // Unauthenticated user prompt - prioritize login, but also apply complaints assistant rules
+      this.systemPrompt.content = SYSTEM_PROMPT_LOGIN_ASSISTANT + '\n\n' + SYSTEM_PROMPT_COMPLAINTS_ASSISTANT;
     }
   }
 
