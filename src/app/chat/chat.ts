@@ -41,13 +41,27 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   }
 
   ngOnInit(): void {
-    this.userId = localStorage.getItem('user_id');
-    this.agencyId = localStorage.getItem('agency_id');
+    let userId = localStorage.getItem('user_id');
+    let agencyId = localStorage.getItem('agency_id');
+
+    // Check for inconsistent state or invalid agencyId from localStorage
+    if ((userId && (!agencyId || agencyId === 'null' || agencyId === 'undefined')) || (!userId && agencyId)) {
+      this.authService.logout(); // Clear inconsistent localStorage
+      userId = null;
+      agencyId = null;
+    }
+
+    this.userId = userId;
+    this.agencyId = agencyId;
+
     this.setInitialSystemPrompt();
+
     if (this.userId) {
+      // User is logged in and state is consistent
       this.loadChatHistory();
     } else {
-      // If user is not logged in, show a welcome message.
+      // User is logged out, ensure a clean state
+      this.messages = [];
       this.messages.push({ role: 'assistant', content: 'Welcome! To get started, please provide your last name and passport number so I can assist you.' });
     }
   }

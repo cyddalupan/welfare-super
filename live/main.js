@@ -52848,6 +52848,10 @@ var AuthService = class _AuthService {
       return of(false);
     }));
   }
+  logout() {
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("agency_id");
+  }
   encryptPayload(payload) {
     const key = CryptoJS2.enc.Hex.parse(this.encryptionKey);
     const iv = CryptoJS2.lib.WordArray.random(16);
@@ -53043,12 +53047,20 @@ var ChatComponent = class _ChatComponent {
     };
   }
   ngOnInit() {
-    this.userId = localStorage.getItem("user_id");
-    this.agencyId = localStorage.getItem("agency_id");
+    let userId = localStorage.getItem("user_id");
+    let agencyId = localStorage.getItem("agency_id");
+    if (userId && (!agencyId || agencyId === "null" || agencyId === "undefined") || !userId && agencyId) {
+      this.authService.logout();
+      userId = null;
+      agencyId = null;
+    }
+    this.userId = userId;
+    this.agencyId = agencyId;
     this.setInitialSystemPrompt();
     if (this.userId) {
       this.loadChatHistory();
     } else {
+      this.messages = [];
       this.messages.push({ role: "assistant", content: "Welcome! To get started, please provide your last name and passport number so I can assist you." });
     }
   }

@@ -44,6 +44,11 @@ export class AuthService {
     );
   }
 
+  public logout(): void {
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('agency_id');
+  }
+
   private encryptPayload(payload: string): string {
     const key = CryptoJS.enc.Hex.parse(this.encryptionKey);
     // Generate a random IV for each encryption
