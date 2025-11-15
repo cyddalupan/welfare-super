@@ -40,7 +40,7 @@ export class AuthService {
   }
 
   private encryptPayload(payload: string): string {
-    const key = CryptoJS.enc.Utf8.parse(this.encryptionKey);
+    const key = CryptoJS.enc.Hex.parse(this.encryptionKey);
     // Generate a random IV for each encryption
     const iv = CryptoJS.lib.WordArray.random(16); // 16 bytes for AES-256-CBC
 
