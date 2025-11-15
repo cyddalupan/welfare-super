@@ -57,8 +57,8 @@ export class DatabaseService {
     );
   }
 
-  public saveChatMessage(message: ChatMessage, employeeId: number): Observable<any> {
+  public saveChatMessage(message: ChatMessage, employeeId: number, agencyId: number): Observable<any> {
     const sender = message.role === 'user' ? 'Employee' : 'AI';
-    return this.query(INSERT_CHAT_MESSAGE, [employeeId, message.content, sender]);
+    return this.query(INSERT_CHAT_MESSAGE, [employeeId, agencyId, message.content, sender]);
   }
 }

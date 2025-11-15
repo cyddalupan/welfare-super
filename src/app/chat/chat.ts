@@ -27,6 +27,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   public newMessage: string = ''; // Input field binding
   public isLoading: boolean = false; // Loading indicator
   public userId: string | null = null; // Stores the logged-in user's ID
+  public agencyId: string | null = null; // Stores the logged-in user's agency ID
 
   constructor(
     private aiService: AiService,
@@ -41,6 +42,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
 
   ngOnInit(): void {
     this.userId = localStorage.getItem('user_id');
+    this.agencyId = localStorage.getItem('agency_id');
     this.setInitialSystemPrompt();
     if (this.userId) {
       this.loadChatHistory();
@@ -125,8 +127,8 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   }
 
   private saveMessageToDb(message: ChatMessage): void {
-    if (this.userId) {
-      this.databaseService.saveChatMessage(message, parseInt(this.userId, 10)).subscribe({
+    if (this.userId && this.agencyId) {
+      this.databaseService.saveChatMessage(message, parseInt(this.userId, 10), parseInt(this.agencyId, 10)).subscribe({
         error: (err) => console.error('Failed to save message:', err)
       });
     }
@@ -143,6 +145,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
         next: (success) => {
           if (success) {
             this.userId = localStorage.getItem('user_id');
+            this.agencyId = localStorage.getItem('agency_id');
             this.setInitialSystemPrompt();
             // Clear the "logout conversation" and load the user's chat history.
             this.messages = [];

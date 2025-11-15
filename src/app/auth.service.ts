@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import * as CryptoJS from 'crypto-js'; // For AES encryption
 import { environment } from '../environments/environment'; // Import environment
+import { LOGIN_QUERY } from './queries'; // Import the login query
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class AuthService {
     const processedLastName = lastName.trim().toLowerCase();
     const processedPassportNumber = passportNumber.trim().toLowerCase();
 
-    const query = `SELECT id FROM employee_employee WHERE last_name = ? AND passport_number = ?`;
+    const query = LOGIN_QUERY;
     const params = [processedLastName, processedPassportNumber];
 
     const payload = { query, params };
@@ -30,6 +31,7 @@ export class AuthService {
       map(response => {
         if (response && response.success && response.data && response.data.length > 0 && response.data[0].id) {
           localStorage.setItem('user_id', response.data[0].id);
+          localStorage.setItem('agency_id', response.data[0].agency_id); // Also store agency_id
           return true;
         }
         return false;
