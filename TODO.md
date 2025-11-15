@@ -2,7 +2,10 @@
 
 TODO:
 - applicant login feature
+    - after login load history
+    - on load with user log history
 - history database
+    - save conversation
 - create admin page
 - report creation
 - make thinking algo
