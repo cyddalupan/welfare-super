@@ -1,0 +1,53 @@
+import { Injectable, inject } from '@angular/core';
+import { DatabaseService } from '../../database.service';
+import {
+  GET_EMPLOYEES,
+  GET_EMPLOYEE_BY_ID,
+  CREATE_EMPLOYEE,
+  UPDATE_EMPLOYEE,
+  DELETE_EMPLOYEE
+} from '../../queries';
+import { Employee } from '../../schemas';
+import { firstValueFrom } from 'rxjs'; // Import firstValueFrom
+
+@Injectable({
+  providedIn: 'root',
+})
+export class EmployeeService {
+  private db = inject(DatabaseService);
+
+  async getEmployees(): Promise<Employee[]> {
+    return await firstValueFrom(this.db.query(GET_EMPLOYEES)) as Employee[];
+  }
+
+  async getEmployeeById(id: number): Promise<Employee | null> {
+    const res = await firstValueFrom(this.db.query(GET_EMPLOYEE_BY_ID, [id])) as Employee[];
+    return res?.[0] ?? null;
+  }
+
+  async createEmployee(employee: Omit<Employee, 'id'>): Promise<any> {
+    const params = this.mapEmployeeToParams(employee);
+    return firstValueFrom(this.db.query(CREATE_EMPLOYEE, params));
+  }
+
+  async updateEmployee(employee: Employee): Promise<any> {
+    const params = this.mapEmployeeToParams(employee);
+    return firstValueFrom(this.db.query(UPDATE_EMPLOYEE, [...params, employee.id]));
+  }
+
+  async deleteEmployee(id: number): Promise<any> {
+    return firstValueFrom(this.db.query(DELETE_EMPLOYEE, [id]));
+  }
+
+  private mapEmployeeToParams(employee: Omit<Employee, 'id'> | Employee): any[] {
+    return [
+      employee.first_name, employee.middle_name, employee.last_name, employee.passport_number,
+      employee.date_of_birth, employee.address, employee.phone_number, employee.email,
+      employee.is_support, employee.token, employee.user_id, employee.date_deployment,
+      employee.fra_id, employee.main_status, employee.applicant_type,
+      employee.created_date_of_report, employee.country, employee.facebook, employee.whatsapp,
+      employee.consistency_percentage, employee.agency_id, employee.emergency_contact_name,
+      employee.emergency_contact_phone
+    ];
+  }
+}
