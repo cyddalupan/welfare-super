@@ -1,15 +1,14 @@
 # TODO
 
 TODO:
-- applicant login feature
-    - after login load history
-    - on load with user log history
-- history database
-    - save conversation
 - user summary as reference
 - create admin page
 - report creation
 - make thinking algo
+    - or think after replying
+        - [[Done]] of its good
+        - follow up and clarify if not
+        - trigger a function if missed
 - add error handling for all service and update GEMINI.md about this instruction
 - we need to put all queries and all ai promps in a place where its easy to see read and edit.
 - list other features

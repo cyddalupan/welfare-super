@@ -43,3 +43,21 @@ The application employs a conversational authentication method to identify and l
 ## 3. Future Tags
 
 The system is designed to accommodate additional action-triggering tags in the future, such as `[[REPORT]]`, which will follow a similar parsing and action execution pattern.
+
+### 3.1 AI Memory Tag
+
+To enable the AI to store and retrieve key information about the user, a special tagging mechanism called "AI Memory Tag" is introduced.
+
+*   **Tag Format**: `[[MEMORY:"<memory_content>"]]`
+    *   `<memory_content>`: A single sentence description of a user's characteristic or a new piece of factual information learned about the user.
+    *   Example: `[[MEMORY:"graduated as a nurse"]]`
+*   **Purpose**: The AI will use this tag to communicate new memories to the frontend for storage in the `employee_employeememory` database table.
+*   **UI Display**: Any content within an `[[MEMORY:"..."]]` tag in the AI's response **must not** be displayed in the chat UI. The frontend is responsible for parsing and removing these tags before rendering the AI's message.
+*   **Duplication**: The AI will be instructed to only generate `[[MEMORY]]` tags for *new* information, avoiding duplication of existing memories.
+
+## 4. Relevant Chat Code Locations
+
+*   **Chat Component**: `src/app/chat/chat.ts`
+*   **AI Service**: `src/app/ai.service.ts`
+*   **Prompts**: `src/app/prompts.ts`
+*   **Authentication Service**: `src/app/auth.service.ts`

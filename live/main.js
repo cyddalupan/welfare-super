@@ -52817,6 +52817,8 @@ var CryptoJS2 = __toESM(require_crypto_js());
 var LOGIN_QUERY = "SELECT id, agency_id FROM employee_employee WHERE last_name = ? AND passport_number = ?";
 var GET_CHAT_HISTORY = "SELECT message, sender FROM chats_chat WHERE employee_id = ? ORDER BY timestamp DESC LIMIT 20";
 var INSERT_CHAT_MESSAGE = "INSERT INTO chats_chat (employee_id, agency_id, message, sender, timestamp) VALUES (?, ?, ?, ?, NOW())";
+var INSERT_EMPLOYEE_MEMORY = "INSERT INTO employee_employeememory (employee_id, note, created_at) VALUES (?, ?, NOW())";
+var GET_EMPLOYEE_MEMORIES = "SELECT note FROM employee_employeememory WHERE employee_id = ? ORDER BY created_at ASC";
 
 // src/app/auth.service.ts
 var AuthService = class _AuthService {
@@ -52916,6 +52918,19 @@ var DatabaseService = class _DatabaseService {
   saveChatMessage(message, employeeId, agencyId) {
     const sender = message.role === "user" ? "Employee" : "AI";
     return this.query(INSERT_CHAT_MESSAGE, [employeeId, agencyId, message.content, sender]);
+  }
+  saveEmployeeMemory(employeeId, note) {
+    return this.query(INSERT_EMPLOYEE_MEMORY, [employeeId, note]);
+  }
+  getEmployeeMemories(employeeId) {
+    return this.query(GET_EMPLOYEE_MEMORIES, [employeeId]).pipe(map((response) => {
+      const responseData = response && response.data ? response.data : response;
+      if (!Array.isArray(responseData)) {
+        console.error("Employee memories response is not a valid array:", responseData);
+        return [];
+      }
+      return responseData.map((rawMemory) => rawMemory.note);
+    }));
   }
   static \u0275fac = function DatabaseService_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _DatabaseService)(\u0275\u0275inject(HttpClient));
@@ -53038,6 +53053,8 @@ var ChatComponent = class _ChatComponent {
   // Stores the logged-in user's ID
   agencyId = null;
   // Stores the logged-in user's agency ID
+  employeeMemories = [];
+  // Stores employee memories
   constructor(aiService, authService, databaseService) {
     this.aiService = aiService;
     this.authService = authService;
@@ -53061,6 +53078,7 @@ var ChatComponent = class _ChatComponent {
     this.setInitialSystemPrompt();
     if (this.userId) {
       this.loadChatHistory();
+      this.loadEmployeeMemories();
     } else {
       this.messages = [];
       this.messages.push({ role: "assistant", content: "Welcome! To get started, please provide your last name and passport number so I can assist you." });
@@ -53086,6 +53104,19 @@ var ChatComponent = class _ChatComponent {
       });
     }
   }
+  loadEmployeeMemories() {
+    if (this.userId) {
+      this.databaseService.getEmployeeMemories(parseInt(this.userId, 10)).subscribe({
+        next: (memories) => {
+          this.employeeMemories = memories;
+          console.log("Loaded employee memories:", this.employeeMemories);
+        },
+        error: (error) => {
+          console.error("Failed to load employee memories:", error);
+        }
+      });
+    }
+  }
   ngAfterViewChecked() {
     this.scrollToBottom();
   }
@@ -53106,8 +53137,16 @@ var ChatComponent = class _ChatComponent {
     this.messages.push(userMessage);
     this.saveMessageToDb(userMessage);
     this.newMessage = "";
+    let currentSystemPromptContent = this.systemPrompt.content;
+    if (this.userId && this.employeeMemories && this.employeeMemories.length > 0) {
+      const memoriesString = this.employeeMemories.map((memory) => `"${memory}"`).join(", ");
+      currentSystemPromptContent += `
+
+User's known characteristics: ${memoriesString}`;
+    }
+    const systemPromptForAi = { role: "system", content: currentSystemPromptContent };
     const historyForAi = this.messages.slice(-10);
-    const aiPayload = [this.systemPrompt, ...historyForAi];
+    const aiPayload = [systemPromptForAi, ...historyForAi];
     this.aiService.callAi(aiPayload).subscribe({
       next: (response) => {
         const processedResponse = this.parseAiResponseForTags(response);
@@ -53143,10 +53182,13 @@ var ChatComponent = class _ChatComponent {
   }
   parseAiResponseForTags(response) {
     const loginTagRegex = /\[\[LOGIN, LASTNAME:"([^"]+)",PASSPORT:"([^"]+)"\]\]/;
-    const match2 = response.match(loginTagRegex);
-    if (match2) {
-      const lastName = match2[1];
-      const passportNumber = match2[2];
+    const memoryTagRegex = /\[\[MEMORY:"([^"]+)"\]\]/g;
+    let modifiedResponse = response;
+    let loginProcessed = false;
+    const loginMatch = modifiedResponse.match(loginTagRegex);
+    if (loginMatch) {
+      const lastName = loginMatch[1];
+      const passportNumber = loginMatch[2];
       this.authService.login(lastName, passportNumber).subscribe({
         next: (success) => {
           if (success) {
@@ -53155,6 +53197,7 @@ var ChatComponent = class _ChatComponent {
             this.setInitialSystemPrompt();
             this.messages = [];
             this.loadChatHistory();
+            this.loadEmployeeMemories();
           } else {
             const loginFailMessage = { role: "assistant", content: "Account does not exist, please double check if input is correct." };
             this.messages.push(loginFailMessage);
@@ -53168,9 +53211,30 @@ var ChatComponent = class _ChatComponent {
           this.saveMessageToDb(loginErrorMessage);
         }
       });
-      return response.replace(loginTagRegex, "").trim();
+      modifiedResponse = modifiedResponse.replace(loginTagRegex, "").trim();
+      loginProcessed = true;
     }
-    return response;
+    let memoryMatch;
+    let responseWithoutMemoryTags = modifiedResponse;
+    while ((memoryMatch = memoryTagRegex.exec(modifiedResponse)) !== null) {
+      const memoryContent = memoryMatch[1];
+      if (this.userId) {
+        this.databaseService.saveEmployeeMemory(parseInt(this.userId, 10), memoryContent).subscribe({
+          next: () => {
+            console.log("Memory saved successfully: ", memoryContent);
+            this.employeeMemories.push(memoryContent);
+          },
+          error: (err) => console.error("Failed to save memory:", err)
+        });
+      } else {
+        console.warn("Attempted to save memory for unauthenticated user:", memoryContent);
+      }
+      responseWithoutMemoryTags = responseWithoutMemoryTags.replace(memoryMatch[0], "").trim();
+    }
+    if (loginProcessed) {
+      return "";
+    }
+    return responseWithoutMemoryTags;
   }
   scrollToBottom() {
     try {

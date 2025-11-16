@@ -69,6 +69,7 @@ npm run build
 ```
 
 This command compiles the Angular application and copies the necessary files to the `live` directory.
+Always run this after changing an angular code.
 
 ## Running Unit Tests
 

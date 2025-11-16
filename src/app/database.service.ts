@@ -4,12 +4,17 @@ import { Observable, map } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 import { environment } from '../environments/environment';
 import { ChatMessage } from './schemas';
-import { GET_CHAT_HISTORY, INSERT_CHAT_MESSAGE } from './queries';
+import { GET_CHAT_HISTORY, INSERT_CHAT_MESSAGE, INSERT_EMPLOYEE_MEMORY, GET_EMPLOYEE_MEMORIES } from './queries';
 
 // Define a type for the raw chat history from the database
 interface RawChatMessage {
   message: string;
   sender: 'Employee' | 'AI';
+}
+
+// Define a type for the raw memory from the database
+interface RawMemory {
+  note: string;
 }
 
 @Injectable({
@@ -66,5 +71,24 @@ export class DatabaseService {
   public saveChatMessage(message: ChatMessage, employeeId: number, agencyId: number): Observable<any> {
     const sender = message.role === 'user' ? 'Employee' : 'AI';
     return this.query(INSERT_CHAT_MESSAGE, [employeeId, agencyId, message.content, sender]);
+  }
+
+  public saveEmployeeMemory(employeeId: number, note: string): Observable<any> {
+    return this.query(INSERT_EMPLOYEE_MEMORY, [employeeId, note]);
+  }
+
+  public getEmployeeMemories(employeeId: number): Observable<string[]> {
+    return this.query(GET_EMPLOYEE_MEMORIES, [employeeId]).pipe(
+      map((response: any) => {
+        const responseData = (response && response.data) ? response.data : response;
+
+        if (!Array.isArray(responseData)) {
+          console.error('Employee memories response is not a valid array:', responseData);
+          return [];
+        }
+
+        return responseData.map((rawMemory: RawMemory) => rawMemory.note);
+      })
+    );
   }
 }
