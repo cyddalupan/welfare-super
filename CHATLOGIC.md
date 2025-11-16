@@ -27,7 +27,9 @@ The application employs a conversational authentication method to identify and l
     *   **Context Limit**: For every AI call, the payload includes the system prompt plus only the **10 most recent messages** from the conversation history.
 
 *   **AI Response Tag Parsing**:
-    *   The frontend parses AI responses for a `[[LOGIN, LASTNAME:"...",PASSPORT:"..."]]` tag.
+    *   The frontend parses AI responses for specific "AI Action Tags".
+    *   Currently, this includes the `[[LOGIN, LASTNAME:"...",PASSPORT:"..."]]` tag for authentication and the `[[MEMORY:"..."]]` tag for storing user memories.
+    *   When a `[[LOGIN, LASTNAME:"...",PASSPORT:"..."]]` tag is detected, the `AuthService` is called to validate the credentials against the `employee_employee` table via the `api/database.php` endpoint.
     *   When this tag is detected, the `AuthService` is called to validate the credentials against the `employee_employee` table via the `api/database.php` endpoint.
 
 *   **Login Result Handling**:
@@ -40,7 +42,9 @@ The application employs a conversational authentication method to identify and l
 *   **Saving Messages**: Once a user is authenticated, every message sent by the user or the assistant is saved to the `chats_chat` table. The `sender` column is populated with 'Employee' for user messages and 'AI' for assistant messages.
 *   **Loading History**: When an authenticated user opens the chat, the **20 most recent messages** from their conversation history are fetched from the database and displayed.
 
-## 3. Future Tags
+## 3. AI Action Tags
+
+The system utilizes special "AI Action Tags" within AI responses to trigger specific frontend actions or convey structured information. These tags are designed to be parsed and processed by the frontend and are generally not displayed directly to the user.
 
 The system is designed to accommodate additional action-triggering tags in the future, such as `[[REPORT]]`, which will follow a similar parsing and action execution pattern.
 
