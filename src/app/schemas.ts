@@ -1,3 +1,37 @@
+export interface AdminUser {
+  id: number;
+  email: string;
+  password: string; // Note: In a real app, this should not be here.
+  full_name: string;
+}
+
+export interface Employee {
+  id: number;
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
+  passport_number?: string;
+  date_of_birth?: string;
+  address?: string;
+  phone_number?: string;
+  email?: string;
+  is_support?: boolean;
+  token?: string;
+  user_id?: number;
+  date_deployment?: string;
+  fra_id?: number;
+  main_status?: string;
+  applicant_type?: string;
+  created_date_of_report?: string;
+  country?: string;
+  facebook?: string;
+  whatsapp?: string;
+  consistency_percentage?: number;
+  agency_id?: number;
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+}
+
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;

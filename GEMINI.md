@@ -111,6 +111,10 @@ This setup allows backend PHP files to persist in `live/api` across builds.
 
 For detailed information on the chat logic, including conversational authentication and special tag parsing (e.g., `[[LOGIN, ...]]`), please refer to `CHATLOGIC.md`.
 
+## Admin Panel
+
+For details on the admin panel, including authentication, database tables, and CRUD operations, please refer to `ADMIN.md`.
+
 ### Routing
 
 *   **Home Page (`/`)**: The main entry point of the application is the `ChatComponent` (`src/app/chat/chat.ts`), which provides the chat interface.

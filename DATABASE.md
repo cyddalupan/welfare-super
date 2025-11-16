@@ -3,6 +3,21 @@
 This document outlines the database schema for the `expatcare` Django project. The table names are derived from the app and model names (e.g., `advance_aicategory`).
 
 ---
+## `admin` App
+
+### `admin_users` Table
+Stores credentials for admin users.
+
+| Column | Type | Description |
+|---|---|---|
+| `id` | `BigAutoField` | Primary Key |
+| `email` | `CharField(255)` | Admin's email and username for login. |
+| `password` | `CharField(255)` | Admin's password (stored in plaintext). |
+| `full_name` | `CharField(255)` | Admin's full name. |
+| `created_at` | `DateTimeField` | Timestamp of creation. |
+| `updated_at` | `DateTimeField` | Timestamp of the last update. |
+
+---
 
 ## `advance` App
 

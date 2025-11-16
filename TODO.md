@@ -1,7 +1,6 @@
 # TODO
 
 TODO:
-- user summary as reference
 - create admin page
 - report creation
 - make thinking algo
