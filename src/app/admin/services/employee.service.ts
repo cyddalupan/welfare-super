@@ -62,7 +62,7 @@ export class EmployeeService {
       employee.facebook || '',
       employee.whatsapp || '',
       employee.consistency_percentage || 0,
-      employee.agency_id || null,
+      employee.agency_id || 1,
       employee.emergency_contact_name || '',
       employee.emergency_contact_phone || ''
     ];
