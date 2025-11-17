@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +18,7 @@ export class AdminLoginComponent {
 
   private authService = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef); // Inject ChangeDetectorRef
 
   async login(): Promise<void> {
     this.errorMessage = '';
@@ -27,10 +28,12 @@ export class AdminLoginComponent {
         this.router.navigate(['/admin/dashboard']);
       } else {
         this.errorMessage = 'Invalid email or password.';
+        this.cdr.detectChanges(); // Manually trigger change detection
       }
     } catch (error) {
       this.errorMessage = 'An unexpected error occurred. Please try again.';
       console.error('Login error:', error);
+      this.cdr.detectChanges(); // Manually trigger change detection
     }
   }
 }
