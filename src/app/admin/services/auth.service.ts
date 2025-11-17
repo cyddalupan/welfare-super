@@ -19,6 +19,7 @@ export class AuthService {
   async login(email: string, password: string): Promise<boolean> {
     try {
       const result = await firstValueFrom(this.db.query(GET_ADMIN_USER_BY_EMAIL, [email])) as DbQueryResult<AdminUser[]>;
+      console.log('AuthService: API result:', result); // Debug log
 
       if (result && result.data && result.data.length > 0) {
         const user = result.data[0]; // Access user from result.data
@@ -26,9 +27,11 @@ export class AuthService {
         if (user.password === password) {
           const token = JSON.stringify({ userId: user.id, email: user.email });
           localStorage.setItem(this.TOKEN_KEY, token);
+          console.log('AuthService: Login successful, returning true'); // Debug log
           return true;
         }
       }
+      console.log('AuthService: Login failed (invalid credentials or no user data), returning false'); // Debug log
       return false;
     } catch (error) {
       console.error('AuthService: Error during login:', error);
