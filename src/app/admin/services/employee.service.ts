@@ -42,29 +42,29 @@ export class EmployeeService {
 
   private mapEmployeeToParams(employee: Partial<Employee>): any[] {
     return [
-      employee.first_name || null,
-      employee.middle_name || null,
-      employee.last_name || null,
-      employee.passport_number || null,
+      employee.first_name || '',
+      employee.middle_name || '',
+      employee.last_name || '',
+      employee.passport_number || '',
       employee.date_of_birth || null,
-      employee.address || null,
-      employee.phone_number || null,
-      employee.email || null,
+      employee.address || '',
+      employee.phone_number || '',
+      employee.email || '',
       (employee.is_support ? 1 : 0),
       employee.token || '',
       employee.user_id || null,
       employee.date_deployment || null,
       employee.fra_id || null,
-      employee.main_status || null,
-      employee.applicant_type || null,
+      employee.main_status || '',
+      employee.applicant_type || '',
       employee.created_date_of_report || null,
-      employee.country || null,
-      employee.facebook || null,
-      employee.whatsapp || null,
-      employee.consistency_percentage || null,
+      employee.country || '',
+      employee.facebook || '',
+      employee.whatsapp || '',
+      employee.consistency_percentage || 0,
       employee.agency_id || null,
-      employee.emergency_contact_name || null,
-      employee.emergency_contact_phone || null
+      employee.emergency_contact_name || '',
+      employee.emergency_contact_phone || ''
     ];
   }
 }
