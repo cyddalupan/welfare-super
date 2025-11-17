@@ -12,15 +12,11 @@ body {
   background-attachment: fixed;
   font-family: "Inter", sans-serif;
 }
-.liquid-effect {
+.glass-card {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
-}
-.liquid-container {
-  @apply liquid-effect;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 0.75rem;
 }
 
 /* angular:styles/global:styles */

@@ -14,16 +14,10 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
-/* Base liquid effect for blur and background transparency */
-.liquid-effect {
-  background: rgba(255, 255, 255, 0.2); /* Matching glass-card opacity */
-  backdrop-filter: blur(5px); /* Matching glass-card blur */
+/* Styles for glass cards/panels (used for chat bubbles) */
+.glass-card {
+  background: rgba(255, 255, 255, 0.2); /* More opaque for chat bubbles */
+  backdrop-filter: blur(5px); /* Slightly less blur */
   -webkit-backdrop-filter: blur(5px); /* For compatibility */
-}
-
-/* Liquid container with border and rounded corners */
-.liquid-container {
-  @apply liquid-effect; /* Inherit base liquid effect */
-  border: 1px solid rgba(255, 255, 255, 0.15); /* Matching glass-card border */
-  border-radius: 0.75rem; /* Tailwind's rounded-xl is 0.75rem */
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }

@@ -18,13 +18,6 @@
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* Soft shadow for depth */
 }
 
-/* Styles for glass cards/panels (used for chat bubbles) */
-.glass-card {
-  background: rgba(255, 255, 255, 0.2); /* More opaque for chat bubbles */
-  backdrop-filter: blur(5px); /* Slightly less blur */
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
 /* New styles for responsive content within chat bubbles */
 :host::ng-deep .chat-message-content {
   word-wrap: break-word;
