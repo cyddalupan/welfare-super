@@ -35,24 +35,35 @@ export class EmployeeService {
         const newEmployeeId = result.insertId;
         await this.applicantHistoryService.addHistoryEntry({
             applicant_id: newEmployeeId,
-            remarks: 'Applicant created.',
+            remarks: `Applicant created with status: ${employee.main_status}`,
             attachment: '',
-            status: 'Created'
+            status: employee.main_status || 'Created'
         });
     }
     return result;
   }
 
   async updateEmployee(employee: Employee): Promise<any> {
+    const oldEmployee = await this.getEmployeeById(employee.id);
     const params = this.mapEmployeeToParams(employee);
     const result = await firstValueFrom(this.db.query(UPDATE_EMPLOYEE, [...params, employee.id]));
+
     if (employee.id) {
+      if (oldEmployee && oldEmployee.main_status !== employee.main_status) {
         await this.applicantHistoryService.addHistoryEntry({
-            applicant_id: employee.id,
-            remarks: 'Applicant updated.',
-            attachment: '',
-            status: 'Updated'
+          applicant_id: employee.id,
+          remarks: `Applicant status changed from '${oldEmployee.main_status}' to '${employee.main_status}'`,
+          attachment: '',
+          status: employee.main_status
         });
+      } else {
+        await this.applicantHistoryService.addHistoryEntry({
+          applicant_id: employee.id,
+          remarks: 'Applicant updated.',
+          attachment: '',
+          status: 'Updated'
+        });
+      }
     }
     return result;
   }

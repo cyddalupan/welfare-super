@@ -18,12 +18,25 @@ export class CaseService {
 
   async getCases(): Promise<Case[]> {
     const response: any = await firstValueFrom(this.db.query(GET_CASES));
-    return (response && response.data) ? response.data as Case[] : [];
+    if (response && response.data) {
+      return response.data.map((item: any) => ({
+        ...item,
+        employee_name: `${item.last_name}, ${item.first_name}`
+      })) as Case[];
+    }
+    return [];
   }
 
   async getCaseById(id: number): Promise<Case | null> {
     const res: any = await firstValueFrom(this.db.query(GET_CASE_BY_ID, [id]));
-    return (res && res.data && res.data.length > 0) ? res.data[0] as Case : null;
+    if (res && res.data && res.data.length > 0) {
+      const caseItem = res.data[0];
+      return {
+        ...caseItem,
+        employee_name: `${caseItem.last_name}, ${caseItem.first_name}`
+      } as Case;
+    }
+    return null;
   }
 
   async createCase(caseData: Omit<Case, 'id' | 'date_reported' | 'updated_date'>): Promise<any> {

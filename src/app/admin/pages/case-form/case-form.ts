@@ -25,8 +25,8 @@ export class CaseFormComponent implements OnInit {
   employees: Employee[] = []; // For the employee dropdown
   isEditMode = false;
 
-  ngOnInit(): void {
-    this.loadEmployees();
+  async ngOnInit(): Promise<void> {
+    await this.loadEmployees(); // Ensure employees are loaded first
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {

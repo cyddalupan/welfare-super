@@ -1,12 +1,8 @@
 # TODO
 
 TODO:
-- report creation
-    - fix loading indicator
-    - no reply after create
 - report CRUD
 - status history save
-- status database
 - status in sidebar
 - make thinking algo
     - or think after replying
