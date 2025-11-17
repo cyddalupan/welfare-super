@@ -110,6 +110,6 @@ export const INSERT_CASE = `
 
 export const UPDATE_CASE_REPORT = `
   UPDATE cases_case
-  SET report = ?, updated_date = NOW()
+  SET report = ?, updated_date = NOW(), report_status = 'open'
   WHERE id = ?
 `;

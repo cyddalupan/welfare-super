@@ -57,7 +57,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-5B7AF7YO.js";
+} from "./chunk-HVOTCBR3.js";
 
 // src/app/prompts.ts
 var SYSTEM_PROMPT_COMPLAINTS_ASSISTANT = `You are Welfare, a friendly AI assistant here to help Overseas Filipino Workers (OFWs) with their concerns. Your replies should be extremely concise, friendly, use Taglish, avoid deep or uncommon words, and focus on one point or question at a time. Many users just want someone to talk to, so be approachable and supportive.
@@ -831,7 +831,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-UH23BALS.js").then((m) => m.ADMIN_ROUTES)
+    loadChildren: () => import("./chunk-TJR4JI2T.js").then((m) => m.ADMIN_ROUTES)
   }
 ];
 

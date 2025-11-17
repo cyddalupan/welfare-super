@@ -1,0 +1,74 @@
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Case, Employee } from '../../../schemas';
+import { CaseService } from '../../services/case.service';
+import { EmployeeService } from '../../services/employee.service'; // To get employees for dropdown
+
+@Component({
+  selector: 'app-case-form',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './case-form.html',
+  styleUrl: './case-form.css',
+})
+export class CaseFormComponent implements OnInit {
+  private caseService = inject(CaseService);
+  private employeeService = inject(EmployeeService);
+  private route = inject(ActivatedRoute);
+  public router = inject(Router);
+
+  caseItem: Partial<Case> = {
+    report_status: 'open' // Default status
+  };
+  employees: Employee[] = []; // For the employee dropdown
+  isEditMode = false;
+
+  ngOnInit(): void {
+    this.loadEmployees();
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.isEditMode = true;
+        this.loadCase(+id);
+      }
+    });
+  }
+
+  async loadEmployees(): Promise<void> {
+    try {
+      this.employees = await this.employeeService.getEmployees();
+    } catch (error) {
+      console.error('Error loading employees:', error);
+    }
+  }
+
+  async loadCase(id: number): Promise<void> {
+    try {
+      const fetchedCase = await this.caseService.getCaseById(id);
+      if (fetchedCase) {
+        this.caseItem = fetchedCase;
+      } else {
+        console.error('Case not found');
+        this.router.navigate(['/admin/cases']);
+      }
+    } catch (error) {
+      console.error('Error loading case:', error);
+    }
+  }
+
+  async saveCase(): Promise<void> {
+    try {
+      if (this.isEditMode) {
+        await this.caseService.updateCase(this.caseItem as Case);
+      } else {
+        await this.caseService.createCase(this.caseItem as Omit<Case, 'id' | 'date_reported' | 'updated_date'>);
+      }
+      this.router.navigate(['/admin/cases']);
+    } catch (error) {
+      console.error('Error saving case:', error);
+      alert('Failed to save case.');
+    }
+  }
+}
