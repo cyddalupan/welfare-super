@@ -32,6 +32,18 @@ export interface Employee {
   emergency_contact_phone?: string;
 }
 
+export interface Case {
+  id: number;
+  employee_id: number;
+  employee_name?: string; // For display purposes, not directly from cases_case table
+  category: string;
+  report: string;
+  date_reported: string;
+  updated_date: string;
+  report_status: string;
+  agency_id?: number;
+}
+
 export interface ApplicantHistory {
   ids: number;
   applicant_id: number;

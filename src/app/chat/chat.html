@@ -9,11 +9,11 @@
       </div>
     </div>
 
-    <!-- Thinking indicator -->
-    <div *ngIf="isLoading" class="flex justify-center">
+    <!-- Status and Thinking Indicator -->
+    <div *ngIf="isLoading || currentStatusMessage !== 'Thinking...'" class="flex justify-center">
       <div class="glass-card p-3 rounded-lg max-w-xl flex items-center space-x-2">
         <span>{{ currentStatusMessage }}</span>
-        <span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+        <span *ngIf="isLoading" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
       </div>
     </div>
   </div>

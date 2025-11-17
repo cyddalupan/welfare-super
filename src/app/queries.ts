@@ -29,6 +29,60 @@ export const UPDATE_EMPLOYEE = `
 `;
 export const DELETE_EMPLOYEE = 'DELETE FROM employee_employee WHERE id = ?';
 
+// Case CRUD Queries
+export const GET_CASES = `
+  SELECT
+    cc.id,
+    cc.employee_id,
+    ee.first_name,
+    ee.last_name,
+    cc.category,
+    cc.report,
+    cc.date_reported,
+    cc.updated_date,
+    cc.report_status,
+    cc.agency_id
+  FROM cases_case cc
+  JOIN employee_employee ee ON cc.employee_id = ee.id
+  ORDER BY cc.date_reported DESC
+`;
+
+export const GET_CASE_BY_ID = `
+  SELECT
+    cc.id,
+    cc.employee_id,
+    ee.first_name,
+    ee.last_name,
+    cc.category,
+    cc.report,
+    cc.date_reported,
+    cc.updated_date,
+    cc.report_status,
+    cc.agency_id
+  FROM cases_case cc
+  JOIN employee_employee ee ON cc.employee_id = ee.id
+  WHERE cc.id = ?
+`;
+
+export const CREATE_CASE = `
+  INSERT INTO cases_case (
+    employee_id, category, report, date_reported, updated_date, report_status, agency_id
+  ) VALUES (?, ?, ?, NOW(), NOW(), ?, ?)
+`;
+
+export const UPDATE_CASE = `
+  UPDATE cases_case SET
+    employee_id = ?,
+    category = ?,
+    report = ?,
+    report_status = ?,
+    agency_id = ?,
+    updated_date = NOW()
+  WHERE id = ?
+`;
+
+export const DELETE_CASE = 'DELETE FROM cases_case WHERE id = ?';
+
 export const INSERT_APPLICANT_HISTORY = `
   INSERT INTO applicant_history (applicant_id, remarks, attachment, created_at, status)
   VALUES (?, ?, ?, NOW(), ?)

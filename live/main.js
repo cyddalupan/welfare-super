@@ -57,7 +57,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-IYH7NMZN.js";
+} from "./chunk-5B7AF7YO.js";
 
 // src/app/prompts.ts
 var SYSTEM_PROMPT_COMPLAINTS_ASSISTANT = `You are Welfare, a friendly AI assistant here to help Overseas Filipino Workers (OFWs) with their concerns. Your replies should be extremely concise, friendly, use Taglish, avoid deep or uncommon words, and focus on one point or question at a time. Many users just want someone to talk to, so be approachable and supportive.
@@ -335,66 +335,73 @@ function ChatComponent_div_3_Template(rf, ctx) {
     \u0275\u0275property("innerHTML", message_r2.content, \u0275\u0275sanitizeHtml);
   }
 }
+function ChatComponent_div_4_span_4_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "span", 17);
+  }
+}
 function ChatComponent_div_4_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 14)(1, "div", 15)(2, "span");
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
-    \u0275\u0275element(4, "span", 16);
+    \u0275\u0275template(4, ChatComponent_div_4_span_4_Template, 1, 0, "span", 16);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     const ctx_r2 = \u0275\u0275nextContext();
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(ctx_r2.currentStatusMessage);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r2.isLoading);
   }
 }
 function ChatComponent_div_11_ol_9_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "ol", 30);
+    \u0275\u0275elementStart(0, "ol", 31);
     \u0275\u0275element(1, "li");
     \u0275\u0275elementEnd();
   }
 }
 function ChatComponent_div_11_p_10_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 31);
+    \u0275\u0275elementStart(0, "p", 32);
     \u0275\u0275text(1, "No breakdown steps generated yet.");
     \u0275\u0275elementEnd();
   }
 }
 function ChatComponent_div_11_div_15_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 32);
+    \u0275\u0275elementStart(0, "div", 33);
     \u0275\u0275element(1, "pre");
     \u0275\u0275elementEnd();
   }
 }
 function ChatComponent_div_11_p_16_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 31);
+    \u0275\u0275elementStart(0, "p", 32);
     \u0275\u0275text(1, "Execution has not started yet.");
     \u0275\u0275elementEnd();
   }
 }
 function ChatComponent_div_11_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 17)(1, "div", 18)(2, "h2", 19);
+    \u0275\u0275elementStart(0, "div", 18)(1, "div", 19)(2, "h2", 20);
     \u0275\u0275text(3, "AI Execution Details");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div", 20)(5, "div", 21)(6, "h3", 22);
+    \u0275\u0275elementStart(4, "div", 21)(5, "div", 22)(6, "h3", 23);
     \u0275\u0275text(7, "Plan");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(8, "div", 23);
-    \u0275\u0275template(9, ChatComponent_div_11_ol_9_Template, 2, 0, "ol", 24)(10, ChatComponent_div_11_p_10_Template, 2, 0, "p", 25);
+    \u0275\u0275elementStart(8, "div", 24);
+    \u0275\u0275template(9, ChatComponent_div_11_ol_9_Template, 2, 0, "ol", 25)(10, ChatComponent_div_11_p_10_Template, 2, 0, "p", 26);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(11, "div", 26)(12, "h3", 22);
+    \u0275\u0275elementStart(11, "div", 27)(12, "h3", 23);
     \u0275\u0275text(13, "Execution Log");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(14, "div", 27);
-    \u0275\u0275template(15, ChatComponent_div_11_div_15_Template, 2, 0, "div", 28)(16, ChatComponent_div_11_p_16_Template, 2, 0, "p", 25);
+    \u0275\u0275elementStart(14, "div", 28);
+    \u0275\u0275template(15, ChatComponent_div_11_div_15_Template, 2, 0, "div", 29)(16, ChatComponent_div_11_p_16_Template, 2, 0, "p", 26);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(17, "button", 29);
+    \u0275\u0275elementStart(17, "button", 30);
     \u0275\u0275text(18, " Close ");
     \u0275\u0275elementEnd()()();
   }
@@ -679,11 +686,11 @@ User's known characteristics: ${memoriesString}`;
       \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.chatContainer = _t.first);
       \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.messageInput = _t.first);
     }
-  }, decls: 12, vars: 6, consts: [["chatContainer", ""], ["messageInput", ""], [1, "flex", "flex-col", "h-screen", "text-white", "bg-transparent"], [1, "flex-1", "overflow-y-auto", "p-4", "space-y-4"], ["class", "flex", 3, "justify-end", "justify-start", 4, "ngFor", "ngForOf"], ["class", "flex justify-center", 4, "ngIf"], [1, "p-4"], [1, "flex", "items-center", "glass-container", "p-2", "rounded-lg"], ["rows", "1", "placeholder", "Type your message...", 1, "flex-1", "resize-none", "outline-none", "bg-transparent", "text-white", "placeholder-gray-400", "glass-input", "p-2", 3, "ngModelChange", "input", "keydown.enter", "ngModel", "disabled"], [1, "ml-2", "px-4", "py-2", "glass-button", "bg-blue-600/50", "hover:bg-blue-700/60", "rounded-lg", "font-semibold", 3, "click", "disabled"], ["class", "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50", 4, "ngIf"], [1, "flex"], [1, "glass-card", "p-3", "rounded-lg", "max-w-xl"], [1, "chat-message-content", 3, "innerHTML"], [1, "flex", "justify-center"], [1, "glass-card", "p-3", "rounded-lg", "max-w-xl", "flex", "items-center", "space-x-2"], [1, "animate-spin", "rounded-full", "h-4", "w-4", "border-b-2", "border-white"], [1, "fixed", "inset-0", "bg-black", "bg-opacity-50", "flex", "items-center", "justify-center", "z-50"], [1, "glass-container", "p-6", "rounded-lg", "shadow-lg", "max-w-4xl", "w-full", "mx-4", "max-h-[80vh]", "flex", "flex-col"], [1, "text-xl", "font-bold", "mb-4", "text-center"], [1, "flex-1", "flex", "flex-col", "md:flex-row", "md:space-x-4", "overflow-y-hidden"], [1, "flex-1", "flex", "flex-col", "log-container-plan"], [1, "font-semibold", "text-lg", "mb-2"], [1, "flex-1", "bg-black/20", "p-3", "rounded-lg", "overflow-y-auto"], ["class", "list-decimal list-inside space-y-1 text-gray-200", 4, "ngIf"], ["class", "text-gray-400", 4, "ngIf"], [1, "flex-1", "flex", "flex-col", "log-container-execution", "mt-4", "md:mt-0"], [1, "flex-1", "bg-black/20", "p-3", "rounded-lg", "overflow-y-auto", "font-mono", "text-sm"], ["class", "space-y-2", 4, "ngIf"], [1, "mt-6", "px-4", "py-2", "glass-button", "bg-red-600/50", "hover:bg-red-700/60", "rounded-lg", "font-semibold", "w-full"], [1, "list-decimal", "list-inside", "space-y-1", "text-gray-200"], [1, "text-gray-400"], [1, "space-y-2"]], template: function ChatComponent_Template(rf, ctx) {
+  }, decls: 12, vars: 6, consts: [["chatContainer", ""], ["messageInput", ""], [1, "flex", "flex-col", "h-screen", "text-white", "bg-transparent"], [1, "flex-1", "overflow-y-auto", "p-4", "space-y-4"], ["class", "flex", 3, "justify-end", "justify-start", 4, "ngFor", "ngForOf"], ["class", "flex justify-center", 4, "ngIf"], [1, "p-4"], [1, "flex", "items-center", "glass-container", "p-2", "rounded-lg"], ["rows", "1", "placeholder", "Type your message...", 1, "flex-1", "resize-none", "outline-none", "bg-transparent", "text-white", "placeholder-gray-400", "glass-input", "p-2", 3, "ngModelChange", "input", "keydown.enter", "ngModel", "disabled"], [1, "ml-2", "px-4", "py-2", "glass-button", "bg-blue-600/50", "hover:bg-blue-700/60", "rounded-lg", "font-semibold", 3, "click", "disabled"], ["class", "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50", 4, "ngIf"], [1, "flex"], [1, "glass-card", "p-3", "rounded-lg", "max-w-xl"], [1, "chat-message-content", 3, "innerHTML"], [1, "flex", "justify-center"], [1, "glass-card", "p-3", "rounded-lg", "max-w-xl", "flex", "items-center", "space-x-2"], ["class", "animate-spin rounded-full h-4 w-4 border-b-2 border-white", 4, "ngIf"], [1, "animate-spin", "rounded-full", "h-4", "w-4", "border-b-2", "border-white"], [1, "fixed", "inset-0", "bg-black", "bg-opacity-50", "flex", "items-center", "justify-center", "z-50"], [1, "glass-container", "p-6", "rounded-lg", "shadow-lg", "max-w-4xl", "w-full", "mx-4", "max-h-[80vh]", "flex", "flex-col"], [1, "text-xl", "font-bold", "mb-4", "text-center"], [1, "flex-1", "flex", "flex-col", "md:flex-row", "md:space-x-4", "overflow-y-hidden"], [1, "flex-1", "flex", "flex-col", "log-container-plan"], [1, "font-semibold", "text-lg", "mb-2"], [1, "flex-1", "bg-black/20", "p-3", "rounded-lg", "overflow-y-auto"], ["class", "list-decimal list-inside space-y-1 text-gray-200", 4, "ngIf"], ["class", "text-gray-400", 4, "ngIf"], [1, "flex-1", "flex", "flex-col", "log-container-execution", "mt-4", "md:mt-0"], [1, "flex-1", "bg-black/20", "p-3", "rounded-lg", "overflow-y-auto", "font-mono", "text-sm"], ["class", "space-y-2", 4, "ngIf"], [1, "mt-6", "px-4", "py-2", "glass-button", "bg-red-600/50", "hover:bg-red-700/60", "rounded-lg", "font-semibold", "w-full"], [1, "list-decimal", "list-inside", "space-y-1", "text-gray-200"], [1, "text-gray-400"], [1, "space-y-2"]], template: function ChatComponent_Template(rf, ctx) {
     if (rf & 1) {
       const _r1 = \u0275\u0275getCurrentView();
       \u0275\u0275elementStart(0, "div", 2)(1, "div", 3, 0);
-      \u0275\u0275template(3, ChatComponent_div_3_Template, 3, 7, "div", 4)(4, ChatComponent_div_4_Template, 5, 1, "div", 5);
+      \u0275\u0275template(3, ChatComponent_div_3_Template, 3, 7, "div", 4)(4, ChatComponent_div_4_Template, 5, 2, "div", 5);
       \u0275\u0275elementEnd();
       \u0275\u0275elementStart(5, "div", 6)(6, "div", 7)(7, "textarea", 8, 1);
       \u0275\u0275twoWayListener("ngModelChange", function ChatComponent_Template_textarea_ngModelChange_7_listener($event) {
@@ -714,7 +721,7 @@ User's known characteristics: ${memoriesString}`;
       \u0275\u0275advance(3);
       \u0275\u0275property("ngForOf", ctx.messages);
       \u0275\u0275advance();
-      \u0275\u0275property("ngIf", ctx.isLoading);
+      \u0275\u0275property("ngIf", ctx.isLoading || ctx.currentStatusMessage !== "Thinking...");
       \u0275\u0275advance(3);
       \u0275\u0275twoWayProperty("ngModel", ctx.newMessage);
       \u0275\u0275property("disabled", ctx.isLoading);
@@ -739,11 +746,11 @@ User's known characteristics: ${memoriesString}`;
       </div>
     </div>
 
-    <!-- Thinking indicator -->
-    <div *ngIf="isLoading" class="flex justify-center">
+    <!-- Status and Thinking Indicator -->
+    <div *ngIf="isLoading || currentStatusMessage !== 'Thinking...'" class="flex justify-center">
       <div class="glass-card p-3 rounded-lg max-w-xl flex items-center space-x-2">
         <span>{{ currentStatusMessage }}</span>
-        <span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+        <span *ngIf="isLoading" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
       </div>
     </div>
   </div>
@@ -822,7 +829,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-QFM7LVMZ.js").then((m) => m.ADMIN_ROUTES)
+    loadChildren: () => import("./chunk-UH23BALS.js").then((m) => m.ADMIN_ROUTES)
   }
 ];
 

@@ -2,6 +2,8 @@
 
 TODO:
 - report creation
+    - fix loading indicator
+    - no reply after create
 - report CRUD
 - status history save
 - status database
