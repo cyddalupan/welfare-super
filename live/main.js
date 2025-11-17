@@ -1,50 +1,82 @@
 import {
-  AdminLoginComponent,
   CommonModule,
   Component,
   DatabaseService,
+  DefaultValueAccessor,
+  FormsModule,
   HttpClient,
   Injectable,
+  LOGIN_QUERY,
+  NgControlStatus,
+  NgForOf,
+  NgIf,
+  NgModel,
   RouterModule,
   RouterOutlet,
+  ViewChild,
   __spreadProps,
   __spreadValues,
   __toESM,
   bootstrapApplication,
+  catchError,
   environment,
+  map,
+  of,
   provideHttpClient,
   provideRouter,
   require_crypto_js,
   setClassMetadata,
   ɵsetClassDebugInfo,
+  ɵɵadvance,
+  ɵɵclassProp,
   ɵɵdefineComponent,
   ɵɵdefineInjectable,
   ɵɵdirectiveInject,
   ɵɵelement,
-  ɵɵinject
-} from "./chunk-7P2ZI5EK.js";
+  ɵɵelementEnd,
+  ɵɵelementStart,
+  ɵɵgetCurrentView,
+  ɵɵinject,
+  ɵɵlistener,
+  ɵɵloadQuery,
+  ɵɵproperty,
+  ɵɵqueryRefresh,
+  ɵɵresetView,
+  ɵɵrestoreView,
+  ɵɵsanitizeHtml,
+  ɵɵtemplate,
+  ɵɵtext,
+  ɵɵtwoWayBindingSet,
+  ɵɵtwoWayListener,
+  ɵɵtwoWayProperty,
+  ɵɵviewQuery
+} from "./chunk-LW45ETEE.js";
 
-// src/app/app.routes.ts
-var routes = [
-  // { path: '', component: ChatComponent }, // Temporarily remove ChatComponent from root
-  { path: "", redirectTo: "/admin/login", pathMatch: "full" },
-  // Redirect root to admin login for testing
-  { path: "admin/login", component: AdminLoginComponent },
-  // Directly load AdminLoginComponent
-  {
-    path: "admin",
-    loadChildren: () => import("./chunk-RQK4SLV2.js").then((m) => m.ADMIN_ROUTES)
-  }
-];
+// src/app/prompts.ts
+var SYSTEM_PROMPT_COMPLAINTS_ASSISTANT = `You are Welfare, a friendly AI assistant here to help Overseas Filipino Workers (OFWs) with their concerns. Your replies should be extremely concise, friendly, use Taglish, avoid deep or uncommon words, and focus on one point or question at a time. Many users just want someone to talk to, so be approachable and supportive.
+Core Objective: Your primary function is to be a friendly and supportive listener for Overseas Filipino Workers (OFWs). Provide empathetic responses and a safe space for them to share their thoughts and feelings. Your goal is to offer emotional support and guidance, focusing on their well-being.
+Assistant Protocol:
+ * Welcome and Introduction: Begin the chat with a warm, friendly welcome. Clearly state your purpose: to listen and offer support.
+ * Empathy and Active Listening: Listen attentively and show genuine empathy and concern for the user's situation. Maintain a calm, polite, and understanding demeanor at all times.
+ * Supportive Responses: Provide encouraging and validating responses. Focus on the user's emotional state and offer a safe space for expression.
+ * Closing Message: End the interaction with a supportive and respectful closing message, reinforcing your role as a listener and friend.
+DOS and DON'TS for the AI Assistant
+DOS
+ * Be Respectful and Calm: Be polite, patient, and professional in every response.
+ * Show Malasakit (Empathy): Acknowledge the user's feelings and validate their concern.
+ * Maintain Focus: Keep the conversation centered on the user's emotional state and well-being.
+ * Provide Emotional Assurance: Offer comforting and supportive messages.
+DON'TS
+ * Do Not Promise Solutions: Never guarantee a specific outcome or timeline for resolution.
+ * Do Not Suggest Government Agencies: Absolutely do not mention, recommend, or refer the applicant to any external government bodies (like OWWA, POEA, DMW, etc.).
+ * Do Not Engage in Debate: Avoid arguing or questioning the validity of the complaint. Your role is to receive and process.
+ * Do Not Provide Legal Advice: Stick strictly to the agency's intake protocol.
+ * Do Not Instruct User on Reply Length: Never tell the user to reply with short messages or to be concise. That is your role, not theirs.
 
-// src/app/app.config.ts
-var appConfig = {
-  providers: [
-    provideRouter(routes),
-    provideHttpClient()
-    // <--- Add this provider
-  ]
-};
+---
+AI Action Tag Instructions:
+From the user's message, identify any *new* factual information about their background, situation, or character that is not already listed in "User's known characteristics" (which will be provided separately). If you find new information, output it as a single sentence using the tag [[MEMORY:"<new_memory_content>"]]. Do not include the [[MEMORY]] tag if no new information is found or if the information is already known. The [[MEMORY]] tag should appear at the end of your response, if present.`;
+var SYSTEM_PROMPT_LOGIN_ASSISTANT = `Your goal is to get the passport number and last name of the user to confirm the identity so you can help. take note that we already have the user data we only need to map them on the database to confirm identity so its safe to ask for passport number. In order to help in anything, we prioritize the user log in first. Once you have both the last name and passport number, respond with the exact format: [[LOGIN, LASTNAME:"<last_name>",PASSPORT:"<passport_number>"]]`;
 
 // src/app/ai.service.ts
 var CryptoJS = __toESM(require_crypto_js());
@@ -82,6 +114,531 @@ var AiService = class _AiService {
     }]
   }], () => [{ type: HttpClient }], null);
 })();
+
+// src/app/auth.service.ts
+var CryptoJS2 = __toESM(require_crypto_js());
+var AuthService = class _AuthService {
+  http;
+  apiUrl = "api/database.php";
+  // Path to your PHP backend
+  encryptionKey;
+  constructor(http) {
+    this.http = http;
+    this.encryptionKey = environment.encryptionKey;
+  }
+  login(lastName, passportNumber) {
+    const processedLastName = lastName.trim().toLowerCase();
+    const processedPassportNumber = passportNumber.trim().toLowerCase();
+    const query = LOGIN_QUERY;
+    const params = [processedLastName, processedPassportNumber];
+    const payload = { query, params };
+    const encryptedPayload = this.encryptPayload(JSON.stringify(payload));
+    return this.http.post(this.apiUrl, encryptedPayload).pipe(map((response) => {
+      console.log("Login response data:", response?.data[0]);
+      if (response && response.success && response.data && response.data.length > 0 && response.data[0].id) {
+        localStorage.setItem("user_id", response.data[0].id);
+        localStorage.setItem("agency_id", response.data[0].agency_id);
+        return true;
+      }
+      return false;
+    }), catchError((error) => {
+      console.error("Login API call failed:", error);
+      return of(false);
+    }));
+  }
+  logout() {
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("agency_id");
+  }
+  encryptPayload(payload) {
+    const key = CryptoJS2.enc.Hex.parse(this.encryptionKey);
+    const iv = CryptoJS2.lib.WordArray.random(16);
+    const encrypted = CryptoJS2.AES.encrypt(payload, key, {
+      iv,
+      mode: CryptoJS2.mode.CBC,
+      padding: CryptoJS2.pad.Pkcs7
+    });
+    const combined = CryptoJS2.lib.WordArray.create().concat(iv).concat(encrypted.ciphertext);
+    return combined.toString(CryptoJS2.enc.Base64);
+  }
+  static \u0275fac = function AuthService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _AuthService)(\u0275\u0275inject(HttpClient));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _AuthService, factory: _AuthService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AuthService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], () => [{ type: HttpClient }], null);
+})();
+
+// src/app/chat/chat.ts
+var _c0 = ["chatContainer"];
+var _c1 = ["messageInput"];
+function ChatComponent_div_3_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 11)(1, "div", 12);
+    \u0275\u0275element(2, "div", 13);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const message_r2 = ctx.$implicit;
+    \u0275\u0275classProp("justify-end", message_r2.role === "user")("justify-start", message_r2.role === "assistant");
+    \u0275\u0275advance();
+    \u0275\u0275classProp("user-message-bubble", message_r2.role === "user");
+    \u0275\u0275advance();
+    \u0275\u0275property("innerHTML", message_r2.content, \u0275\u0275sanitizeHtml);
+  }
+}
+function ChatComponent_div_4_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 14)(1, "div", 15)(2, "span");
+    \u0275\u0275text(3, "Thinking...");
+    \u0275\u0275elementEnd();
+    \u0275\u0275element(4, "span", 16);
+    \u0275\u0275elementEnd()();
+  }
+}
+function ChatComponent_div_11_ol_9_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "ol", 30);
+    \u0275\u0275element(1, "li");
+    \u0275\u0275elementEnd();
+  }
+}
+function ChatComponent_div_11_p_10_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 31);
+    \u0275\u0275text(1, "No breakdown steps generated yet.");
+    \u0275\u0275elementEnd();
+  }
+}
+function ChatComponent_div_11_div_15_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 32);
+    \u0275\u0275element(1, "pre");
+    \u0275\u0275elementEnd();
+  }
+}
+function ChatComponent_div_11_p_16_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 31);
+    \u0275\u0275text(1, "Execution has not started yet.");
+    \u0275\u0275elementEnd();
+  }
+}
+function ChatComponent_div_11_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 17)(1, "div", 18)(2, "h2", 19);
+    \u0275\u0275text(3, "AI Execution Details");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "div", 20)(5, "div", 21)(6, "h3", 22);
+    \u0275\u0275text(7, "Plan");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(8, "div", 23);
+    \u0275\u0275template(9, ChatComponent_div_11_ol_9_Template, 2, 0, "ol", 24)(10, ChatComponent_div_11_p_10_Template, 2, 0, "p", 25);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(11, "div", 26)(12, "h3", 22);
+    \u0275\u0275text(13, "Execution Log");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(14, "div", 27);
+    \u0275\u0275template(15, ChatComponent_div_11_div_15_Template, 2, 0, "div", 28)(16, ChatComponent_div_11_p_16_Template, 2, 0, "p", 25);
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(17, "button", 29);
+    \u0275\u0275text(18, " Close ");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance(9);
+    \u0275\u0275property("ngIf", false);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", true);
+    \u0275\u0275advance(5);
+    \u0275\u0275property("ngIf", false);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", true);
+  }
+}
+var MAX_TEXTAREA_HEIGHT = 150;
+var ChatComponent = class _ChatComponent {
+  aiService;
+  authService;
+  databaseService;
+  title = "analytics-agent";
+  chatContainer;
+  messageInput;
+  messages = [];
+  // Local chat history
+  systemPrompt;
+  // Will be set dynamically
+  newMessage = "";
+  // Input field binding
+  isLoading = false;
+  // Loading indicator
+  userId = null;
+  // Stores the logged-in user's ID
+  agencyId = null;
+  // Stores the logged-in user's agency ID
+  employeeMemories = [];
+  // Stores employee memories
+  constructor(aiService, authService, databaseService) {
+    this.aiService = aiService;
+    this.authService = authService;
+    this.databaseService = databaseService;
+    this.systemPrompt = {
+      role: "system",
+      content: ""
+      // Initialize with empty content, will be set in ngOnInit
+    };
+  }
+  ngOnInit() {
+    let userId = localStorage.getItem("user_id");
+    let agencyId = localStorage.getItem("agency_id");
+    if (userId && (!agencyId || agencyId === "null" || agencyId === "undefined") || !userId && agencyId) {
+      this.authService.logout();
+      userId = null;
+      agencyId = null;
+    }
+    this.userId = userId;
+    this.agencyId = agencyId;
+    this.setInitialSystemPrompt();
+    if (this.userId) {
+      this.loadChatHistory();
+      this.loadEmployeeMemories();
+    } else {
+      this.messages = [];
+      this.messages.push({ role: "assistant", content: "Welcome! To get started, please provide your last name and passport number so I can assist you." });
+    }
+  }
+  setInitialSystemPrompt() {
+    if (this.userId) {
+      this.systemPrompt.content = SYSTEM_PROMPT_COMPLAINTS_ASSISTANT;
+    } else {
+      this.systemPrompt.content = SYSTEM_PROMPT_LOGIN_ASSISTANT + "\n\n" + SYSTEM_PROMPT_COMPLAINTS_ASSISTANT;
+    }
+  }
+  loadChatHistory() {
+    if (this.userId) {
+      this.databaseService.getChatHistory(parseInt(this.userId, 10)).subscribe({
+        next: (history) => {
+          this.messages = history;
+        },
+        error: (error) => {
+          console.error("Failed to load chat history:", error);
+          this.messages.push({ role: "assistant", content: "Sorry, I was unable to load your previous conversation." });
+        }
+      });
+    }
+  }
+  loadEmployeeMemories() {
+    if (this.userId) {
+      this.databaseService.getEmployeeMemories(parseInt(this.userId, 10)).subscribe({
+        next: (memories) => {
+          this.employeeMemories = memories;
+          console.log("Loaded employee memories:", this.employeeMemories);
+        },
+        error: (error) => {
+          console.error("Failed to load employee memories:", error);
+        }
+      });
+    }
+  }
+  ngAfterViewChecked() {
+    this.scrollToBottom();
+  }
+  adjustTextareaHeight() {
+    if (this.messageInput && this.messageInput.nativeElement) {
+      const element = this.messageInput.nativeElement;
+      element.style.height = "auto";
+      element.style.height = Math.min(element.scrollHeight, MAX_TEXTAREA_HEIGHT) + "px";
+      element.style.overflowY = element.scrollHeight > MAX_TEXTAREA_HEIGHT ? "auto" : "hidden";
+    }
+  }
+  sendMessage() {
+    if (this.newMessage.trim() === "") {
+      return;
+    }
+    this.isLoading = true;
+    const userMessage = { role: "user", content: this.newMessage.trim() };
+    this.messages.push(userMessage);
+    this.saveMessageToDb(userMessage);
+    this.newMessage = "";
+    let currentSystemPromptContent = this.systemPrompt.content;
+    if (this.userId && this.employeeMemories && this.employeeMemories.length > 0) {
+      const memoriesString = this.employeeMemories.map((memory) => `"${memory}"`).join(", ");
+      currentSystemPromptContent += `
+
+User's known characteristics: ${memoriesString}`;
+    }
+    const systemPromptForAi = { role: "system", content: currentSystemPromptContent };
+    const historyForAi = this.messages.slice(-10);
+    const aiPayload = [systemPromptForAi, ...historyForAi];
+    this.aiService.callAi(aiPayload).subscribe({
+      next: (response) => {
+        const processedResponse = this.parseAiResponseForTags(response);
+        if (processedResponse) {
+          const assistantMessage = { role: "assistant", content: processedResponse };
+          this.messages.push(assistantMessage);
+          this.saveMessageToDb(assistantMessage);
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error("AI call failed:", error);
+        const errorMessage = { role: "assistant", content: "Error: Could not get a response from the AI." };
+        this.messages.push(errorMessage);
+        this.saveMessageToDb(errorMessage);
+        this.isLoading = false;
+      }
+    });
+    this.adjustTextareaHeight();
+  }
+  saveMessageToDb(message) {
+    console.log("Attempting to save message. UserID:", this.userId, "AgencyID:", this.agencyId);
+    if (this.userId && this.agencyId && this.agencyId !== "null" && this.agencyId !== "undefined") {
+      console.log("UserID and AgencyID are present. Calling database service.");
+      this.databaseService.saveChatMessage(message, parseInt(this.userId, 10), parseInt(this.agencyId, 10)).subscribe({
+        next: () => console.log("Message saved successfully."),
+        // DEBUG
+        error: (err) => console.error("Failed to save message:", err)
+      });
+    } else {
+      console.log("Save skipped: UserID or AgencyID is missing or invalid.");
+    }
+  }
+  parseAiResponseForTags(response) {
+    const loginTagRegex = /\[\[LOGIN, LASTNAME:"([^"]+)",PASSPORT:"([^"]+)"\]\]/;
+    const memoryTagRegex = /\[\[MEMORY:"([^"]+)"\]\]/g;
+    let modifiedResponse = response;
+    let loginProcessed = false;
+    const loginMatch = modifiedResponse.match(loginTagRegex);
+    if (loginMatch) {
+      const lastName = loginMatch[1];
+      const passportNumber = loginMatch[2];
+      this.authService.login(lastName, passportNumber).subscribe({
+        next: (success) => {
+          if (success) {
+            this.userId = localStorage.getItem("user_id");
+            this.agencyId = localStorage.getItem("agency_id");
+            this.setInitialSystemPrompt();
+            this.messages = [];
+            this.loadChatHistory();
+            this.loadEmployeeMemories();
+          } else {
+            const loginFailMessage = { role: "assistant", content: "Account does not exist, please double check if input is correct." };
+            this.messages.push(loginFailMessage);
+            this.saveMessageToDb(loginFailMessage);
+          }
+        },
+        error: (error) => {
+          console.error("Login failed:", error);
+          const loginErrorMessage = { role: "assistant", content: "An error occurred during login. Please try again later." };
+          this.messages.push(loginErrorMessage);
+          this.saveMessageToDb(loginErrorMessage);
+        }
+      });
+      modifiedResponse = modifiedResponse.replace(loginTagRegex, "").trim();
+      loginProcessed = true;
+    }
+    let memoryMatch;
+    let responseWithoutMemoryTags = modifiedResponse;
+    while ((memoryMatch = memoryTagRegex.exec(modifiedResponse)) !== null) {
+      const memoryContent = memoryMatch[1];
+      if (this.userId) {
+        this.databaseService.saveEmployeeMemory(parseInt(this.userId, 10), memoryContent).subscribe({
+          next: () => {
+            console.log("Memory saved successfully: ", memoryContent);
+            this.employeeMemories.push(memoryContent);
+          },
+          error: (err) => console.error("Failed to save memory:", err)
+        });
+      } else {
+        console.warn("Attempted to save memory for unauthenticated user:", memoryContent);
+      }
+      responseWithoutMemoryTags = responseWithoutMemoryTags.replace(memoryMatch[0], "").trim();
+    }
+    if (loginProcessed) {
+      return "";
+    }
+    return responseWithoutMemoryTags;
+  }
+  scrollToBottom() {
+    try {
+      this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+    } catch (err) {
+    }
+  }
+  static \u0275fac = function ChatComponent_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _ChatComponent)(\u0275\u0275directiveInject(AiService), \u0275\u0275directiveInject(AuthService), \u0275\u0275directiveInject(DatabaseService));
+  };
+  static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ChatComponent, selectors: [["app-chat"]], viewQuery: function ChatComponent_Query(rf, ctx) {
+    if (rf & 1) {
+      \u0275\u0275viewQuery(_c0, 5);
+      \u0275\u0275viewQuery(_c1, 5);
+    }
+    if (rf & 2) {
+      let _t;
+      \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.chatContainer = _t.first);
+      \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.messageInput = _t.first);
+    }
+  }, decls: 12, vars: 6, consts: [["chatContainer", ""], ["messageInput", ""], [1, "flex", "flex-col", "h-screen", "text-white", "bg-transparent"], [1, "flex-1", "overflow-y-auto", "p-4", "space-y-4"], ["class", "flex", 3, "justify-end", "justify-start", 4, "ngFor", "ngForOf"], ["class", "flex justify-center", 4, "ngIf"], [1, "p-4"], [1, "flex", "items-center", "glass-container", "p-2", "rounded-lg"], ["rows", "1", "placeholder", "Type your message...", 1, "flex-1", "resize-none", "outline-none", "bg-transparent", "text-white", "placeholder-gray-400", "glass-input", "p-2", 3, "ngModelChange", "input", "keydown.enter", "ngModel", "disabled"], [1, "ml-2", "px-4", "py-2", "glass-button", "bg-blue-600/50", "hover:bg-blue-700/60", "rounded-lg", "font-semibold", 3, "click", "disabled"], ["class", "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50", 4, "ngIf"], [1, "flex"], [1, "glass-card", "p-3", "rounded-lg", "max-w-xl"], [1, "chat-message-content", 3, "innerHTML"], [1, "flex", "justify-center"], [1, "glass-card", "p-3", "rounded-lg", "max-w-xl", "flex", "items-center", "space-x-2"], [1, "animate-spin", "rounded-full", "h-4", "w-4", "border-b-2", "border-white"], [1, "fixed", "inset-0", "bg-black", "bg-opacity-50", "flex", "items-center", "justify-center", "z-50"], [1, "glass-container", "p-6", "rounded-lg", "shadow-lg", "max-w-4xl", "w-full", "mx-4", "max-h-[80vh]", "flex", "flex-col"], [1, "text-xl", "font-bold", "mb-4", "text-center"], [1, "flex-1", "flex", "flex-col", "md:flex-row", "md:space-x-4", "overflow-y-hidden"], [1, "flex-1", "flex", "flex-col", "log-container-plan"], [1, "font-semibold", "text-lg", "mb-2"], [1, "flex-1", "bg-black/20", "p-3", "rounded-lg", "overflow-y-auto"], ["class", "list-decimal list-inside space-y-1 text-gray-200", 4, "ngIf"], ["class", "text-gray-400", 4, "ngIf"], [1, "flex-1", "flex", "flex-col", "log-container-execution", "mt-4", "md:mt-0"], [1, "flex-1", "bg-black/20", "p-3", "rounded-lg", "overflow-y-auto", "font-mono", "text-sm"], ["class", "space-y-2", 4, "ngIf"], [1, "mt-6", "px-4", "py-2", "glass-button", "bg-red-600/50", "hover:bg-red-700/60", "rounded-lg", "font-semibold", "w-full"], [1, "list-decimal", "list-inside", "space-y-1", "text-gray-200"], [1, "text-gray-400"], [1, "space-y-2"]], template: function ChatComponent_Template(rf, ctx) {
+    if (rf & 1) {
+      const _r1 = \u0275\u0275getCurrentView();
+      \u0275\u0275elementStart(0, "div", 2)(1, "div", 3, 0);
+      \u0275\u0275template(3, ChatComponent_div_3_Template, 3, 7, "div", 4)(4, ChatComponent_div_4_Template, 5, 0, "div", 5);
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(5, "div", 6)(6, "div", 7)(7, "textarea", 8, 1);
+      \u0275\u0275twoWayListener("ngModelChange", function ChatComponent_Template_textarea_ngModelChange_7_listener($event) {
+        \u0275\u0275restoreView(_r1);
+        \u0275\u0275twoWayBindingSet(ctx.newMessage, $event) || (ctx.newMessage = $event);
+        return \u0275\u0275resetView($event);
+      });
+      \u0275\u0275listener("input", function ChatComponent_Template_textarea_input_7_listener() {
+        \u0275\u0275restoreView(_r1);
+        return \u0275\u0275resetView(ctx.adjustTextareaHeight());
+      })("keydown.enter", function ChatComponent_Template_textarea_keydown_enter_7_listener($event) {
+        \u0275\u0275restoreView(_r1);
+        ctx.sendMessage();
+        return \u0275\u0275resetView($event.preventDefault());
+      });
+      \u0275\u0275elementEnd();
+      \u0275\u0275elementStart(9, "button", 9);
+      \u0275\u0275listener("click", function ChatComponent_Template_button_click_9_listener() {
+        \u0275\u0275restoreView(_r1);
+        return \u0275\u0275resetView(ctx.sendMessage());
+      });
+      \u0275\u0275text(10, " Send ");
+      \u0275\u0275elementEnd()()();
+      \u0275\u0275template(11, ChatComponent_div_11_Template, 19, 4, "div", 10);
+      \u0275\u0275elementEnd();
+    }
+    if (rf & 2) {
+      \u0275\u0275advance(3);
+      \u0275\u0275property("ngForOf", ctx.messages);
+      \u0275\u0275advance();
+      \u0275\u0275property("ngIf", ctx.isLoading);
+      \u0275\u0275advance(3);
+      \u0275\u0275twoWayProperty("ngModel", ctx.newMessage);
+      \u0275\u0275property("disabled", ctx.isLoading);
+      \u0275\u0275advance(2);
+      \u0275\u0275property("disabled", ctx.isLoading);
+      \u0275\u0275advance(2);
+      \u0275\u0275property("ngIf", false);
+    }
+  }, dependencies: [CommonModule, NgForOf, NgIf, FormsModule, DefaultValueAccessor, NgControlStatus, NgModel], styles: ['\n\n[_nghost-%COMP%] {\n  display: block;\n  min-height: 100vh;\n  background-image: url(/background.jpg);\n  background-size: cover;\n  background-position: center;\n  font-family: "Inter", sans-serif;\n}\n.glass-container[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.1);\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);\n}\n.glass-card[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(255, 255, 255, 0.15);\n}\n[_nghost-%COMP%]  .chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n[_nghost-%COMP%]  .chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n}\n[_nghost-%COMP%]  .chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n[_nghost-%COMP%]  .chat-message-content th, \n[_nghost-%COMP%]  .chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid rgba(255, 255, 255, 0.2);\n}\n[_nghost-%COMP%]  .chat-message-content img {\n  max-width: 100%;\n  height: auto;\n}\n.user-message-bubble[_ngcontent-%COMP%] {\n  background: rgba(0, 123, 255, 0.3);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(0, 123, 255, 0.25);\n}\n.glass-input[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.15);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n  border: 1px solid rgba(255, 255, 255, 0.2);\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);\n  color: white;\n}\n.glass-input[_ngcontent-%COMP%]::placeholder {\n  color: rgba(255, 255, 255, 0.7);\n}\n.glass-button[_ngcontent-%COMP%] {\n  background: rgba(76, 175, 80, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(76, 175, 80, 0.3);\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);\n}\n.glass-button[_ngcontent-%COMP%]:hover {\n  background: rgba(76, 175, 80, 0.3);\n}\n.log-container-plan[_ngcontent-%COMP%], \n.log-container-execution[_ngcontent-%COMP%] {\n  max-height: 60vh;\n}\n@media (max-width: 768px) {\n  .log-container-plan[_ngcontent-%COMP%], \n   .log-container-execution[_ngcontent-%COMP%] {\n    max-height: 30vh;\n  }\n}\n/*# sourceMappingURL=chat.css.map */'] });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ChatComponent, [{
+    type: Component,
+    args: [{ selector: "app-chat", standalone: true, imports: [CommonModule, FormsModule], template: `<div class="flex flex-col h-screen text-white bg-transparent">
+  <!-- Chat Area -->
+  <div #chatContainer class="flex-1 overflow-y-auto p-4 space-y-4">
+    <!-- Chat messages will be rendered here dynamically -->
+    <div *ngFor="let message of messages" class="flex" [class.justify-end]="message.role === 'user'" [class.justify-start]="message.role === 'assistant'">
+      <div class="glass-card p-3 rounded-lg max-w-xl"
+           [class.user-message-bubble]="message.role === 'user'">
+        <div class="chat-message-content" [innerHTML]="message.content"></div>
+      </div>
+    </div>
+
+    <!-- Thinking indicator -->
+    <div *ngIf="isLoading" class="flex justify-center">
+      <div class="glass-card p-3 rounded-lg max-w-xl flex items-center space-x-2">
+        <span>Thinking...</span>
+        <span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="p-4">
+    <div class="flex items-center glass-container p-2 rounded-lg">
+      <textarea
+        #messageInput
+        rows="1"
+        class="flex-1 resize-none outline-none bg-transparent text-white placeholder-gray-400 glass-input p-2"
+        placeholder="Type your message..."
+        [(ngModel)]="newMessage"
+        (input)="adjustTextareaHeight()"
+        (keydown.enter)="sendMessage(); $event.preventDefault();"
+        [disabled]="isLoading"
+      ></textarea>
+      <button class="ml-2 px-4 py-2 glass-button bg-blue-600/50 hover:bg-blue-700/60 rounded-lg font-semibold"
+              (click)="sendMessage()"
+              [disabled]="isLoading">
+        Send
+      </button>
+    </div>
+  </div>
+
+  <!-- Thinking Modal -->
+  <div *ngIf="false" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="glass-container p-6 rounded-lg shadow-lg max-w-4xl w-full mx-4 max-h-[80vh] flex flex-col">
+      <h2 class="text-xl font-bold mb-4 text-center">AI Execution Details</h2>
+
+      <div class="flex-1 flex flex-col md:flex-row md:space-x-4 overflow-y-hidden">
+        <!-- Breakdown Steps -->
+        <div class="flex-1 flex flex-col log-container-plan">
+          <h3 class="font-semibold text-lg mb-2">Plan</h3>
+          <div class="flex-1 bg-black/20 p-3 rounded-lg overflow-y-auto">
+            <ol *ngIf="false" class="list-decimal list-inside space-y-1 text-gray-200">
+              <li></li>
+            </ol>
+            <p *ngIf="true" class="text-gray-400">No breakdown steps generated yet.</p>
+          </div>
+        </div>
+
+        <!-- Execution Log -->
+        <div class="flex-1 flex flex-col log-container-execution mt-4 md:mt-0">
+          <h3 class="font-semibold text-lg mb-2">Execution Log</h3>
+          <div class="flex-1 bg-black/20 p-3 rounded-lg overflow-y-auto font-mono text-sm">
+            <div *ngIf="false" class="space-y-2">
+              <pre></pre>
+            </div>
+            <p *ngIf="true" class="text-gray-400">Execution has not started yet.</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="mt-6 px-4 py-2 glass-button bg-red-600/50 hover:bg-red-700/60 rounded-lg font-semibold w-full">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+`, styles: ['/* src/app/chat/chat.css */\n:host {\n  display: block;\n  min-height: 100vh;\n  background-image: url(/background.jpg);\n  background-size: cover;\n  background-position: center;\n  font-family: "Inter", sans-serif;\n}\n.glass-container {\n  background: rgba(255, 255, 255, 0.1);\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);\n}\n.glass-card {\n  background: rgba(255, 255, 255, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(255, 255, 255, 0.15);\n}\n:host::ng-deep .chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n:host::ng-deep .chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n}\n:host::ng-deep .chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n:host::ng-deep .chat-message-content th,\n:host::ng-deep .chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid rgba(255, 255, 255, 0.2);\n}\n:host::ng-deep .chat-message-content img {\n  max-width: 100%;\n  height: auto;\n}\n.user-message-bubble {\n  background: rgba(0, 123, 255, 0.3);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(0, 123, 255, 0.25);\n}\n.glass-input {\n  background: rgba(255, 255, 255, 0.15);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n  border: 1px solid rgba(255, 255, 255, 0.2);\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);\n  color: white;\n}\n.glass-input::placeholder {\n  color: rgba(255, 255, 255, 0.7);\n}\n.glass-button {\n  background: rgba(76, 175, 80, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(76, 175, 80, 0.3);\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);\n}\n.glass-button:hover {\n  background: rgba(76, 175, 80, 0.3);\n}\n.log-container-plan,\n.log-container-execution {\n  max-height: 60vh;\n}\n@media (max-width: 768px) {\n  .log-container-plan,\n  .log-container-execution {\n    max-height: 30vh;\n  }\n}\n/*# sourceMappingURL=chat.css.map */\n'] }]
+  }], () => [{ type: AiService }, { type: AuthService }, { type: DatabaseService }], { chatContainer: [{
+    type: ViewChild,
+    args: ["chatContainer"]
+  }], messageInput: [{
+    type: ViewChild,
+    args: ["messageInput"]
+  }] });
+})();
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ChatComponent, { className: "ChatComponent", filePath: "src/app/chat/chat.ts", lineNumber: 19 });
+})();
+
+// src/app/app.routes.ts
+var routes = [
+  { path: "", component: ChatComponent },
+  {
+    path: "admin",
+    loadChildren: () => import("./chunk-M2DPL5VM.js").then((m) => m.ADMIN_ROUTES)
+  }
+];
+
+// src/app/app.config.ts
+var appConfig = {
+  providers: [
+    provideRouter(routes),
+    provideHttpClient()
+    // <--- Add this provider
+  ]
+};
 
 // src/app/app.ts
 var AppComponent = class _AppComponent {
