@@ -8,7 +8,7 @@
   </div>
 
   <div class="mb-4">
-    <input type="text" placeholder="Search employees..." [(ngModel)]="searchTerm" (input)="filterEmployees()"
+    <input type="text" placeholder="Search employees..." [(ngModel)]="searchTerm" (ngModelChange)="filterEmployees()"
            class="w-full px-4 py-2 bg-white/20 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800">
   </div>
 
