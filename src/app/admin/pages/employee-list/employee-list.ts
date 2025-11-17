@@ -22,10 +22,12 @@ export class EmployeeListComponent implements OnInit {
   private sortDirection: { [key: string]: 'asc' | 'desc' } = {};
 
   ngOnInit(): void {
+    console.log('EmployeeListComponent ngOnInit called');
     this.loadEmployees();
   }
 
   async loadEmployees(): Promise<void> {
+    console.log('loadEmployees method started');
     try {
       this.allEmployees = await this.employeeService.getEmployees();
       this.filteredEmployees = [...this.allEmployees];
@@ -71,3 +73,4 @@ export class EmployeeListComponent implements OnInit {
     }
   }
 }
+

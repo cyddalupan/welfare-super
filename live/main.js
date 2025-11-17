@@ -627,7 +627,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-2BSEJFVZ.js").then((m) => m.ADMIN_ROUTES)
+    loadChildren: () => import("./chunk-VGBNBRYH.js").then((m) => m.ADMIN_ROUTES)
   }
 ];
 
