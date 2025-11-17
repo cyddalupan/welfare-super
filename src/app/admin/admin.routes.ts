@@ -3,8 +3,8 @@ import { AdminLoginComponent } from './pages/admin-login/admin-login';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard';
 import { authGuard } from './guards/auth.guard';
-import { EmployeeListComponent } from './pages/employee-list/employee-list';
-import { EmployeeFormComponent } from './components/employee-form/employee-form';
+import { ApplicantListComponent } from './pages/applicant-list/applicant-list';
+import { ApplicantFormComponent } from './components/applicant-form/applicant-form';
 import { CaseListComponent } from './pages/case-list/case-list';
 import { CaseFormComponent } from './pages/case-form/case-form';
 
@@ -19,9 +19,10 @@ export const ADMIN_ROUTES: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'dashboard', component: AdminDashboardComponent },
-      { path: 'employees', component: EmployeeListComponent },
-      { path: 'employees/new', component: EmployeeFormComponent },
-      { path: 'employees/edit/:id', component: EmployeeFormComponent },
+      { path: 'applicants', component: ApplicantListComponent },
+      { path: 'applicants/status/:status', component: ApplicantListComponent },
+      { path: 'applicants/new', component: ApplicantFormComponent },
+      { path: 'applicants/edit/:id', component: ApplicantFormComponent },
       { path: 'cases', component: CaseListComponent },
       { path: 'cases/new', component: CaseFormComponent },
       { path: 'cases/edit/:id', component: CaseFormComponent },

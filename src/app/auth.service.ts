@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import * as CryptoJS from 'crypto-js'; // For AES encryption
 import { environment } from '../environments/environment'; // Import environment
-import { LOGIN_QUERY } from './queries'; // Import the login query
+import { LOGIN_APPLICANT_QUERY } from './queries'; // Import the login query
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class AuthService {
     const processedLastName = lastName.trim().toLowerCase();
     const processedPassportNumber = passportNumber.trim().toLowerCase();
 
-    const query = LOGIN_QUERY;
+    const query = LOGIN_APPLICANT_QUERY;
     const params = [processedLastName, processedPassportNumber];
 
     const payload = { query, params };

@@ -5,7 +5,7 @@ export interface AdminUser {
   full_name: string;
 }
 
-export interface Employee {
+export interface Applicant {
   id: number;
   first_name?: string;
   middle_name?: string;

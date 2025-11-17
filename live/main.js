@@ -7,14 +7,14 @@ import {
   HttpClient,
   INSERT_CASE,
   Injectable,
-  LOGIN_QUERY,
+  LOGIN_APPLICANT_QUERY,
   NgControlStatus,
   NgForOf,
   NgIf,
   NgModel,
   RouterModule,
   RouterOutlet,
-  SELECT_OPEN_CASE_BY_EMPLOYEE_ID,
+  SELECT_OPEN_CASE_BY_APPLICANT_ID,
   UPDATE_CASE_REPORT,
   ViewChild,
   __spreadProps,
@@ -57,7 +57,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-HVOTCBR3.js";
+} from "./chunk-6XP7C42X.js";
 
 // src/app/prompts.ts
 var SYSTEM_PROMPT_COMPLAINTS_ASSISTANT = `You are Welfare, a friendly AI assistant here to help Overseas Filipino Workers (OFWs) with their concerns. Your replies should be extremely concise, friendly, use Taglish, avoid deep or uncommon words, and focus on one point or question at a time. Many users just want someone to talk to, so be approachable and supportive.
@@ -116,6 +116,15 @@ Chat History:
 {{EXISTING_REPORT_PLACEHOLDER}}
 `;
 var SYSTEM_PROMPT_LOGIN_ASSISTANT = `Your goal is to get the passport number and last name of the user to confirm the identity so you can help. take note that we already have the user data we only need to map them on the database to confirm identity so its safe to ask for passport number. In order to help in anything, we prioritize the user log in first. Once you have both the last name and passport number, respond with the exact format: [[LOGIN, LASTNAME:"<last_name>",PASSPORT:"<passport_number>"]]`;
+var SYSTEM_PROMPT_FOLLOWUP_ASSISTANT = `You are a helpful assistant whose sole purpose is to review the immediately preceding AI's response to the user. Your goal is to act as a "good cop" correcting a "bad cop" if the previous AI's response was unclear, had a typo, or could be improved with a gentle clarification, use Taglish, avoid deep or uncommon words.
+
+Instructions:
+1.  Analyze the last AI message in the conversation history.
+2.  If the last AI message is perfectly clear, concise, and appropriate, respond with the exact tag: [[DONE]].
+3.  If the last AI message could be improved, is slightly off-topic, contains a minor error, or needs a gentle clarification, provide a very short, polite, and helpful follow-up message. Examples: "Sorry for the typo.", "I meant to say...", "Apologies, I meant when did you last eat?", "To clarify, I was referring to...".
+4.  Your response should be extremely brief and only provide a correction or the [[DONE]] tag. Do not rephrase the entire previous message.
+5.  Do NOT generate any other action tags (like [[LOGIN]], [[MEMORY]], [[REPORT]]).
+`;
 
 // src/app/ai.service.ts
 var CryptoJS = __toESM(require_crypto_js());
@@ -168,7 +177,7 @@ var AuthService = class _AuthService {
   login(lastName, passportNumber) {
     const processedLastName = lastName.trim().toLowerCase();
     const processedPassportNumber = passportNumber.trim().toLowerCase();
-    const query = LOGIN_QUERY;
+    const query = LOGIN_APPLICANT_QUERY;
     const params = [processedLastName, processedPassportNumber];
     const payload = { query, params };
     const encryptedPayload = this.encryptPayload(JSON.stringify(payload));
@@ -234,7 +243,7 @@ var CaseService = class _CaseService {
   handleReportCreation(employeeId, agencyId, chatHistory, onStatusUpdate) {
     onStatusUpdate("I've noticed you're describing a serious issue. I'm starting the process to file a formal report for you.");
     onStatusUpdate("Checking for any existing reports...");
-    return this.databaseService.query(SELECT_OPEN_CASE_BY_EMPLOYEE_ID, [employeeId]).pipe(switchMap((result) => {
+    return this.databaseService.query(SELECT_OPEN_CASE_BY_APPLICANT_ID, [employeeId]).pipe(switchMap((result) => {
       const existingCase = result && result.length > 0 ? result[0] : null;
       if (existingCase) {
         onStatusUpdate("An existing report was found. I will now update it with the new information.");
@@ -538,12 +547,15 @@ User's known characteristics: ${memoriesString}`;
     this.aiService.callAi(aiPayload).subscribe({
       next: (response) => {
         const { response: processedResponse, tagProcessed } = this.parseAiResponseForTags(response);
+        let assistantMessage = null;
         if (processedResponse) {
-          const assistantMessage = { role: "assistant", content: processedResponse };
+          assistantMessage = { role: "assistant", content: processedResponse };
           this.messages.push(assistantMessage);
           this.saveMessageToDb(assistantMessage);
         }
-        if (!tagProcessed) {
+        if (!tagProcessed && assistantMessage) {
+          this.triggerFollowUpAi(userMessage, assistantMessage);
+        } else {
           this.isLoading = false;
           this.currentStatusMessage = "Thinking...";
         }
@@ -666,6 +678,36 @@ User's known characteristics: ${memoriesString}`;
         console.error("Error during report processing:", error);
         this.currentStatusMessage = "An unexpected error occurred during report processing. Please try again.";
         this.isLoading = false;
+      }
+    });
+  }
+  triggerFollowUpAi(userMessage, assistantMessage) {
+    this.isLoading = true;
+    this.currentStatusMessage = "Reviewing AI response...";
+    const systemPromptForFollowUp = { role: "system", content: SYSTEM_PROMPT_FOLLOWUP_ASSISTANT };
+    const followUpPayload = [
+      systemPromptForFollowUp,
+      userMessage,
+      assistantMessage
+    ];
+    this.aiService.callAi(followUpPayload).subscribe({
+      next: (response) => {
+        const doneTagRegex = /\[\[DONE\]\]/;
+        const doneMatch = response.match(doneTagRegex);
+        if (doneMatch) {
+          console.log("Follow-up AI: Previous response was satisfactory.");
+        } else {
+          const followUpMessage = { role: "assistant", content: response.trim() };
+          this.messages.push(followUpMessage);
+          this.saveMessageToDb(followUpMessage);
+        }
+        this.isLoading = false;
+        this.currentStatusMessage = "Thinking...";
+      },
+      error: (error) => {
+        console.error("Follow-up AI call failed:", error);
+        this.isLoading = false;
+        this.currentStatusMessage = "Thinking...";
       }
     });
   }
@@ -831,7 +873,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-7ZPXD33C.js").then((m) => m.ADMIN_ROUTES)
+    loadChildren: () => import("./chunk-JTSUAJGX.js").then((m) => m.ADMIN_ROUTES)
   }
 ];
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { DatabaseService } from './database.service';
 import { AiService } from './ai.service';
 import {
-  SELECT_OPEN_CASE_BY_EMPLOYEE_ID,
+  SELECT_OPEN_CASE_BY_APPLICANT_ID,
   INSERT_CASE,
   UPDATE_CASE_REPORT
 } from './queries';
@@ -52,7 +52,7 @@ export class CaseService {
     onStatusUpdate("I've noticed you're describing a serious issue. I'm starting the process to file a formal report for you.");
     onStatusUpdate("Checking for any existing reports...");
 
-    return this.databaseService.query(SELECT_OPEN_CASE_BY_EMPLOYEE_ID, [employeeId]).pipe(
+    return this.databaseService.query(SELECT_OPEN_CASE_BY_APPLICANT_ID, [employeeId]).pipe(
       switchMap((result: any) => {
         const existingCase = result && result.length > 0 ? result[0] : null;
 

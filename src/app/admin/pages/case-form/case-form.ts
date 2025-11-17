@@ -2,9 +2,9 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Case, Employee } from '../../../schemas';
+import { Case, Applicant } from '../../../schemas';
 import { CaseService } from '../../services/case.service';
-import { EmployeeService } from '../../services/employee.service'; // To get employees for dropdown
+import { ApplicantService } from '../../services/applicant.service'; // To get applicants for dropdown
 
 @Component({
   selector: 'app-case-form',
@@ -15,7 +15,7 @@ import { EmployeeService } from '../../services/employee.service'; // To get emp
 })
 export class CaseFormComponent implements OnInit {
   private caseService = inject(CaseService);
-  private employeeService = inject(EmployeeService);
+  private applicantService = inject(ApplicantService);
   private route = inject(ActivatedRoute);
   public router = inject(Router);
   private cdr = inject(ChangeDetectorRef); // Inject ChangeDetectorRef
@@ -23,7 +23,7 @@ export class CaseFormComponent implements OnInit {
   caseItem: Partial<Case> = {
     report_status: 'open' // Default status
   };
-  employees: Employee[] = []; // For the employee dropdown
+  applicants: Applicant[] = []; // For the applicant dropdown
   isEditMode = false;
   isLoading = false; // Add loading state
 
@@ -31,7 +31,7 @@ export class CaseFormComponent implements OnInit {
     this.isLoading = true; // Set loading to true at the start
     this.cdr.detectChanges(); // Force change detection to show loading indicator immediately
     try {
-      await this.loadEmployees(); // Ensure employees are loaded first
+      await this.loadApplicants(); // Ensure applicants are loaded first
       this.route.paramMap.subscribe(async params => { // Use async here for await loadCase
         const id = params.get('id');
         if (id) {
@@ -48,11 +48,11 @@ export class CaseFormComponent implements OnInit {
     }
   }
 
-  async loadEmployees(): Promise<void> {
+  async loadApplicants(): Promise<void> {
     try {
-      this.employees = await this.employeeService.getEmployees();
+      this.applicants = await this.applicantService.getApplicants();
     } catch (error) {
-      console.error('Error loading employees:', error);
+      console.error('Error loading applicants:', error);
     }
   }
 

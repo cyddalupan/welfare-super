@@ -13,8 +13,8 @@
       <select id="employee_id" name="employee_id" [(ngModel)]="caseItem.employee_id" required
               class="mt-1 block w-full px-3 py-2 bg-white/20 border border-transparent rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-800">
         <option [ngValue]="null" disabled>Select an Employee</option>
-        <option *ngFor="let emp of employees" [ngValue]="emp.id">
-          {{ emp.last_name }}, {{ emp.first_name }} ({{ emp.passport_number }})
+        <option *ngFor="let app of applicants" [ngValue]="app.id">
+          {{ app.last_name }}, {{ app.first_name }} ({{ app.passport_number }})
         </option>
       </select>
     </div>

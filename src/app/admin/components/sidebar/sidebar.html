@@ -10,11 +10,31 @@
         </a>
       </li>
       <li class="mb-4">
-        <a routerLink="/admin/employees" routerLinkActive="bg-white/20"
-           class="flex items-center p-3 rounded-lg hover:bg-white/10 transition-colors duration-200">
-          <i class="fas fa-users w-6 h-6 mr-3"></i>
-          Employees
-        </a>
+        <button (click)="toggleApplicantMenu()"
+                class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-white/10 transition-colors duration-200">
+          <span class="flex items-center">
+            <i class="fas fa-users w-6 h-6 mr-3"></i>
+            Applicants
+          </span>
+          <i class="fas fa-chevron-down w-4 h-4 transition-transform duration-200"
+             [class.rotate-180]="isApplicantMenuOpen"></i>
+        </button>
+        <div *ngIf="isApplicantMenuOpen" class="mt-2 ml-4 pl-3 border-l-2 border-white/20">
+          <ul>
+            <li class="mb-2">
+              <a routerLink="/admin/applicants" routerLinkActive="bg-white/20" [routerLinkActiveOptions]="{exact: true}"
+                 class="block p-2 rounded-lg hover:bg-white/10 transition-colors duration-200">
+                All Applicants
+              </a>
+            </li>
+            <li *ngFor="let status of applicantStatuses" class="mb-2">
+              <a [routerLink]="['/admin/applicants/status', status]" routerLinkActive="bg-white/20"
+                 class="block p-2 rounded-lg hover:bg-white/10 transition-colors duration-200">
+                {{ status | titlecase }}
+              </a>
+            </li>
+          </ul>
+        </div>
       </li>
       <li class="mb-4">
         <a routerLink="/admin/cases" routerLinkActive="bg-white/20"

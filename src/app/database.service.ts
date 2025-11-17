@@ -4,7 +4,7 @@ import { Observable, map } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 import { environment } from '../environments/environment';
 import { ChatMessage } from './schemas';
-import { GET_CHAT_HISTORY, INSERT_CHAT_MESSAGE, INSERT_EMPLOYEE_MEMORY, GET_EMPLOYEE_MEMORIES } from './queries';
+import { GET_APPLICANT_CHAT_HISTORY, INSERT_APPLICANT_CHAT_MESSAGE, INSERT_APPLICANT_MEMORY, GET_APPLICANT_MEMORIES } from './queries';
 
 // Define a type for the raw chat history from the database
 interface RawChatMessage {
@@ -47,7 +47,7 @@ export class DatabaseService {
   }
 
   public getChatHistory(employeeId: number): Observable<ChatMessage[]> {
-    return this.query(GET_CHAT_HISTORY, [employeeId]).pipe(
+    return this.query(GET_APPLICANT_CHAT_HISTORY, [employeeId]).pipe(
       map((response: any) => {
         // The API might return {success: true, data: [...]}, so we need to handle that structure.
         const responseData = (response && response.data) ? response.data : response;
@@ -70,15 +70,15 @@ export class DatabaseService {
 
   public saveChatMessage(message: ChatMessage, employeeId: number, agencyId: number): Observable<any> {
     const sender = message.role === 'user' ? 'Employee' : 'AI';
-    return this.query(INSERT_CHAT_MESSAGE, [employeeId, agencyId, message.content, sender]);
+    return this.query(INSERT_APPLICANT_CHAT_MESSAGE, [employeeId, agencyId, message.content, sender]);
   }
 
   public saveEmployeeMemory(employeeId: number, note: string): Observable<any> {
-    return this.query(INSERT_EMPLOYEE_MEMORY, [employeeId, note]);
+    return this.query(INSERT_APPLICANT_MEMORY, [employeeId, note]);
   }
 
   public getEmployeeMemories(employeeId: number): Observable<string[]> {
-    return this.query(GET_EMPLOYEE_MEMORIES, [employeeId]).pipe(
+    return this.query(GET_APPLICANT_MEMORIES, [employeeId]).pipe(
       map((response: any) => {
         const responseData = (response && response.data) ? response.data : response;
 

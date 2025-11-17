@@ -6,7 +6,7 @@ import { AuthService } from '../auth.service'; // Import AuthService
 import { DatabaseService } from '../database.service'; // Import DatabaseService
 import { CaseService } from '../case.service'; // Import CaseService
 import { ChatMessage } from '../schemas'; // Import ChatMessage interface
-import { SYSTEM_PROMPT_COMPLAINTS_ASSISTANT, SYSTEM_PROMPT_LOGIN_ASSISTANT } from '../prompts'; // Import the system prompts
+import { SYSTEM_PROMPT_COMPLAINTS_ASSISTANT, SYSTEM_PROMPT_LOGIN_ASSISTANT, SYSTEM_PROMPT_FOLLOWUP_ASSISTANT } from '../prompts'; // Import the system prompts
 
 const MAX_TEXTAREA_HEIGHT = 150;
 
@@ -152,12 +152,16 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     this.aiService.callAi(aiPayload).subscribe({
       next: (response: string) => {
         const { response: processedResponse, tagProcessed } = this.parseAiResponseForTags(response);
+        let assistantMessage: ChatMessage | null = null;
         if (processedResponse) {
-          const assistantMessage: ChatMessage = { role: 'assistant', content: processedResponse };
+          assistantMessage = { role: 'assistant', content: processedResponse };
           this.messages.push(assistantMessage);
           this.saveMessageToDb(assistantMessage);
         }
-        if (!tagProcessed) { // Only reset if no tags were processed
+
+        if (!tagProcessed && assistantMessage) { // Only trigger follow-up if no tags were processed and there's an assistant message
+          this.triggerFollowUpAi(userMessage, assistantMessage);
+        } else {
           this.isLoading = false;
           this.currentStatusMessage = 'Thinking...'; // Reset status message
         }
@@ -298,6 +302,43 @@ export class ChatComponent implements AfterViewChecked, OnInit {
         console.error('Error during report processing:', error);
         this.currentStatusMessage = "An unexpected error occurred during report processing. Please try again."; // Display error status
         this.isLoading = false; // Turn off loading on error
+      }
+    });
+  }
+
+  private triggerFollowUpAi(userMessage: ChatMessage, assistantMessage: ChatMessage): void {
+    this.isLoading = true;
+    this.currentStatusMessage = 'Reviewing AI response...';
+
+    const systemPromptForFollowUp: ChatMessage = { role: 'system', content: SYSTEM_PROMPT_FOLLOWUP_ASSISTANT };
+    const followUpPayload: ChatMessage[] = [
+      systemPromptForFollowUp,
+      userMessage,
+      assistantMessage
+    ];
+
+    this.aiService.callAi(followUpPayload).subscribe({
+      next: (response: string) => {
+        const doneTagRegex = /\[\[DONE\]\]/;
+        const doneMatch = response.match(doneTagRegex);
+
+        if (doneMatch) {
+          console.log('Follow-up AI: Previous response was satisfactory.');
+          // No message to display, just complete the loading
+        } else {
+          // If no [[DONE]] tag, it's a corrective message
+          const followUpMessage: ChatMessage = { role: 'assistant', content: response.trim() };
+          this.messages.push(followUpMessage);
+          this.saveMessageToDb(followUpMessage);
+        }
+        this.isLoading = false;
+        this.currentStatusMessage = 'Thinking...';
+      },
+      error: (error) => {
+        console.error('Follow-up AI call failed:', error);
+        // Optionally display an error message for the follow-up AI
+        this.isLoading = false;
+        this.currentStatusMessage = 'Thinking...';
       }
     });
   }

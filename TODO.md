@@ -1,9 +1,8 @@
 # TODO
 
 TODO:
-- loading*
 - status history save*
-- status in sidebar
+- status in sidebar*
 - change all employee text to applicant
 - make thinking algo
     - or think after replying
@@ -11,7 +10,7 @@ TODO:
         - follow up and clarify if not
         - trigger a function if missed
 - ⁠Fra 
-- ⁠status add sa drop-down 
+- ionic
 -⁠ ⁠dashboard report
     --per Fra active complain summary reports 
     -per status dn summary reports dn goods na
