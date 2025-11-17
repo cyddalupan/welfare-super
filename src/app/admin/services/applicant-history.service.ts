@@ -12,6 +12,7 @@ export class ApplicantHistoryService {
   constructor() { }
 
   async addHistoryEntry(history: Omit<ApplicantHistory, 'ids' | 'created_at'>): Promise<void> {
+    console.log('ApplicantHistoryService: addHistoryEntry called with history:', history);
     const params = [
       history.applicant_id,
       history.remarks,
@@ -19,5 +20,6 @@ export class ApplicantHistoryService {
       history.status
     ];
     await this.databaseService.query(INSERT_APPLICANT_HISTORY, params);
+    console.log('ApplicantHistoryService: History entry inserted into DB.');
   }
 }

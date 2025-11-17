@@ -319,7 +319,6 @@ export class ChatComponent implements AfterViewChecked, OnInit {
 
   private triggerFollowUpAi(userMessage: ChatMessage, assistantMessage: ChatMessage): void {
     console.log('triggerFollowUpAi called with userMessage:', userMessage, 'and assistantMessage:', assistantMessage);
-    this.currentStatusMessage = 'Reviewing AI response...'; // Update status to reflect follow-up
 
     const systemPromptForFollowUp: ChatMessage = { role: 'system', content: SYSTEM_PROMPT_FOLLOWUP_ASSISTANT };
     const followUpPayload: ChatMessage[] = [

@@ -61,14 +61,19 @@ export class ApplicantService {
 
   async updateApplicant(applicant: Applicant): Promise<any> {
     const oldApplicant = await this.getApplicantById(applicant.id);
+    console.log('ApplicantService: updateApplicant called for ID:', applicant.id);
+    console.log('ApplicantService: Old Applicant Data:', oldApplicant);
     const params = this.mapApplicantToParams(applicant);
     const result = await firstValueFrom(this.db.query(UPDATE_APPLICANT, [...params, applicant.id]));
+    console.log('ApplicantService: Applicant updated in DB. Result:', result);
 
     if (applicant.id) {
       const oldStatus = oldApplicant ? oldApplicant.main_status || '' : '';
       const newStatus = applicant.main_status || '';
+      console.log('ApplicantService: Old Status:', oldStatus, 'New Status:', newStatus);
 
       if (oldApplicant && oldStatus !== newStatus) {
+        console.log('ApplicantService: Status changed. Adding history entry for status change.');
         await this.applicantHistoryService.addHistoryEntry({
           applicant_id: applicant.id,
           remarks: `Applicant status changed from '${oldApplicant.main_status}' to '${applicant.main_status}'`,
@@ -76,6 +81,7 @@ export class ApplicantService {
           status: applicant.main_status || 'Unknown'
         });
       } else {
+        console.log('ApplicantService: Status not changed or oldApplicant not found. Adding generic update history entry.');
         await this.applicantHistoryService.addHistoryEntry({
           applicant_id: applicant.id,
           remarks: 'Applicant updated.',
@@ -83,6 +89,8 @@ export class ApplicantService {
           status: 'Updated'
         });
       }
+    } else {
+      console.log('ApplicantService: Applicant ID not found, skipping history entry.');
     }
     return result;
   }

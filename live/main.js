@@ -690,7 +690,6 @@ User's known characteristics: ${memoriesString}`;
   }
   triggerFollowUpAi(userMessage, assistantMessage) {
     console.log("triggerFollowUpAi called with userMessage:", userMessage, "and assistantMessage:", assistantMessage);
-    this.currentStatusMessage = "Reviewing AI response...";
     const systemPromptForFollowUp = { role: "system", content: SYSTEM_PROMPT_FOLLOWUP_ASSISTANT };
     const followUpPayload = [
       systemPromptForFollowUp,
@@ -883,7 +882,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-JTSUAJGX.js").then((m) => m.ADMIN_ROUTES)
+    loadChildren: () => import("./chunk-ATZSBSHE.js").then((m) => m.ADMIN_ROUTES)
   }
 ];
 
