@@ -13,3 +13,18 @@ body {
   background-attachment: fixed;
   font-family: 'Inter', sans-serif;
 }
+
+/* Base liquid effect for blur and background transparency */
+.liquid-effect {
+  background: rgba(255, 255, 255, 0.2); /* Matching glass-card opacity */
+  backdrop-filter: blur(10px); /* Stronger blur for containers */
+  -webkit-backdrop-filter: blur(10px); /* For compatibility */
+}
+
+/* Liquid container with border, shadow, and rounded corners */
+.liquid-container {
+  @apply liquid-effect; /* Inherit base liquid effect */
+  border: 1px solid rgba(255, 255, 255, 0.15); /* Matching glass-card border */
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* From glass-container */
+  border-radius: 0.75rem; /* Tailwind's rounded-xl is 0.75rem */
+}
