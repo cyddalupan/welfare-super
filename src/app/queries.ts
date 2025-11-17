@@ -34,3 +34,23 @@ export const GET_CHAT_HISTORY = 'SELECT message, sender FROM chats_chat WHERE em
 export const INSERT_CHAT_MESSAGE = 'INSERT INTO chats_chat (employee_id, agency_id, message, sender, timestamp) VALUES (?, ?, ?, ?, NOW())';
 export const INSERT_EMPLOYEE_MEMORY = 'INSERT INTO employee_employeememory (employee_id, note, created_at) VALUES (?, ?, NOW())';
 export const GET_EMPLOYEE_MEMORIES = 'SELECT note FROM employee_employeememory WHERE employee_id = ? ORDER BY created_at ASC';
+
+export const SELECT_OPEN_CASE_BY_EMPLOYEE_ID = `
+  SELECT id, category, report, report_status
+  FROM cases_case
+  WHERE employee_id = ? AND report_status = 'open'
+  ORDER BY date_reported DESC
+  LIMIT 1
+`;
+
+export const INSERT_CASE = `
+  INSERT INTO cases_case (
+    employee_id, category, report, date_reported, updated_date, report_status
+  ) VALUES (?, ?, ?, NOW(), NOW(), 'open')
+`;
+
+export const UPDATE_CASE_REPORT = `
+  UPDATE cases_case
+  SET report = ?, updated_date = NOW()
+  WHERE id = ?
+`;

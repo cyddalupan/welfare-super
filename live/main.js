@@ -5,6 +5,7 @@ import {
   DefaultValueAccessor,
   FormsModule,
   HttpClient,
+  INSERT_CASE,
   Injectable,
   LOGIN_QUERY,
   NgControlStatus,
@@ -13,6 +14,8 @@ import {
   NgModel,
   RouterModule,
   RouterOutlet,
+  SELECT_OPEN_CASE_BY_EMPLOYEE_ID,
+  UPDATE_CASE_REPORT,
   ViewChild,
   __spreadProps,
   __spreadValues,
@@ -26,6 +29,8 @@ import {
   provideRouter,
   require_crypto_js,
   setClassMetadata,
+  switchMap,
+  throwError,
   ɵsetClassDebugInfo,
   ɵɵadvance,
   ɵɵclassProp,
@@ -50,7 +55,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-CLOCGZEW.js";
+} from "./chunk-HJLEFKMH.js";
 
 // src/app/prompts.ts
 var SYSTEM_PROMPT_COMPLAINTS_ASSISTANT = `You are Welfare, a friendly AI assistant here to help Overseas Filipino Workers (OFWs) with their concerns. Your replies should be extremely concise, friendly, use Taglish, avoid deep or uncommon words, and focus on one point or question at a time. Many users just want someone to talk to, so be approachable and supportive.
@@ -74,8 +79,38 @@ DON'TS
  * Do Not Instruct User on Reply Length: Never tell the user to reply with short messages or to be concise. That is your role, not theirs.
 
 ---
+Complaint Reporting Protocol:
+If the user describes a serious complaint or issue that typically requires formal reporting (e.g., "no salary", "rape", "abuse", "contract violation"), your primary goal shifts to gathering sufficient details about the complaint. Once you believe you have enough information to form a comprehensive report, you MUST end your response with the [[REPORT]] tag. Do not include the [[REPORT]] tag until you have gathered sufficient details.
+
+---
 AI Action Tag Instructions:
-From the user's message, identify any *new* factual information about their background, situation, or character that is not already listed in "User's known characteristics" (which will be provided separately). If you find new information, output it as a single sentence using the tag [[MEMORY:"<new_memory_content>"]]. Do not include the [[MEMORY]] tag if no new information is found or if the information is already known. The [[MEMORY]] tag should appear at the end of your response, if present.`;
+From the user's message, identify any *new* factual information about their background, situation, or character that is not already listed in "User's known characteristics" (which will be provided separately). If you find new information, output it as a single sentence using the tag [[MEMORY:"<new_memory_content>"]]. Do not include the [[MEMORY]] tag if no new information is found or if the information is already known. The [[MEMORY]] tag should appear at the end of your response, if present. The [[REPORT]] tag, if triggered, should always appear as the very last item in your response.`;
+var SYSTEM_PROMPT_REPORT_GENERATOR = `You are an AI assistant specialized in generating and updating formal case reports based on chat conversations with Overseas Filipino Workers (OFWs). Your task is to extract critical information about a complaint and present it in a structured format.
+
+Instructions:
+1.  **Analyze the provided chat history.** Focus on identifying the core complaint, key events, and relevant details.
+2.  **Determine the complaint category.** Use general, legally appropriate terms for the category (e.g., "Unpaid Wages", "Physical Abuse", "Sexual Harassment", "Contract Violation", "Illegal Recruitment", "Human Trafficking"). Avoid overly specific or duplicate categories. If multiple issues are present, choose the most severe or primary one.
+3.  **Compose a detailed report.** Summarize the complaint clearly and concisely, including who, what, when, and where possible.
+4.  **If an 'Existing Report' is provided, update it.** Integrate new information from the chat history into the existing report. Do not repeat information already present. Ensure the updated report is comprehensive and flows logically.
+5.  **Output Format:** Return your response as a JSON object with two keys: "category" and "report".
+
+Example Output (for a new report):
+{
+  "category": "Unpaid Wages",
+  "report": "The employee, [Employee Name], reports that they have not received their salary for the past three months (August, September, October 2025) from their employer, [Employer Name], in [Country]. They have attempted to contact the employer multiple times without success. The total amount owed is approximately [Amount]."
+}
+
+Example Output (for an updated report, if 'Existing Report' was provided):
+{
+  "category": "Unpaid Wages", // Keep the original category unless the primary complaint has clearly shifted
+  "report": "The employee, [Employee Name], reports that they have not received their salary for the past three months (August, September, October 2025) from their employer, [Employer Name], in [Country]. They have attempted to contact the employer multiple times without success. The total amount owed is approximately [Amount]. New information: The employer has now threatened to confiscate the employee's passport if they continue to demand their salary."
+}
+
+Chat History:
+{{CHAT_HISTORY}}
+
+{{EXISTING_REPORT_PLACEHOLDER}}
+`;
 var SYSTEM_PROMPT_LOGIN_ASSISTANT = `Your goal is to get the passport number and last name of the user to confirm the identity so you can help. take note that we already have the user data we only need to map them on the database to confirm identity so its safe to ask for passport number. In order to help in anything, we prioritize the user log in first. Once you have both the last name and passport number, respond with the exact format: [[LOGIN, LASTNAME:"<last_name>",PASSPORT:"<passport_number>"]]`;
 
 // src/app/ai.service.ts
@@ -175,6 +210,107 @@ var AuthService = class _AuthService {
   }], () => [{ type: HttpClient }], null);
 })();
 
+// src/app/case.service.ts
+var CaseService = class _CaseService {
+  databaseService;
+  aiService;
+  constructor(databaseService, aiService) {
+    this.databaseService = databaseService;
+    this.aiService = aiService;
+  }
+  /**
+   * Handles the creation or update of a case report based on chat history.
+   * Emits status messages for UI updates.
+   * @param employeeId The ID of the employee.
+   * @param chatHistory The relevant chat messages for generating the report.
+   * @param onStatusUpdate Callback function to emit status messages to the UI.
+   * @returns Observable<number> The ID of the created or updated case.
+   */
+  handleReportCreation(employeeId, chatHistory, onStatusUpdate) {
+    onStatusUpdate("I've noticed you're describing a serious issue. I'm starting the process to file a formal report for you.");
+    onStatusUpdate("Checking for any existing reports...");
+    return this.databaseService.query(SELECT_OPEN_CASE_BY_EMPLOYEE_ID, [employeeId]).pipe(switchMap((result) => {
+      const existingCase = result && result.length > 0 ? result[0] : null;
+      if (existingCase) {
+        onStatusUpdate("An existing report was found. I will now update it with the new information.");
+        return this.updateExistingCase(employeeId, existingCase, chatHistory, onStatusUpdate);
+      } else {
+        onStatusUpdate("No existing report found. I will create a new one for you.");
+        return this.createNewCase(employeeId, chatHistory, onStatusUpdate);
+      }
+    }), catchError((error) => {
+      console.error("Error handling report creation:", error);
+      onStatusUpdate("An error occurred while processing the report. Please try again.");
+      return throwError(() => new Error("Failed to handle report creation."));
+    }));
+  }
+  createNewCase(employeeId, chatHistory, onStatusUpdate) {
+    onStatusUpdate("Generating a summary of your complaint...");
+    const prompt = this.buildReportGenerationPrompt(chatHistory);
+    return this.aiService.callAi([{ role: "system", content: prompt }]).pipe(switchMap((aiResponseString) => {
+      const aiResponse = JSON.parse(aiResponseString);
+      onStatusUpdate("Saving the report to your file...");
+      return this.databaseService.query(INSERT_CASE, [
+        employeeId,
+        aiResponse.category,
+        aiResponse.report
+      ]).pipe(switchMap((insertResult) => {
+        const caseId = insertResult.insertId;
+        onStatusUpdate(`Your report has been successfully filed. Your case ID is ${caseId}.`);
+        return of(caseId);
+      }));
+    }), catchError((error) => {
+      console.error("Error creating new case:", error);
+      onStatusUpdate("An error occurred while creating the report. Please try again.");
+      return throwError(() => new Error("Failed to create new case."));
+    }));
+  }
+  updateExistingCase(employeeId, existingCase, chatHistory, onStatusUpdate) {
+    onStatusUpdate("Updating the summary of your complaint...");
+    const prompt = this.buildReportGenerationPrompt(chatHistory, existingCase.report);
+    return this.aiService.callAi([{ role: "system", content: prompt }]).pipe(switchMap((aiResponseString) => {
+      const aiResponse = JSON.parse(aiResponseString);
+      onStatusUpdate("Saving the updated report to your file...");
+      return this.databaseService.query(UPDATE_CASE_REPORT, [
+        aiResponse.report,
+        existingCase.id
+        // Assuming existingCase.id is available
+      ]).pipe(switchMap(() => {
+        onStatusUpdate(`Your report (Case ID: ${existingCase.id}) has been successfully updated.`);
+        return of(existingCase.id);
+      }));
+    }), catchError((error) => {
+      console.error("Error updating existing case:", error);
+      onStatusUpdate("An error occurred while updating the report. Please try again.");
+      return throwError(() => new Error("Failed to update existing case."));
+    }));
+  }
+  buildReportGenerationPrompt(chatHistory, existingReport) {
+    let prompt = SYSTEM_PROMPT_REPORT_GENERATOR;
+    const chatHistoryString = chatHistory.map((msg) => `${msg.role}: ${msg.content}`).join("\n");
+    prompt = prompt.replace("{{CHAT_HISTORY}}", chatHistoryString);
+    if (existingReport) {
+      prompt = prompt.replace("{{EXISTING_REPORT_PLACEHOLDER}}", `Existing Report:
+${existingReport}`);
+    } else {
+      prompt = prompt.replace("{{EXISTING_REPORT_PLACEHOLDER}}", "");
+    }
+    return prompt;
+  }
+  static \u0275fac = function CaseService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _CaseService)(\u0275\u0275inject(DatabaseService), \u0275\u0275inject(AiService));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _CaseService, factory: _CaseService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CaseService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], () => [{ type: DatabaseService }, { type: AiService }], null);
+})();
+
 // src/app/chat/chat.ts
 var _c0 = ["chatContainer"];
 var _c1 = ["messageInput"];
@@ -267,6 +403,7 @@ var ChatComponent = class _ChatComponent {
   aiService;
   authService;
   databaseService;
+  caseService;
   title = "analytics-agent";
   chatContainer;
   messageInput;
@@ -284,10 +421,11 @@ var ChatComponent = class _ChatComponent {
   // Stores the logged-in user's agency ID
   employeeMemories = [];
   // Stores employee memories
-  constructor(aiService, authService, databaseService) {
+  constructor(aiService, authService, databaseService, caseService) {
     this.aiService = aiService;
     this.authService = authService;
     this.databaseService = databaseService;
+    this.caseService = caseService;
     this.systemPrompt = {
       role: "system",
       content: ""
@@ -412,8 +550,10 @@ User's known characteristics: ${memoriesString}`;
   parseAiResponseForTags(response) {
     const loginTagRegex = /\[\[LOGIN, LASTNAME:"([^"]+)",PASSPORT:"([^"]+)"\]\]/;
     const memoryTagRegex = /\[\[MEMORY:"([^"]+)"\]\]/g;
+    const reportTagRegex = /\[\[REPORT\]\]/;
     let modifiedResponse = response;
     let loginProcessed = false;
+    let reportTriggered = false;
     const loginMatch = modifiedResponse.match(loginTagRegex);
     if (loginMatch) {
       const lastName = loginMatch[1];
@@ -460,10 +600,49 @@ User's known characteristics: ${memoriesString}`;
       }
       responseWithoutMemoryTags = responseWithoutMemoryTags.replace(memoryMatch[0], "").trim();
     }
-    if (loginProcessed) {
+    modifiedResponse = responseWithoutMemoryTags;
+    const reportMatch = modifiedResponse.match(reportTagRegex);
+    if (reportMatch) {
+      reportTriggered = true;
+      modifiedResponse = modifiedResponse.replace(reportTagRegex, "").trim();
+      if (this.userId) {
+        this.handleReportTag();
+      } else {
+        console.warn("[[REPORT]] tag detected for unauthenticated user. Ignoring.");
+        const unauthReportMessage = { role: "assistant", content: "Please log in to file a report." };
+        this.messages.push(unauthReportMessage);
+        this.saveMessageToDb(unauthReportMessage);
+      }
+    }
+    if (loginProcessed || reportTriggered) {
       return "";
     }
-    return responseWithoutMemoryTags;
+    return modifiedResponse;
+  }
+  handleReportTag() {
+    if (!this.userId) {
+      console.error("handleReportTag called without a valid userId.");
+      return;
+    }
+    this.isLoading = true;
+    const onStatusUpdate = (message) => {
+      const statusMessage = { role: "assistant", content: message };
+      this.messages.push(statusMessage);
+      this.saveMessageToDb(statusMessage);
+      this.scrollToBottom();
+    };
+    const historyForReport = this.messages.slice(-10);
+    this.caseService.handleReportCreation(parseInt(this.userId, 10), historyForReport, onStatusUpdate).subscribe({
+      next: (caseId) => {
+        console.log(`Report process completed. Case ID: ${caseId}`);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error("Error during report processing:", error);
+        onStatusUpdate("An unexpected error occurred during report processing. Please try again.");
+        this.isLoading = false;
+      }
+    });
   }
   scrollToBottom() {
     try {
@@ -472,7 +651,7 @@ User's known characteristics: ${memoriesString}`;
     }
   }
   static \u0275fac = function ChatComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ChatComponent)(\u0275\u0275directiveInject(AiService), \u0275\u0275directiveInject(AuthService), \u0275\u0275directiveInject(DatabaseService));
+    return new (__ngFactoryType__ || _ChatComponent)(\u0275\u0275directiveInject(AiService), \u0275\u0275directiveInject(AuthService), \u0275\u0275directiveInject(DatabaseService), \u0275\u0275directiveInject(CaseService));
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ChatComponent, selectors: [["app-chat"]], viewQuery: function ChatComponent_Query(rf, ctx) {
     if (rf & 1) {
@@ -610,7 +789,7 @@ User's known characteristics: ${memoriesString}`;
   </div>
 </div>
 `, styles: ['/* src/app/chat/chat.css */\n:host {\n  display: block;\n  min-height: 100vh;\n  background-image: url(/background.jpg);\n  background-size: cover;\n  background-position: center;\n  font-family: "Inter", sans-serif;\n}\n.glass-container {\n  background: rgba(255, 255, 255, 0.1);\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);\n}\n:host::ng-deep .chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n:host::ng-deep .chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n}\n:host::ng-deep .chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n:host::ng-deep .chat-message-content th,\n:host::ng-deep .chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid rgba(255, 255, 255, 0.2);\n}\n:host::ng-deep .chat-message-content img {\n  max-width: 100%;\n  height: auto;\n}\n.user-message-bubble {\n  background: rgba(0, 123, 255, 0.3);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(0, 123, 255, 0.25);\n}\n.glass-input {\n  background: rgba(255, 255, 255, 0.15);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n  border: 1px solid rgba(255, 255, 255, 0.2);\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);\n  color: white;\n}\n.glass-input::placeholder {\n  color: rgba(255, 255, 255, 0.7);\n}\n.glass-button {\n  background: rgba(76, 175, 80, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(76, 175, 80, 0.3);\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);\n}\n.glass-button:hover {\n  background: rgba(76, 175, 80, 0.3);\n}\n.log-container-plan,\n.log-container-execution {\n  max-height: 60vh;\n}\n@media (max-width: 768px) {\n  .log-container-plan,\n  .log-container-execution {\n    max-height: 30vh;\n  }\n}\n/*# sourceMappingURL=chat.css.map */\n'] }]
-  }], () => [{ type: AiService }, { type: AuthService }, { type: DatabaseService }], { chatContainer: [{
+  }], () => [{ type: AiService }, { type: AuthService }, { type: DatabaseService }, { type: CaseService }], { chatContainer: [{
     type: ViewChild,
     args: ["chatContainer"]
   }], messageInput: [{
@@ -619,7 +798,7 @@ User's known characteristics: ${memoriesString}`;
   }] });
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ChatComponent, { className: "ChatComponent", filePath: "src/app/chat/chat.ts", lineNumber: 19 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ChatComponent, { className: "ChatComponent", filePath: "src/app/chat/chat.ts", lineNumber: 20 });
 })();
 
 // src/app/app.routes.ts
@@ -627,7 +806,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-T4DDJHB5.js").then((m) => m.ADMIN_ROUTES)
+    loadChildren: () => import("./chunk-AJVKMCK4.js").then((m) => m.ADMIN_ROUTES)
   }
 ];
 

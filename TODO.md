@@ -1,9 +1,11 @@
 # TODO
 
 TODO:
-- employee filtered status
 - report creation
 - report CRUD
+- status history save
+- status database
+- status in sidebar
 - make thinking algo
     - or think after replying
         - [[Done]] of its good

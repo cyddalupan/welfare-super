@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AiService } from '../ai.service'; // Import AiService
 import { AuthService } from '../auth.service'; // Import AuthService
 import { DatabaseService } from '../database.service'; // Import DatabaseService
+import { CaseService } from '../case.service'; // Import CaseService
 import { ChatMessage } from '../schemas'; // Import ChatMessage interface
 import { SYSTEM_PROMPT_COMPLAINTS_ASSISTANT, SYSTEM_PROMPT_LOGIN_ASSISTANT } from '../prompts'; // Import the system prompts
 
@@ -33,7 +34,8 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   constructor(
     private aiService: AiService,
     private authService: AuthService,
-    private databaseService: DatabaseService // Inject DatabaseService
+    private databaseService: DatabaseService, // Inject DatabaseService
+    private caseService: CaseService // Inject CaseService
   ) {
     this.systemPrompt = {
       role: 'system',
@@ -182,11 +184,12 @@ export class ChatComponent implements AfterViewChecked, OnInit {
 
   private parseAiResponseForTags(response: string): string {
     const loginTagRegex = /\[\[LOGIN, LASTNAME:"([^"]+)",PASSPORT:"([^"]+)"\]\]/;
-    // Global flag for memoryTagRegex to find all occurrences
     const memoryTagRegex = /\[\[MEMORY:"([^"]+)"\]\]/g;
+    const reportTagRegex = /\[\[REPORT\]\]/; // New regex for REPORT tag
 
     let modifiedResponse = response;
-    let loginProcessed = false; // Flag to indicate if login tag was found and processed
+    let loginProcessed = false;
+    let reportTriggered = false; // New flag for report
 
     // 1. Handle LOGIN tag (existing logic)
     const loginMatch = modifiedResponse.match(loginTagRegex);
@@ -220,16 +223,12 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       loginProcessed = true;
     }
 
-    // 2. Handle MEMORY tag (new logic)
-    // Use exec in a loop to find all matches with the global regex
+    // 2. Handle MEMORY tag (existing logic)
     let memoryMatch;
-    // We need to create a temporary string without the memory tags for display, but process all tags first.
     let responseWithoutMemoryTags = modifiedResponse;
     while ((memoryMatch = memoryTagRegex.exec(modifiedResponse)) !== null) {
       const memoryContent = memoryMatch[1];
       if (this.userId) { // Only save memory if user is authenticated
-        // Call the new method to save this content to the database
-        // This method will be implemented in DatabaseService next.
         this.databaseService.saveEmployeeMemory(parseInt(this.userId, 10), memoryContent)
           .subscribe({
             next: () => {
@@ -241,16 +240,64 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       } else {
         console.warn('Attempted to save memory for unauthenticated user:', memoryContent);
       }
-      // Remove the matched memory tag from the string that will eventually be displayed
       responseWithoutMemoryTags = responseWithoutMemoryTags.replace(memoryMatch[0], '').trim();
+    }
+    modifiedResponse = responseWithoutMemoryTags; // Update modifiedResponse after memory processing
+
+    // 3. Handle REPORT tag (NEW LOGIC)
+    const reportMatch = modifiedResponse.match(reportTagRegex);
+    if (reportMatch) {
+      reportTriggered = true;
+      modifiedResponse = modifiedResponse.replace(reportTagRegex, '').trim();
+      if (this.userId) {
+        this.handleReportTag();
+      } else {
+        console.warn('[[REPORT]] tag detected for unauthenticated user. Ignoring.');
+        const unauthReportMessage: ChatMessage = { role: 'assistant', content: 'Please log in to file a report.' };
+        this.messages.push(unauthReportMessage);
+        this.saveMessageToDb(unauthReportMessage);
+      }
     }
 
     // If a login was processed, we want to ensure the response is empty to reflect the state change in UI,
     // otherwise, return the response without memory tags.
-    if (loginProcessed) {
+    // If a report was triggered, we also want to ensure the response is empty, as the report service will add messages.
+    if (loginProcessed || reportTriggered) {
         return '';
     }
-    return responseWithoutMemoryTags;
+    return modifiedResponse; // Return the response after all tags are processed
+  }
+
+  private handleReportTag(): void {
+    if (!this.userId) {
+      console.error('handleReportTag called without a valid userId.');
+      return;
+    }
+
+    this.isLoading = true; // Keep loading true during report processing
+
+    // Pass a callback to CaseService to update chat messages
+    const onStatusUpdate = (message: string) => {
+      const statusMessage: ChatMessage = { role: 'assistant', content: message };
+      this.messages.push(statusMessage);
+      this.saveMessageToDb(statusMessage); // Save status messages to DB
+      this.scrollToBottom(); // Scroll to show new status
+    };
+
+    // Send only the last 10 messages for context to the report generator
+    const historyForReport = this.messages.slice(-10);
+
+    this.caseService.handleReportCreation(parseInt(this.userId, 10), historyForReport, onStatusUpdate).subscribe({
+      next: (caseId) => {
+        console.log(`Report process completed. Case ID: ${caseId}`);
+        this.isLoading = false; // Turn off loading after completion
+      },
+      error: (error) => {
+        console.error('Error during report processing:', error);
+        onStatusUpdate("An unexpected error occurred during report processing. Please try again.");
+        this.isLoading = false; // Turn off loading on error
+      }
+    });
   }
 
   private scrollToBottom(): void {

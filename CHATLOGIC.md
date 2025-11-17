@@ -59,6 +59,20 @@ To enable the AI to store and retrieve key information about the user, a special
 *   **UI Display**: Any content within an `[[MEMORY:"..."]]` tag in the AI's response **must not** be displayed in the chat UI. The frontend is responsible for parsing and removing these tags before rendering the AI's message.
 *   **Duplication**: The AI will be instructed to only generate `[[MEMORY]]` tags for *new* information, avoiding duplication of existing memories.
 
+### 3.2 AI Report Tag
+
+To enable the AI to initiate a formal case report for serious complaints, a special tagging mechanism called "AI Report Tag" is introduced.
+
+*   **Tag Format**: `[[REPORT]]`
+*   **Purpose**: When the AI detects a serious complaint from the user and has gathered sufficient details, it will include this tag in its response. The `ChatComponent` will parse this tag and trigger the case reporting workflow via the `CaseService`.
+*   **Workflow**:
+    *   The `ChatComponent` detects the `[[REPORT]]` tag.
+    *   It calls `CaseService.handleReportCreation()`, passing the employee ID and relevant chat history.
+    *   The `CaseService` checks for existing open cases for the employee.
+    *   It then uses a separate AI call (with `SYSTEM_PROMPT_REPORT_GENERATOR`) to either create a new report or update an existing one based on the chat history.
+    *   During this process, the `CaseService` sends step-by-step status updates back to the `ChatComponent`, which are displayed to the user in the chat interface.
+*   **UI Display**: The `[[REPORT]]` tag itself is not displayed in the chat UI. The frontend is responsible for parsing and removing this tag before rendering the AI's message, and instead displays the status messages from the reporting workflow.
+
 ## 4. Relevant Chat Code Locations
 
 *   **Chat Component**: `src/app/chat/chat.ts`
