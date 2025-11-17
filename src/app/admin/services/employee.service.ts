@@ -51,7 +51,7 @@ export class EmployeeService {
       employee.phone_number || null,
       employee.email || null,
       (employee.is_support ? 1 : 0),
-      employee.token || null,
+      employee.token || '',
       employee.user_id || null,
       employee.date_deployment || null,
       employee.fra_id || null,
