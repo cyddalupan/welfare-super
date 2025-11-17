@@ -4,7 +4,9 @@ TODO:
 - login issue
 - design fix
 - CRUD
+- employee filtered status
 - report creation
+- report CRUD
 - make thinking algo
     - or think after replying
         - [[Done]] of its good
