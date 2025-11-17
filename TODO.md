@@ -1,7 +1,9 @@
 # TODO
 
 TODO:
-- create admin page
+- login issue
+- design fix
+- CRUD
 - report creation
 - make thinking algo
     - or think after replying
