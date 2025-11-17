@@ -21,6 +21,7 @@ export class EmployeeFormComponent implements OnInit {
   employee: Partial<Employee> = {};
   isEditMode = false;
   employeeId: number | null = null;
+  isLoading = false; // Add loading state
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -32,6 +33,7 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   async loadEmployeeData(id: number): Promise<void> {
+    this.isLoading = true; // Set loading to true
     try {
       const data = await this.employeeService.getEmployeeById(id);
       if (data) {
@@ -43,6 +45,8 @@ export class EmployeeFormComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error loading employee data:', error);
+    } finally {
+      this.isLoading = false; // Set loading to false
     }
   }
 

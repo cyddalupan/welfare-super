@@ -24,16 +24,24 @@ export class CaseFormComponent implements OnInit {
   };
   employees: Employee[] = []; // For the employee dropdown
   isEditMode = false;
+  isLoading = false; // Add loading state
 
   async ngOnInit(): Promise<void> {
-    await this.loadEmployees(); // Ensure employees are loaded first
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
-      if (id) {
-        this.isEditMode = true;
-        this.loadCase(+id);
-      }
-    });
+    this.isLoading = true; // Set loading to true at the start
+    try {
+      await this.loadEmployees(); // Ensure employees are loaded first
+      this.route.paramMap.subscribe(async params => { // Use async here for await loadCase
+        const id = params.get('id');
+        if (id) {
+          this.isEditMode = true;
+          await this.loadCase(+id); // Await loadCase
+        }
+        this.isLoading = false; // Set loading to false after everything is loaded
+      });
+    } catch (error) {
+      console.error('Error during initialization:', error);
+      this.isLoading = false; // Ensure loading is false on error
+    }
   }
 
   async loadEmployees(): Promise<void> {

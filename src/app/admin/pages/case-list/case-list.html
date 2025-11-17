@@ -12,7 +12,13 @@
            class="w-full px-4 py-2 bg-white/20 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800">
   </div>
 
-  <div class="overflow-x-auto bg-black/30 backdrop-blur-xl rounded-lg shadow-lg">
+  <div *ngIf="isLoading" class="text-center py-8">
+    <p>Loading cases...</p>
+    <!-- You can add a spinner icon here if Font Awesome is available -->
+    <i class="fas fa-spinner fa-spin text-4xl mt-4"></i>
+  </div>
+
+  <div *ngIf="!isLoading" class="overflow-x-auto bg-black/30 backdrop-blur-xl rounded-lg shadow-lg">
     <table class="min-w-full">
       <thead>
         <tr class="border-b border-white/20">

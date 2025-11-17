@@ -19,6 +19,7 @@ export class CaseListComponent implements OnInit {
   allCases: Case[] = [];
   filteredCases: Case[] = [];
   searchTerm = '';
+  isLoading = false; // Add loading state
 
   private sortDirection: { [key: string]: 'asc' | 'desc' } = {};
 
@@ -27,12 +28,15 @@ export class CaseListComponent implements OnInit {
   }
 
   async loadCases(): Promise<void> {
+    this.isLoading = true; // Set loading to true
     try {
       this.allCases = await this.caseService.getCases();
       this.filteredCases = [...this.allCases];
       this.cdr.detectChanges(); // Manually trigger change detection
     } catch (error) {
       console.error('Error loading cases:', error);
+    } finally {
+      this.isLoading = false; // Set loading to false
     }
   }
 

@@ -1,7 +1,13 @@
 <div class="glass-card w-full p-8 text-white">
   <h1 class="text-3xl font-bold mb-6">{{ isEditMode ? 'Edit' : 'Create' }} Employee</h1>
 
-  <form (ngSubmit)="saveEmployee()" #employeeForm="ngForm">
+  <div *ngIf="isLoading" class="text-center py-8">
+    <p>Loading employee data...</p>
+    <!-- You can add a spinner icon here if Font Awesome is available -->
+    <i class="fas fa-spinner fa-spin text-4xl mt-4"></i>
+  </div>
+
+  <form *ngIf="!isLoading" (ngSubmit)="saveEmployee()" #employeeForm="ngForm">
     <!-- Personal Information -->
     <div class="mb-8">
       <h2 class="text-xl font-semibold mb-4 border-b border-white/20 pb-2">Personal Information</h2>

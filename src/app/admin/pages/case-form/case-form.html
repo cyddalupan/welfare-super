@@ -1,7 +1,13 @@
 <div class="glass-card p-8 text-white rounded-xl">
   <h1 class="text-3xl font-bold mb-6">{{ isEditMode ? 'Edit Case' : 'New Case' }}</h1>
 
-  <form (ngSubmit)="saveCase()" class="space-y-4">
+  <div *ngIf="isLoading" class="text-center py-8">
+    <p>Loading case details...</p>
+    <!-- You can add a spinner icon here if Font Awesome is available -->
+    <i class="fas fa-spinner fa-spin text-4xl mt-4"></i>
+  </div>
+
+  <form *ngIf="!isLoading" (ngSubmit)="saveCase()" class="space-y-4">
     <div>
       <label for="employee_id" class="block text-sm font-medium text-gray-300">Employee</label>
       <select id="employee_id" name="employee_id" [(ngModel)]="caseItem.employee_id" required

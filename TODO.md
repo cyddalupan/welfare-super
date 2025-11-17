@@ -1,7 +1,7 @@
 # TODO
 
 TODO:
-- report CRUD
+- loading
 - status history save
 - status in sidebar
 - make thinking algo

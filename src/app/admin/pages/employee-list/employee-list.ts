@@ -19,6 +19,7 @@ export class EmployeeListComponent implements OnInit {
   allEmployees: Employee[] = [];
   filteredEmployees: Employee[] = [];
   searchTerm = '';
+  isLoading = false; // Add loading state
 
   private sortDirection: { [key: string]: 'asc' | 'desc' } = {};
 
@@ -27,12 +28,15 @@ export class EmployeeListComponent implements OnInit {
   }
 
   async loadEmployees(): Promise<void> {
+    this.isLoading = true; // Set loading to true
     try {
       this.allEmployees = await this.employeeService.getEmployees();
       this.filteredEmployees = [...this.allEmployees];
       this.cdr.detectChanges(); // Manually trigger change detection
     } catch (error) {
       console.error('Error loading employees:', error);
+    } finally {
+      this.isLoading = false; // Set loading to false
     }
   }
 

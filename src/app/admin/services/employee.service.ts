@@ -54,7 +54,7 @@ export class EmployeeService {
           applicant_id: employee.id,
           remarks: `Applicant status changed from '${oldEmployee.main_status}' to '${employee.main_status}'`,
           attachment: '',
-          status: employee.main_status
+          status: employee.main_status || 'Unknown'
         });
       } else {
         await this.applicantHistoryService.addHistoryEntry({
