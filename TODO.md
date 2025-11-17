@@ -1,13 +1,7 @@
 # TODO
 
 TODO:
-- status history save*
 - fix report always triggered
-- make thinking algo
-    - or think after replying
-        - [[Done]] of its good
-        - follow up and clarify if not
-        - trigger a function if missed
 - ⁠Fra 
 - ionic
 -⁠ ⁠dashboard report
