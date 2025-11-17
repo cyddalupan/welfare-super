@@ -106,6 +106,7 @@ This setup allows backend PHP files to persist in `live/api` across builds.
     *   Converting the string to a consistent case (`.toLowerCase()` or `.toUpperCase()`).
     The PHP backend should then expect and process these already-normalized values without needing to re-apply such transformations for specific parameters.
 *   **Testing:** All testing will be performed manually by the user. Automated unit tests are not required for new features or bug fixes at this stage.
+*   **Font Awesome:** Included via CDN in `src/index.html` for icon usage across the application.
 
 ## Chat Functionality Details
 
