@@ -12,7 +12,7 @@
     <!-- Thinking indicator -->
     <div *ngIf="isLoading" class="flex justify-center">
       <div class="glass-card p-3 rounded-lg max-w-xl flex items-center space-x-2">
-        <span>Thinking...</span>
+        <span>{{ currentStatusMessage }}</span>
         <span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
       </div>
     </div>

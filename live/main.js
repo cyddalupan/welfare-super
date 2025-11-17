@@ -44,6 +44,7 @@ import {
   ɵɵinject,
   ɵɵlistener,
   ɵɵloadQuery,
+  ɵɵnextContext,
   ɵɵproperty,
   ɵɵqueryRefresh,
   ɵɵresetView,
@@ -51,11 +52,12 @@ import {
   ɵɵsanitizeHtml,
   ɵɵtemplate,
   ɵɵtext,
+  ɵɵtextInterpolate,
   ɵɵtwoWayBindingSet,
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-HJLEFKMH.js";
+} from "./chunk-IYH7NMZN.js";
 
 // src/app/prompts.ts
 var SYSTEM_PROMPT_COMPLAINTS_ASSISTANT = `You are Welfare, a friendly AI assistant here to help Overseas Filipino Workers (OFWs) with their concerns. Your replies should be extremely concise, friendly, use Taglish, avoid deep or uncommon words, and focus on one point or question at a time. Many users just want someone to talk to, so be approachable and supportive.
@@ -71,12 +73,14 @@ DOS
  * Show Malasakit (Empathy): Acknowledge the user's feelings and validate their concern.
  * Maintain Focus: Keep the conversation centered on the user's emotional state and well-being.
  * Provide Emotional Assurance: Offer comforting and supportive messages.
+ * give strength to fight.
 DON'TS
  * Do Not Promise Solutions: Never guarantee a specific outcome or timeline for resolution.
  * Do Not Suggest Government Agencies: Absolutely do not mention, recommend, or refer the applicant to any external government bodies (like OWWA, POEA, DMW, etc.).
  * Do Not Engage in Debate: Avoid arguing or questioning the validity of the complaint. Your role is to receive and process.
  * Do Not Provide Legal Advice: Stick strictly to the agency's intake protocol.
  * Do Not Instruct User on Reply Length: Never tell the user to reply with short messages or to be concise. That is your role, not theirs.
+ * Do Not tell that its scary.
 
 ---
 Complaint Reporting Protocol:
@@ -222,11 +226,12 @@ var CaseService = class _CaseService {
    * Handles the creation or update of a case report based on chat history.
    * Emits status messages for UI updates.
    * @param employeeId The ID of the employee.
+   * @param agencyId The ID of the agency.
    * @param chatHistory The relevant chat messages for generating the report.
    * @param onStatusUpdate Callback function to emit status messages to the UI.
    * @returns Observable<number> The ID of the created or updated case.
    */
-  handleReportCreation(employeeId, chatHistory, onStatusUpdate) {
+  handleReportCreation(employeeId, agencyId, chatHistory, onStatusUpdate) {
     onStatusUpdate("I've noticed you're describing a serious issue. I'm starting the process to file a formal report for you.");
     onStatusUpdate("Checking for any existing reports...");
     return this.databaseService.query(SELECT_OPEN_CASE_BY_EMPLOYEE_ID, [employeeId]).pipe(switchMap((result) => {
@@ -236,7 +241,7 @@ var CaseService = class _CaseService {
         return this.updateExistingCase(employeeId, existingCase, chatHistory, onStatusUpdate);
       } else {
         onStatusUpdate("No existing report found. I will create a new one for you.");
-        return this.createNewCase(employeeId, chatHistory, onStatusUpdate);
+        return this.createNewCase(employeeId, agencyId, chatHistory, onStatusUpdate);
       }
     }), catchError((error) => {
       console.error("Error handling report creation:", error);
@@ -244,7 +249,7 @@ var CaseService = class _CaseService {
       return throwError(() => new Error("Failed to handle report creation."));
     }));
   }
-  createNewCase(employeeId, chatHistory, onStatusUpdate) {
+  createNewCase(employeeId, agencyId, chatHistory, onStatusUpdate) {
     onStatusUpdate("Generating a summary of your complaint...");
     const prompt = this.buildReportGenerationPrompt(chatHistory);
     return this.aiService.callAi([{ role: "system", content: prompt }]).pipe(switchMap((aiResponseString) => {
@@ -252,6 +257,7 @@ var CaseService = class _CaseService {
       onStatusUpdate("Saving the report to your file...");
       return this.databaseService.query(INSERT_CASE, [
         employeeId,
+        agencyId,
         aiResponse.category,
         aiResponse.report
       ]).pipe(switchMap((insertResult) => {
@@ -332,10 +338,15 @@ function ChatComponent_div_3_Template(rf, ctx) {
 function ChatComponent_div_4_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 14)(1, "div", 15)(2, "span");
-    \u0275\u0275text(3, "Thinking...");
+    \u0275\u0275text(3);
     \u0275\u0275elementEnd();
     \u0275\u0275element(4, "span", 16);
     \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext();
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(ctx_r2.currentStatusMessage);
   }
 }
 function ChatComponent_div_11_ol_9_Template(rf, ctx) {
@@ -415,6 +426,8 @@ var ChatComponent = class _ChatComponent {
   // Input field binding
   isLoading = false;
   // Loading indicator
+  currentStatusMessage = "Thinking...";
+  // New: For displaying current status
   userId = null;
   // Stores the logged-in user's ID
   agencyId = null;
@@ -500,6 +513,7 @@ var ChatComponent = class _ChatComponent {
       return;
     }
     this.isLoading = true;
+    this.currentStatusMessage = "Thinking...";
     const userMessage = { role: "user", content: this.newMessage.trim() };
     this.messages.push(userMessage);
     this.saveMessageToDb(userMessage);
@@ -523,6 +537,7 @@ User's known characteristics: ${memoriesString}`;
           this.saveMessageToDb(assistantMessage);
         }
         this.isLoading = false;
+        this.currentStatusMessage = "Thinking...";
       },
       error: (error) => {
         console.error("AI call failed:", error);
@@ -530,6 +545,7 @@ User's known characteristics: ${memoriesString}`;
         this.messages.push(errorMessage);
         this.saveMessageToDb(errorMessage);
         this.isLoading = false;
+        this.currentStatusMessage = "Thinking...";
       }
     });
     this.adjustTextareaHeight();
@@ -548,8 +564,8 @@ User's known characteristics: ${memoriesString}`;
     }
   }
   parseAiResponseForTags(response) {
-    const loginTagRegex = /\[\[LOGIN, LASTNAME:"([^"]+)",PASSPORT:"([^"]+)"\]\]/;
-    const memoryTagRegex = /\[\[MEMORY:"([^"]+)"\]\]/g;
+    const loginTagRegex = /\[\[LOGIN, LASTNAME:\"([^\"]+)\",PASSPORT:\"([^\"]+)\"\]\]/;
+    const memoryTagRegex = /\[\[MEMORY:\"([^\"]+)\"\]\]/g;
     const reportTagRegex = /\[\[REPORT\]\]/;
     let modifiedResponse = response;
     let loginProcessed = false;
@@ -620,26 +636,26 @@ User's known characteristics: ${memoriesString}`;
     return modifiedResponse;
   }
   handleReportTag() {
-    if (!this.userId) {
-      console.error("handleReportTag called without a valid userId.");
+    if (!this.userId || !this.agencyId) {
+      console.error("handleReportTag called without a valid userId or agencyId.");
       return;
     }
     this.isLoading = true;
+    this.currentStatusMessage = "I've noticed you're describing a serious issue. I'm starting the process to file a formal report for you.";
     const onStatusUpdate = (message) => {
-      const statusMessage = { role: "assistant", content: message };
-      this.messages.push(statusMessage);
-      this.saveMessageToDb(statusMessage);
+      this.currentStatusMessage = message;
       this.scrollToBottom();
     };
     const historyForReport = this.messages.slice(-10);
-    this.caseService.handleReportCreation(parseInt(this.userId, 10), historyForReport, onStatusUpdate).subscribe({
+    this.caseService.handleReportCreation(parseInt(this.userId, 10), parseInt(this.agencyId, 10), historyForReport, onStatusUpdate).subscribe({
       next: (caseId) => {
         console.log(`Report process completed. Case ID: ${caseId}`);
         this.isLoading = false;
+        this.currentStatusMessage = "Thinking...";
       },
       error: (error) => {
         console.error("Error during report processing:", error);
-        onStatusUpdate("An unexpected error occurred during report processing. Please try again.");
+        this.currentStatusMessage = "An unexpected error occurred during report processing. Please try again.";
         this.isLoading = false;
       }
     });
@@ -667,7 +683,7 @@ User's known characteristics: ${memoriesString}`;
     if (rf & 1) {
       const _r1 = \u0275\u0275getCurrentView();
       \u0275\u0275elementStart(0, "div", 2)(1, "div", 3, 0);
-      \u0275\u0275template(3, ChatComponent_div_3_Template, 3, 7, "div", 4)(4, ChatComponent_div_4_Template, 5, 0, "div", 5);
+      \u0275\u0275template(3, ChatComponent_div_3_Template, 3, 7, "div", 4)(4, ChatComponent_div_4_Template, 5, 1, "div", 5);
       \u0275\u0275elementEnd();
       \u0275\u0275elementStart(5, "div", 6)(6, "div", 7)(7, "textarea", 8, 1);
       \u0275\u0275twoWayListener("ngModelChange", function ChatComponent_Template_textarea_ngModelChange_7_listener($event) {
@@ -726,7 +742,7 @@ User's known characteristics: ${memoriesString}`;
     <!-- Thinking indicator -->
     <div *ngIf="isLoading" class="flex justify-center">
       <div class="glass-card p-3 rounded-lg max-w-xl flex items-center space-x-2">
-        <span>Thinking...</span>
+        <span>{{ currentStatusMessage }}</span>
         <span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
       </div>
     </div>
@@ -806,7 +822,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-AJVKMCK4.js").then((m) => m.ADMIN_ROUTES)
+    loadChildren: () => import("./chunk-QFM7LVMZ.js").then((m) => m.ADMIN_ROUTES)
   }
 ];
 

@@ -7,14 +7,16 @@ import {
   UPDATE_EMPLOYEE,
   DELETE_EMPLOYEE
 } from '../../queries';
-import { Employee } from '../../schemas';
-import { firstValueFrom } from 'rxjs'; // Import firstValueFrom
+import { Employee, ApplicantHistory } from '../../schemas';
+import { firstValueFrom } from 'rxjs';
+import { ApplicantHistoryService } from './applicant-history.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EmployeeService {
   private db = inject(DatabaseService);
+  private applicantHistoryService = inject(ApplicantHistoryService);
 
   async getEmployees(): Promise<Employee[]> {
     const response: any = await firstValueFrom(this.db.query(GET_EMPLOYEES));
@@ -28,12 +30,31 @@ export class EmployeeService {
 
   async createEmployee(employee: Omit<Employee, 'id'>): Promise<any> {
     const params = this.mapEmployeeToParams(employee);
-    return firstValueFrom(this.db.query(CREATE_EMPLOYEE, params));
+    const result = await firstValueFrom(this.db.query(CREATE_EMPLOYEE, params));
+    if (result && result.insertId) {
+        const newEmployeeId = result.insertId;
+        await this.applicantHistoryService.addHistoryEntry({
+            applicant_id: newEmployeeId,
+            remarks: 'Applicant created.',
+            attachment: '',
+            status: 'Created'
+        });
+    }
+    return result;
   }
 
   async updateEmployee(employee: Employee): Promise<any> {
     const params = this.mapEmployeeToParams(employee);
-    return firstValueFrom(this.db.query(UPDATE_EMPLOYEE, [...params, employee.id]));
+    const result = await firstValueFrom(this.db.query(UPDATE_EMPLOYEE, [...params, employee.id]));
+    if (employee.id) {
+        await this.applicantHistoryService.addHistoryEntry({
+            applicant_id: employee.id,
+            remarks: 'Applicant updated.',
+            attachment: '',
+            status: 'Updated'
+        });
+    }
+    return result;
   }
 
   async deleteEmployee(id: number): Promise<any> {

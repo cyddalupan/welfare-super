@@ -27,6 +27,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   private systemPrompt: ChatMessage; // Will be set dynamically
   public newMessage: string = ''; // Input field binding
   public isLoading: boolean = false; // Loading indicator
+  public currentStatusMessage: string = 'Thinking...'; // New: For displaying current status
   public userId: string | null = null; // Stores the logged-in user's ID
   public agencyId: string | null = null; // Stores the logged-in user's agency ID
   public employeeMemories: string[] = []; // Stores employee memories
@@ -127,6 +128,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     }
 
     this.isLoading = true;
+    this.currentStatusMessage = 'Thinking...'; // Reset status message
     const userMessage: ChatMessage = { role: 'user', content: this.newMessage.trim() };
     this.messages.push(userMessage);
     this.saveMessageToDb(userMessage);
@@ -156,6 +158,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
           this.saveMessageToDb(assistantMessage);
         }
         this.isLoading = false;
+        this.currentStatusMessage = 'Thinking...'; // Reset status message
       },
       error: (error) => {
         console.error('AI call failed:', error);
@@ -163,6 +166,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
         this.messages.push(errorMessage);
         this.saveMessageToDb(errorMessage);
         this.isLoading = false;
+        this.currentStatusMessage = 'Thinking...'; // Reset status message
       }
     });
     this.adjustTextareaHeight();
@@ -183,9 +187,9 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   }
 
   private parseAiResponseForTags(response: string): string {
-    const loginTagRegex = /\[\[LOGIN, LASTNAME:"([^"]+)",PASSPORT:"([^"]+)"\]\]/;
-    const memoryTagRegex = /\[\[MEMORY:"([^"]+)"\]\]/g;
-    const reportTagRegex = /\[\[REPORT\]\]/; // New regex for REPORT tag
+    const loginTagRegex = /\[\[LOGIN, LASTNAME:\"([^\"]+)\",PASSPORT:\"([^\"]+)\"\]\]/;
+    const memoryTagRegex = /\[\[MEMORY:\"([^\"]+)\"\]\]/g;
+    const reportTagRegex = /\[\[REPORT\]\]/; 
 
     let modifiedResponse = response;
     let loginProcessed = false;
@@ -269,32 +273,32 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   }
 
   private handleReportTag(): void {
-    if (!this.userId) {
-      console.error('handleReportTag called without a valid userId.');
+    if (!this.userId || !this.agencyId) {
+      console.error('handleReportTag called without a valid userId or agencyId.');
       return;
     }
 
     this.isLoading = true; // Keep loading true during report processing
+    this.currentStatusMessage = "I've noticed you're describing a serious issue. I'm starting the process to file a formal report for you."; // Initial status
 
     // Pass a callback to CaseService to update chat messages
     const onStatusUpdate = (message: string) => {
-      const statusMessage: ChatMessage = { role: 'assistant', content: message };
-      this.messages.push(statusMessage);
-      this.saveMessageToDb(statusMessage); // Save status messages to DB
+      this.currentStatusMessage = message; // Update status message
       this.scrollToBottom(); // Scroll to show new status
     };
 
     // Send only the last 10 messages for context to the report generator
     const historyForReport = this.messages.slice(-10);
 
-    this.caseService.handleReportCreation(parseInt(this.userId, 10), historyForReport, onStatusUpdate).subscribe({
+    this.caseService.handleReportCreation(parseInt(this.userId, 10), parseInt(this.agencyId, 10), historyForReport, onStatusUpdate).subscribe({
       next: (caseId) => {
         console.log(`Report process completed. Case ID: ${caseId}`);
         this.isLoading = false; // Turn off loading after completion
+        this.currentStatusMessage = 'Thinking...'; // Reset status message
       },
       error: (error) => {
         console.error('Error during report processing:', error);
-        onStatusUpdate("An unexpected error occurred during report processing. Please try again.");
+        this.currentStatusMessage = "An unexpected error occurred during report processing. Please try again."; // Display error status
         this.isLoading = false; // Turn off loading on error
       }
     });

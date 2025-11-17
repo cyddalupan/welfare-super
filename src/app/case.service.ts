@@ -38,12 +38,14 @@ export class CaseService {
    * Handles the creation or update of a case report based on chat history.
    * Emits status messages for UI updates.
    * @param employeeId The ID of the employee.
+   * @param agencyId The ID of the agency.
    * @param chatHistory The relevant chat messages for generating the report.
    * @param onStatusUpdate Callback function to emit status messages to the UI.
    * @returns Observable<number> The ID of the created or updated case.
    */
   handleReportCreation(
     employeeId: number,
+    agencyId: number,
     chatHistory: ChatMessage[],
     onStatusUpdate: (message: string) => void
   ): Observable<number> {
@@ -59,7 +61,7 @@ export class CaseService {
           return this.updateExistingCase(employeeId, existingCase, chatHistory, onStatusUpdate);
         } else {
           onStatusUpdate("No existing report found. I will create a new one for you.");
-          return this.createNewCase(employeeId, chatHistory, onStatusUpdate);
+          return this.createNewCase(employeeId, agencyId, chatHistory, onStatusUpdate);
         }
       }),
       catchError(error => {
@@ -72,6 +74,7 @@ export class CaseService {
 
   private createNewCase(
     employeeId: number,
+    agencyId: number,
     chatHistory: ChatMessage[],
     onStatusUpdate: (message: string) => void
   ): Observable<number> {
@@ -84,6 +87,7 @@ export class CaseService {
         onStatusUpdate("Saving the report to your file...");
         return this.databaseService.query(INSERT_CASE, [
           employeeId,
+          agencyId,
           aiResponse.category,
           aiResponse.report,
         ]).pipe(

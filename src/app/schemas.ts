@@ -32,6 +32,15 @@ export interface Employee {
   emergency_contact_phone?: string;
 }
 
+export interface ApplicantHistory {
+  ids: number;
+  applicant_id: number;
+  remarks: string;
+  attachment: string;
+  created_at: string;
+  status: string;
+}
+
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;

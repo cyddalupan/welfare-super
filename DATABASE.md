@@ -234,3 +234,13 @@ Stores information about attachments.
 | `attachment` | `CharField(100)` | File path or identifier of the attachment. |
 | `created_at` | `DateTimeField` | Timestamp of creation. |
 | `status` | `CharField(200)` | Current status of the attachment. |
+
+
+## `applicant_history` Table
+
+ids | int
+applicant_id | int
+remarks | text
+attachment | varchar(100)
+created_at | datetime
+status | varchar(200)

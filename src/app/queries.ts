@@ -29,6 +29,11 @@ export const UPDATE_EMPLOYEE = `
 `;
 export const DELETE_EMPLOYEE = 'DELETE FROM employee_employee WHERE id = ?';
 
+export const INSERT_APPLICANT_HISTORY = `
+  INSERT INTO applicant_history (applicant_id, remarks, attachment, created_at, status)
+  VALUES (?, ?, ?, NOW(), ?)
+`;
+
 
 export const GET_CHAT_HISTORY = 'SELECT message, sender FROM chats_chat WHERE employee_id = ? ORDER BY timestamp DESC LIMIT 20';
 export const INSERT_CHAT_MESSAGE = 'INSERT INTO chats_chat (employee_id, agency_id, message, sender, timestamp) VALUES (?, ?, ?, ?, NOW())';
@@ -45,8 +50,8 @@ export const SELECT_OPEN_CASE_BY_EMPLOYEE_ID = `
 
 export const INSERT_CASE = `
   INSERT INTO cases_case (
-    employee_id, category, report, date_reported, updated_date, report_status
-  ) VALUES (?, ?, ?, NOW(), NOW(), 'open')
+    employee_id, agency_id, category, report, date_reported, updated_date, report_status
+  ) VALUES (?, ?, ?, ?, NOW(), NOW(), 'open')
 `;
 
 export const UPDATE_CASE_REPORT = `
