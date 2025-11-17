@@ -28,7 +28,38 @@
         </div>
         <div class="form-group">
           <label for="country" class="form-label">Country</label>
-          <input type="text" id="country" name="country" [(ngModel)]="employee.country" class="form-field">
+          <select id="country" name="country" [(ngModel)]="employee.country" class="form-field">
+            <option value="">Select Country</option>
+            <option value="US">United States</option>
+            <option value="CA">Canada</option>
+            <option value="MX">Mexico</option>
+            <option value="BR">Brazil</option>
+            <option value="GB">United Kingdom</option>
+            <option value="FR">France</option>
+            <option value="DE">Germany</option>
+            <option value="IT">Italy</option>
+            <option value="ES">Spain</option>
+            <option value="CN">China</option>
+            <option value="IN">India</option>
+            <option value="JP">Japan</option>
+            <option value="KR">South Korea</option>
+            <option value="AU">Australia</option>
+            <option value="NZ">New Zealand</option>
+            <option value="PH">Philippines</option>
+            <option value="SA">Saudi Arabia</option>
+            <option value="AE">United Arab Emirates</option>
+            <option value="QA">Qatar</option>
+            <option value="KW">Kuwait</option>
+            <option value="BH">Bahrain</option>
+            <option value="OM">Oman</option>
+            <option value="EG">Egypt</option>
+            <option value="JO">Jordan</option>
+            <option value="LB">Lebanon</option>
+            <option value="IQ">Iraq</option>
+            <option value="IR">Iran</option>
+            <option value="TR">Turkey</option>
+            <option value="IL">Israel</option>
+          </select>
         </div>
       </div>
     </div>
