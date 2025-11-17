@@ -151,14 +151,16 @@ export class ChatComponent implements AfterViewChecked, OnInit {
 
     this.aiService.callAi(aiPayload).subscribe({
       next: (response: string) => {
-        const processedResponse = this.parseAiResponseForTags(response);
+        const { response: processedResponse, tagProcessed } = this.parseAiResponseForTags(response);
         if (processedResponse) {
           const assistantMessage: ChatMessage = { role: 'assistant', content: processedResponse };
           this.messages.push(assistantMessage);
           this.saveMessageToDb(assistantMessage);
         }
-        this.isLoading = false;
-        this.currentStatusMessage = 'Thinking...'; // Reset status message
+        if (!tagProcessed) { // Only reset if no tags were processed
+          this.isLoading = false;
+          this.currentStatusMessage = 'Thinking...'; // Reset status message
+        }
       },
       error: (error) => {
         console.error('AI call failed:', error);
@@ -186,92 +188,88 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     }
   }
 
-  private parseAiResponseForTags(response: string): string {
-    const loginTagRegex = /\[\[LOGIN, LASTNAME:\"([^\"]+)\",PASSPORT:\"([^\"]+)\"\]\]/;
-    const memoryTagRegex = /\[\[MEMORY:\"([^\"]+)\"\]\]/g;
-    const reportTagRegex = /\[\[REPORT\]\]/; 
-
-    let modifiedResponse = response;
-    let loginProcessed = false;
-    let reportTriggered = false; // New flag for report
-
-    // 1. Handle LOGIN tag (existing logic)
-    const loginMatch = modifiedResponse.match(loginTagRegex);
-    if (loginMatch) {
-      const lastName = loginMatch[1];
-      const passportNumber = loginMatch[2];
-      this.authService.login(lastName, passportNumber).subscribe({
-        next: (success) => {
-          if (success) {
-            this.userId = localStorage.getItem('user_id');
-            this.agencyId = localStorage.getItem('agency_id');
-            this.setInitialSystemPrompt();
-            // Clear the "logout conversation" and load the user's chat history.
-            this.messages = [];
-            this.loadChatHistory();
-            this.loadEmployeeMemories(); // Reload memories after login
-          } else {
-            const loginFailMessage: ChatMessage = { role: 'assistant', content: 'Account does not exist, please double check if input is correct.' };
-            this.messages.push(loginFailMessage);
-            this.saveMessageToDb(loginFailMessage);
+    private parseAiResponseForTags(response: string): { response: string, tagProcessed: boolean } {
+      const loginTagRegex = /\[\[LOGIN, LASTNAME:\"([^\"]+)\",PASSPORT:\"([^\"]+)\"\]\]/;
+      const memoryTagRegex = /\[\[MEMORY:\"([^\"]+)\"\]\]/g;
+      const reportTagRegex = /\[\[REPORT\]\]/;
+  
+      let modifiedResponse = response;
+      let loginProcessed = false;
+      let reportTriggered = false; // New flag for report
+  
+      // 1. Handle LOGIN tag (existing logic)
+      const loginMatch = modifiedResponse.match(loginTagRegex);
+      if (loginMatch) {
+        const lastName = loginMatch[1];
+        const passportNumber = loginMatch[2];
+        this.authService.login(lastName, passportNumber).subscribe({
+          next: (success) => {
+            if (success) {
+              this.userId = localStorage.getItem('user_id');
+              this.agencyId = localStorage.getItem('agency_id');
+              this.setInitialSystemPrompt();
+              // Clear the "logout conversation" and load the user's chat history.
+              this.messages = [];
+              this.loadChatHistory();
+              this.loadEmployeeMemories(); // Reload memories after login
+            } else {
+              const loginFailMessage: ChatMessage = { role: 'assistant', content: 'Account does not exist, please double check if input is correct.' };
+              this.messages.push(loginFailMessage);
+              this.saveMessageToDb(loginFailMessage);
+            }
+          },
+          error: (error) => {
+            console.error('Login failed:', error);
+            const loginErrorMessage: ChatMessage = { role: 'assistant', content: 'An error occurred during login. Please try again later.' };
+            this.messages.push(loginErrorMessage);
+            this.saveMessageToDb(loginErrorMessage);
           }
-        },
-        error: (error) => {
-          console.error('Login failed:', error);
-          const loginErrorMessage: ChatMessage = { role: 'assistant', content: 'An error occurred during login. Please try again later.' };
-          this.messages.push(loginErrorMessage);
-          this.saveMessageToDb(loginErrorMessage);
+        });
+        modifiedResponse = modifiedResponse.replace(loginTagRegex, '').trim();
+        loginProcessed = true;
+      }
+  
+      // 2. Handle MEMORY tag (existing logic)
+      let memoryMatch;
+      let responseWithoutMemoryTags = modifiedResponse;
+      while ((memoryMatch = memoryTagRegex.exec(modifiedResponse)) !== null) {
+        const memoryContent = memoryMatch[1];
+        if (this.userId) { // Only save memory if user is authenticated
+          this.databaseService.saveEmployeeMemory(parseInt(this.userId, 10), memoryContent)
+            .subscribe({
+              next: () => {
+                console.log('Memory saved successfully: ', memoryContent);
+                this.employeeMemories.push(memoryContent); // Add to local memories
+              },
+              error: (err) => console.error('Failed to save memory:', err)
+            });
+        } else {
+          console.warn('Attempted to save memory for unauthenticated user:', memoryContent);
         }
-      });
-      modifiedResponse = modifiedResponse.replace(loginTagRegex, '').trim();
-      loginProcessed = true;
-    }
-
-    // 2. Handle MEMORY tag (existing logic)
-    let memoryMatch;
-    let responseWithoutMemoryTags = modifiedResponse;
-    while ((memoryMatch = memoryTagRegex.exec(modifiedResponse)) !== null) {
-      const memoryContent = memoryMatch[1];
-      if (this.userId) { // Only save memory if user is authenticated
-        this.databaseService.saveEmployeeMemory(parseInt(this.userId, 10), memoryContent)
-          .subscribe({
-            next: () => {
-              console.log('Memory saved successfully: ', memoryContent);
-              this.employeeMemories.push(memoryContent); // Add to local memories
-            },
-            error: (err) => console.error('Failed to save memory:', err)
-          });
-      } else {
-        console.warn('Attempted to save memory for unauthenticated user:', memoryContent);
+        responseWithoutMemoryTags = responseWithoutMemoryTags.replace(memoryMatch[0], '').trim();
       }
-      responseWithoutMemoryTags = responseWithoutMemoryTags.replace(memoryMatch[0], '').trim();
-    }
-    modifiedResponse = responseWithoutMemoryTags; // Update modifiedResponse after memory processing
-
-    // 3. Handle REPORT tag (NEW LOGIC)
-    const reportMatch = modifiedResponse.match(reportTagRegex);
-    if (reportMatch) {
-      reportTriggered = true;
-      modifiedResponse = modifiedResponse.replace(reportTagRegex, '').trim();
-      if (this.userId) {
-        this.handleReportTag();
-      } else {
-        console.warn('[[REPORT]] tag detected for unauthenticated user. Ignoring.');
-        const unauthReportMessage: ChatMessage = { role: 'assistant', content: 'Please log in to file a report.' };
-        this.messages.push(unauthReportMessage);
-        this.saveMessageToDb(unauthReportMessage);
+      modifiedResponse = responseWithoutMemoryTags; // Update modifiedResponse after memory processing
+  
+      // 3. Handle REPORT tag (NEW LOGIC)
+      const reportMatch = modifiedResponse.match(reportTagRegex);
+      if (reportMatch) {
+        reportTriggered = true;
+        modifiedResponse = modifiedResponse.replace(reportTagRegex, '').trim();
+        if (this.userId) {
+          this.handleReportTag();
+        } else {
+          console.warn('[[REPORT]] tag detected for unauthenticated user. Ignoring.');
+          const unauthReportMessage: ChatMessage = { role: 'assistant', content: 'Please log in to file a report.' };
+          this.messages.push(unauthReportMessage);
+          this.saveMessageToDb(unauthReportMessage);
+        }
       }
+  
+      return {
+        response: modifiedResponse,
+        tagProcessed: loginProcessed || reportTriggered
+      };
     }
-
-    // If a login was processed, we want to ensure the response is empty to reflect the state change in UI,
-    // otherwise, return the response without memory tags.
-    // If a report was triggered, we also want to ensure the response is empty, as the report service will add messages.
-    if (loginProcessed || reportTriggered) {
-        return '';
-    }
-    return modifiedResponse; // Return the response after all tags are processed
-  }
-
   private handleReportTag(): void {
     if (!this.userId || !this.agencyId) {
       console.error('handleReportTag called without a valid userId or agencyId.');

@@ -537,14 +537,16 @@ User's known characteristics: ${memoriesString}`;
     const aiPayload = [systemPromptForAi, ...historyForAi];
     this.aiService.callAi(aiPayload).subscribe({
       next: (response) => {
-        const processedResponse = this.parseAiResponseForTags(response);
+        const { response: processedResponse, tagProcessed } = this.parseAiResponseForTags(response);
         if (processedResponse) {
           const assistantMessage = { role: "assistant", content: processedResponse };
           this.messages.push(assistantMessage);
           this.saveMessageToDb(assistantMessage);
         }
-        this.isLoading = false;
-        this.currentStatusMessage = "Thinking...";
+        if (!tagProcessed) {
+          this.isLoading = false;
+          this.currentStatusMessage = "Thinking...";
+        }
       },
       error: (error) => {
         console.error("AI call failed:", error);
@@ -637,10 +639,10 @@ User's known characteristics: ${memoriesString}`;
         this.saveMessageToDb(unauthReportMessage);
       }
     }
-    if (loginProcessed || reportTriggered) {
-      return "";
-    }
-    return modifiedResponse;
+    return {
+      response: modifiedResponse,
+      tagProcessed: loginProcessed || reportTriggered
+    };
   }
   handleReportTag() {
     if (!this.userId || !this.agencyId) {

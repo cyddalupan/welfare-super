@@ -18,35 +18,23 @@ export class CaseService {
 
   async getCases(): Promise<Case[]> {
     const response: any = await firstValueFrom(this.db.query(GET_CASES));
-    if (response && response.data) {
-      return response.data.map((caseData: any) => {
-        caseData.employee_name = `${caseData.first_name} ${caseData.last_name}`;
-        return caseData as Case;
-      });
-    }
-    return [];
+    return (response && response.data) ? response.data as Case[] : [];
   }
 
   async getCaseById(id: number): Promise<Case | null> {
     const res: any = await firstValueFrom(this.db.query(GET_CASE_BY_ID, [id]));
-    // The query returns first_name and last_name separately, combine them for employee_name
-    if (res && res.data && res.data.length > 0) {
-      const caseData = res.data[0] as Case;
-      caseData.employee_name = `${res.data[0].first_name} ${res.data[0].last_name}`;
-      return caseData;
-    }
-    return null;
+    return (res && res.data && res.data.length > 0) ? res.data[0] as Case : null;
   }
 
-  async createCase(caseData: Omit<Case, 'id' | 'date_reported' | 'updated_date' | 'employee_name'>): Promise<any> {
+  async createCase(caseData: Omit<Case, 'id' | 'date_reported' | 'updated_date'>): Promise<any> {
     const params = this.mapCaseToParams(caseData);
-    // CREATE_CASE expects: employee_id, category, report, report_status, agency_id
+    // CREATE_CASE query already sets date_reported and updated_date to NOW()
     return firstValueFrom(this.db.query(CREATE_CASE, params));
   }
 
   async updateCase(caseData: Case): Promise<any> {
     const params = this.mapCaseToParams(caseData);
-    // UPDATE_CASE expects: employee_id, category, report, report_status, agency_id, id
+    // UPDATE_CASE query already sets updated_date to NOW()
     return firstValueFrom(this.db.query(UPDATE_CASE, [...params, caseData.id]));
   }
 
@@ -55,6 +43,9 @@ export class CaseService {
   }
 
   private mapCaseToParams(caseData: Partial<Case>): any[] {
+    // The order of parameters must match the CREATE_CASE and UPDATE_CASE queries
+    // CREATE_CASE: employee_id, category, report, report_status, agency_id
+    // UPDATE_CASE: employee_id, category, report, report_status, agency_id, id
     return [
       caseData.employee_id || null,
       caseData.category || '',
