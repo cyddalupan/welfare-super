@@ -17,7 +17,8 @@ export class EmployeeService {
   private db = inject(DatabaseService);
 
   async getEmployees(): Promise<Employee[]> {
-    return await firstValueFrom(this.db.query(GET_EMPLOYEES)) as Employee[];
+    const response: any = await firstValueFrom(this.db.query(GET_EMPLOYEES));
+    return (response && response.data) ? response.data as Employee[] : [];
   }
 
   async getEmployeeById(id: number): Promise<Employee | null> {
