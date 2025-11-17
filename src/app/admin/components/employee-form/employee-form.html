@@ -1,4 +1,4 @@
-<div class="container mx-auto text-white">
+<div class="w-full h-full bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-8 text-white">
   <h1 class="text-3xl font-bold mb-6">{{ isEditMode ? 'Edit' : 'Create' }} Employee</h1>
 
   <form (ngSubmit)="saveEmployee()" #employeeForm="ngForm">
@@ -8,27 +8,27 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="form-group">
           <label for="first_name">First Name</label>
-          <input type="text" id="first_name" name="first_name" [(ngModel)]="employee.first_name" required>
+          <input type="text" id="first_name" name="first_name" [(ngModel)]="employee.first_name" required class="text-gray-800">
         </div>
         <div class="form-group">
           <label for="middle_name">Middle Name</label>
-          <input type="text" id="middle_name" name="middle_name" [(ngModel)]="employee.middle_name">
+          <input type="text" id="middle_name" name="middle_name" [(ngModel)]="employee.middle_name" class="text-gray-800">
         </div>
         <div class="form-group">
           <label for="last_name">Last Name</label>
-          <input type="text" id="last_name" name="last_name" [(ngModel)]="employee.last_name" required>
+          <input type="text" id="last_name" name="last_name" [(ngModel)]="employee.last_name" required class="text-gray-800">
         </div>
         <div class="form-group">
           <label for="passport_number">Passport Number</label>
-          <input type="text" id="passport_number" name="passport_number" [(ngModel)]="employee.passport_number">
+          <input type="text" id="passport_number" name="passport_number" [(ngModel)]="employee.passport_number" class="text-gray-800">
         </div>
         <div class="form-group">
           <label for="date_of_birth">Date of Birth</label>
-          <input type="date" id="date_of_birth" name="date_of_birth" [(ngModel)]="employee.date_of_birth">
+          <input type="date" id="date_of_birth" name="date_of_birth" [(ngModel)]="employee.date_of_birth" class="text-gray-800">
         </div>
         <div class="form-group">
           <label for="country">Country</label>
-          <input type="text" id="country" name="country" [(ngModel)]="employee.country">
+          <input type="text" id="country" name="country" [(ngModel)]="employee.country" class="text-gray-800">
         </div>
       </div>
     </div>
@@ -39,23 +39,23 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" [(ngModel)]="employee.email">
+          <input type="email" id="email" name="email" [(ngModel)]="employee.email" class="text-gray-800">
         </div>
         <div class="form-group">
           <label for="phone_number">Phone Number</label>
-          <input type="text" id="phone_number" name="phone_number" [(ngModel)]="employee.phone_number">
+          <input type="text" id="phone_number" name="phone_number" [(ngModel)]="employee.phone_number" class="text-gray-800">
         </div>
         <div class="form-group">
           <label for="whatsapp">WhatsApp</label>
-          <input type="text" id="whatsapp" name="whatsapp" [(ngModel)]="employee.whatsapp">
+          <input type="text" id="whatsapp" name="whatsapp" [(ngModel)]="employee.whatsapp" class="text-gray-800">
         </div>
         <div class="form-group">
           <label for="facebook">Facebook URL</label>
-          <input type="url" id="facebook" name="facebook" [(ngModel)]="employee.facebook">
+          <input type="url" id="facebook" name="facebook" [(ngModel)]="employee.facebook" class="text-gray-800">
         </div>
         <div class="form-group md:col-span-2">
           <label for="address">Address</label>
-          <textarea id="address" name="address" [(ngModel)]="employee.address" rows="3"></textarea>
+          <textarea id="address" name="address" [(ngModel)]="employee.address" rows="3" class="text-gray-800"></textarea>
         </div>
       </div>
     </div>
@@ -66,7 +66,7 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="form-group">
           <label for="main_status">Main Status</label>
-          <select id="main_status" name="main_status" [(ngModel)]="employee.main_status">
+          <select id="main_status" name="main_status" [(ngModel)]="employee.main_status" class="text-gray-800">
             <option>active</option>
             <option>with_complain</option>
             <option>inactive</option>
@@ -74,14 +74,14 @@
         </div>
         <div class="form-group">
           <label for="applicant_type">Applicant Type</label>
-          <select id="applicant_type" name="applicant_type" [(ngModel)]="employee.applicant_type">
+          <select id="applicant_type" name="applicant_type" [(ngModel)]="employee.applicant_type" class="text-gray-800">
             <option>household</option>
             <option>skilled</option>
           </select>
         </div>
         <div class="form-group">
           <label for="date_deployment">Deployment Date</label>
-          <input type="date" id="date_deployment" name="date_deployment" [(ngModel)]="employee.date_deployment">
+          <input type="date" id="date_deployment" name="date_deployment" [(ngModel)]="employee.date_deployment" class="text-gray-800">
         </div>
       </div>
     </div>
