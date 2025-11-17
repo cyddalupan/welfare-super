@@ -558,13 +558,11 @@ User's known characteristics: ${memoriesString}`;
           this.saveMessageToDb(assistantMessage);
           console.log("Assistant message added:", assistantMessage);
         }
+        this.isLoading = false;
+        this.currentStatusMessage = "Thinking...";
         if (assistantMessage) {
           console.log("Triggering follow-up AI.");
           this.triggerFollowUpAi(userMessage, assistantMessage);
-        } else {
-          console.log("No assistant message to review, setting isLoading to false.");
-          this.isLoading = false;
-          this.currentStatusMessage = "Thinking...";
         }
       },
       error: (error) => {
@@ -710,13 +708,9 @@ User's known characteristics: ${memoriesString}`;
           this.messages.push(followUpMessage);
           this.saveMessageToDb(followUpMessage);
         }
-        this.isLoading = false;
-        this.currentStatusMessage = "Thinking...";
       },
       error: (error) => {
         console.error("Follow-up AI call failed:", error);
-        this.isLoading = false;
-        this.currentStatusMessage = "Thinking...";
       }
     });
   }
@@ -882,7 +876,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-ATZSBSHE.js").then((m) => m.ADMIN_ROUTES)
+    loadChildren: () => import("./chunk-CCPBQGLL.js").then((m) => m.ADMIN_ROUTES)
   }
 ];
 

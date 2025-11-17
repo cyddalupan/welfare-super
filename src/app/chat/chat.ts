@@ -164,17 +164,14 @@ export class ChatComponent implements AfterViewChecked, OnInit {
           console.log('Assistant message added:', assistantMessage);
         }
 
-        // Always trigger follow-up if there was an assistant message (even if it was just tags that got removed)
-        // The follow-up AI will decide if there's anything to review.
+        // Set isLoading to false and reset status message after the initial AI response is processed
+        this.isLoading = false;
+        this.currentStatusMessage = 'Thinking...';
+
+        // Then, trigger follow-up if an assistant message was generated
         if (assistantMessage) {
           console.log('Triggering follow-up AI.');
           this.triggerFollowUpAi(userMessage, assistantMessage);
-        } else {
-          console.log('No assistant message to review, setting isLoading to false.');
-          // If no assistant message was generated (e.g., only login/report tags and no text),
-          // then we can set isLoading to false directly.
-          this.isLoading = false;
-          this.currentStatusMessage = 'Thinking...';
         }
       },
       error: (error) => {
@@ -344,14 +341,10 @@ export class ChatComponent implements AfterViewChecked, OnInit {
           this.messages.push(followUpMessage);
           this.saveMessageToDb(followUpMessage);
         }
-        this.isLoading = false; // Final step, set isLoading to false
-        this.currentStatusMessage = 'Thinking...';
       },
       error: (error) => {
         console.error('Follow-up AI call failed:', error);
         // Optionally display an error message for the follow-up AI
-        this.isLoading = false; // Ensure isLoading is false on error
-        this.currentStatusMessage = 'Thinking...';
       }
     });
   }
