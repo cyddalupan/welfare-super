@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -14,6 +14,7 @@ import { EmployeeService } from '../../services/employee.service';
 })
 export class EmployeeListComponent implements OnInit {
   private employeeService = inject(EmployeeService);
+  private cdr = inject(ChangeDetectorRef);
 
   allEmployees: Employee[] = [];
   filteredEmployees: Employee[] = [];
@@ -22,17 +23,14 @@ export class EmployeeListComponent implements OnInit {
   private sortDirection: { [key: string]: 'asc' | 'desc' } = {};
 
   ngOnInit(): void {
-    console.log('EmployeeListComponent ngOnInit called');
     this.loadEmployees();
   }
 
   async loadEmployees(): Promise<void> {
-    console.log('loadEmployees method started');
     try {
       this.allEmployees = await this.employeeService.getEmployees();
       this.filteredEmployees = [...this.allEmployees];
-      console.log('All Employees:', this.allEmployees);
-      console.log('Filtered Employees:', this.filteredEmployees);
+      this.cdr.detectChanges(); // Manually trigger change detection
     } catch (error) {
       console.error('Error loading employees:', error);
     }
