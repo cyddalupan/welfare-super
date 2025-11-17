@@ -1,0 +1,48 @@
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  color: #D1D5DB; /* text-gray-300 */
+}
+
+.form-field {
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-width: 0;
+  border-bottom-width: 2px;
+  border-color: rgba(255, 255, 255, 0.3);
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  padding: 0.625rem;
+  color: white;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.form-field::placeholder {
+  color: #9CA3AF; /* placeholder-gray-400 */
+}
+
+.form-field:focus {
+  outline: none;
+  --tw-ring-shadow: 0 0 #0000; /* focus:ring-0 */
+  border-color: #60A5FA; /* focus:border-blue-400 */
+}
+
+/* Special handling for select options and date picker */
+.form-field option {
+  background-color: #1F2937; /* bg-gray-800 */
+  color: white;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}

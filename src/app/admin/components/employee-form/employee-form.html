@@ -1,87 +1,87 @@
-<div class="w-full h-full bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-8 text-white border border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)]">
+<div class="glass-card w-full p-8">
   <h1 class="text-3xl font-bold mb-6">{{ isEditMode ? 'Edit' : 'Create' }} Employee</h1>
 
   <form (ngSubmit)="saveEmployee()" #employeeForm="ngForm">
     <!-- Personal Information -->
-    <div class="bg-black/30 backdrop-blur-xl rounded-lg shadow-lg p-6 mb-6">
+    <div class="mb-8">
       <h2 class="text-xl font-semibold mb-4 border-b border-white/20 pb-2">Personal Information</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6">
         <div class="form-group">
-          <label for="first_name">First Name</label>
-          <input type="text" id="first_name" name="first_name" [(ngModel)]="employee.first_name" required class="text-gray-800">
+          <label for="first_name" class="form-label">First Name</label>
+          <input type="text" id="first_name" name="first_name" [(ngModel)]="employee.first_name" required class="form-field">
         </div>
         <div class="form-group">
-          <label for="middle_name">Middle Name</label>
-          <input type="text" id="middle_name" name="middle_name" [(ngModel)]="employee.middle_name" class="text-gray-800">
+          <label for="middle_name" class="form-label">Middle Name</label>
+          <input type="text" id="middle_name" name="middle_name" [(ngModel)]="employee.middle_name" class="form-field">
         </div>
         <div class="form-group">
-          <label for="last_name">Last Name</label>
-          <input type="text" id="last_name" name="last_name" [(ngModel)]="employee.last_name" required class="text-gray-800">
+          <label for="last_name" class="form-label">Last Name</label>
+          <input type="text" id="last_name" name="last_name" [(ngModel)]="employee.last_name" required class="form-field">
         </div>
         <div class="form-group">
-          <label for="passport_number">Passport Number</label>
-          <input type="text" id="passport_number" name="passport_number" [(ngModel)]="employee.passport_number" class="text-gray-800">
+          <label for="passport_number" class="form-label">Passport Number</label>
+          <input type="text" id="passport_number" name="passport_number" [(ngModel)]="employee.passport_number" class="form-field">
         </div>
         <div class="form-group">
-          <label for="date_of_birth">Date of Birth</label>
-          <input type="date" id="date_of_birth" name="date_of_birth" [(ngModel)]="employee.date_of_birth" class="text-gray-800">
+          <label for="date_of_birth" class="form-label">Date of Birth</label>
+          <input type="date" id="date_of_birth" name="date_of_birth" [(ngModel)]="employee.date_of_birth" class="form-field">
         </div>
         <div class="form-group">
-          <label for="country">Country</label>
-          <input type="text" id="country" name="country" [(ngModel)]="employee.country" class="text-gray-800">
+          <label for="country" class="form-label">Country</label>
+          <input type="text" id="country" name="country" [(ngModel)]="employee.country" class="form-field">
         </div>
       </div>
     </div>
 
     <!-- Contact Details -->
-    <div class="bg-black/30 backdrop-blur-xl rounded-lg shadow-lg p-6 mb-6">
+    <div class="mb-8">
       <h2 class="text-xl font-semibold mb-4 border-b border-white/20 pb-2">Contact Details</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
         <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" [(ngModel)]="employee.email" class="text-gray-800">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" id="email" name="email" [(ngModel)]="employee.email" class="form-field">
         </div>
         <div class="form-group">
-          <label for="phone_number">Phone Number</label>
-          <input type="text" id="phone_number" name="phone_number" [(ngModel)]="employee.phone_number" class="text-gray-800">
+          <label for="phone_number" class="form-label">Phone Number</label>
+          <input type="text" id="phone_number" name="phone_number" [(ngModel)]="employee.phone_number" class="form-field">
         </div>
         <div class="form-group">
-          <label for="whatsapp">WhatsApp</label>
-          <input type="text" id="whatsapp" name="whatsapp" [(ngModel)]="employee.whatsapp" class="text-gray-800">
+          <label for="whatsapp" class="form-label">WhatsApp</label>
+          <input type="text" id="whatsapp" name="whatsapp" [(ngModel)]="employee.whatsapp" class="form-field">
         </div>
         <div class="form-group">
-          <label for="facebook">Facebook URL</label>
-          <input type="url" id="facebook" name="facebook" [(ngModel)]="employee.facebook" class="text-gray-800">
+          <label for="facebook" class="form-label">Facebook URL</label>
+          <input type="url" id="facebook" name="facebook" [(ngModel)]="employee.facebook" class="form-field">
         </div>
         <div class="form-group md:col-span-2">
-          <label for="address">Address</label>
-          <textarea id="address" name="address" [(ngModel)]="employee.address" rows="3" class="text-gray-800"></textarea>
+          <label for="address" class="form-label">Address</label>
+          <textarea id="address" name="address" [(ngModel)]="employee.address" rows="3" class="form-field"></textarea>
         </div>
       </div>
     </div>
 
     <!-- Employment Details -->
-    <div class="bg-black/30 backdrop-blur-xl rounded-lg shadow-lg p-6 mb-6">
+    <div class="mb-8">
       <h2 class="text-xl font-semibold mb-4 border-b border-white/20 pb-2">Employment Details</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6">
         <div class="form-group">
-          <label for="main_status">Main Status</label>
-          <select id="main_status" name="main_status" [(ngModel)]="employee.main_status" class="text-gray-800">
+          <label for="main_status" class="form-label">Main Status</label>
+          <select id="main_status" name="main_status" [(ngModel)]="employee.main_status" class="form-field">
             <option>active</option>
             <option>with_complain</option>
             <option>inactive</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="applicant_type">Applicant Type</label>
-          <select id="applicant_type" name="applicant_type" [(ngModel)]="employee.applicant_type" class="text-gray-800">
+          <label for="applicant_type" class="form-label">Applicant Type</label>
+          <select id="applicant_type" name="applicant_type" [(ngModel)]="employee.applicant_type" class="form-field">
             <option>household</option>
             <option>skilled</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="date_deployment">Deployment Date</label>
-          <input type="date" id="date_deployment" name="date_deployment" [(ngModel)]="employee.date_deployment" class="text-gray-800">
+          <label for="date_deployment" class="form-label">Deployment Date</label>
+          <input type="date" id="date_deployment" name="date_deployment" [(ngModel)]="employee.date_deployment" class="form-field">
         </div>
       </div>
     </div>

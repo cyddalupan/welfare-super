@@ -40,15 +40,31 @@ export class EmployeeService {
     return firstValueFrom(this.db.query(DELETE_EMPLOYEE, [id]));
   }
 
-  private mapEmployeeToParams(employee: Omit<Employee, 'id'> | Employee): any[] {
+  private mapEmployeeToParams(employee: Partial<Employee>): any[] {
     return [
-      employee.first_name, employee.middle_name, employee.last_name, employee.passport_number,
-      employee.date_of_birth, employee.address, employee.phone_number, employee.email,
-      employee.is_support, employee.token, employee.user_id, employee.date_deployment,
-      employee.fra_id, employee.main_status, employee.applicant_type,
-      employee.created_date_of_report, employee.country, employee.facebook, employee.whatsapp,
-      employee.consistency_percentage, employee.agency_id, employee.emergency_contact_name,
-      employee.emergency_contact_phone
+      employee.first_name || null,
+      employee.middle_name || null,
+      employee.last_name || null,
+      employee.passport_number || null,
+      employee.date_of_birth || null,
+      employee.address || null,
+      employee.phone_number || null,
+      employee.email || null,
+      employee.is_support || false, // Assuming default should be false for a boolean
+      employee.token || null,
+      employee.user_id || null,
+      employee.date_deployment || null,
+      employee.fra_id || null,
+      employee.main_status || null,
+      employee.applicant_type || null,
+      employee.created_date_of_report || null,
+      employee.country || null,
+      employee.facebook || null,
+      employee.whatsapp || null,
+      employee.consistency_percentage || null,
+      employee.agency_id || null,
+      employee.emergency_contact_name || null,
+      employee.emergency_contact_phone || null
     ];
   }
 }
