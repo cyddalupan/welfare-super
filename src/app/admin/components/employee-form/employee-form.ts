@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -16,6 +16,7 @@ export class EmployeeFormComponent implements OnInit {
   private employeeService = inject(EmployeeService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef); // Inject ChangeDetectorRef
 
   employee: Partial<Employee> = {};
   isEditMode = false;
@@ -35,6 +36,7 @@ export class EmployeeFormComponent implements OnInit {
       const data = await this.employeeService.getEmployeeById(id);
       if (data) {
         this.employee = data;
+        this.cdr.detectChanges(); // Manually trigger change detection
       } else {
         // Handle case where employee is not found
         this.router.navigate(['/admin/employees']);
