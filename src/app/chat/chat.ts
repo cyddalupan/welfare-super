@@ -123,7 +123,9 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   }
 
   sendMessage(): void {
+    console.log('sendMessage called.');
     if (this.newMessage.trim() === '') {
+      console.log('New message is empty, returning.');
       return;
     }
 
@@ -149,21 +151,30 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     const historyForAi = this.messages.slice(-10);
     const aiPayload: ChatMessage[] = [systemPromptForAi, ...historyForAi];
 
+    console.log('Calling initial AI with payload:', aiPayload);
     this.aiService.callAi(aiPayload).subscribe({
       next: (response: string) => {
+        console.log('Initial AI response received:', response);
         const { response: processedResponse, tagProcessed } = this.parseAiResponseForTags(response);
         let assistantMessage: ChatMessage | null = null;
         if (processedResponse) {
           assistantMessage = { role: 'assistant', content: processedResponse };
           this.messages.push(assistantMessage);
           this.saveMessageToDb(assistantMessage);
+          console.log('Assistant message added:', assistantMessage);
         }
 
-        if (!tagProcessed && assistantMessage) { // Only trigger follow-up if no tags were processed and there's an assistant message
+        // Always trigger follow-up if there was an assistant message (even if it was just tags that got removed)
+        // The follow-up AI will decide if there's anything to review.
+        if (assistantMessage) {
+          console.log('Triggering follow-up AI.');
           this.triggerFollowUpAi(userMessage, assistantMessage);
         } else {
+          console.log('No assistant message to review, setting isLoading to false.');
+          // If no assistant message was generated (e.g., only login/report tags and no text),
+          // then we can set isLoading to false directly.
           this.isLoading = false;
-          this.currentStatusMessage = 'Thinking...'; // Reset status message
+          this.currentStatusMessage = 'Thinking...';
         }
       },
       error: (error) => {
@@ -171,7 +182,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
         const errorMessage: ChatMessage = { role: 'assistant', content: 'Error: Could not get a response from the AI.' };
         this.messages.push(errorMessage);
         this.saveMessageToDb(errorMessage);
-        this.isLoading = false;
+        this.isLoading = false; // Ensure isLoading is false on error
         this.currentStatusMessage = 'Thinking...'; // Reset status message
       }
     });
@@ -193,8 +204,8 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   }
 
     private parseAiResponseForTags(response: string): { response: string, tagProcessed: boolean } {
-      const loginTagRegex = /\[\[LOGIN, LASTNAME:\"([^\"]+)\",PASSPORT:\"([^\"]+)\"\]\]/;
-      const memoryTagRegex = /\[\[MEMORY:\"([^\"]+)\"\]\]/g;
+      const loginTagRegex = /\[\[LOGIN, LASTNAME:"([^"]+)",PASSPORT:"([^"]+)"\]\]/;
+      const memoryTagRegex = /\[\[MEMORY:"([^"]+)"\]\]/g;
       const reportTagRegex = /\[\[REPORT\]\]/;
   
       let modifiedResponse = response;
@@ -307,8 +318,8 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   }
 
   private triggerFollowUpAi(userMessage: ChatMessage, assistantMessage: ChatMessage): void {
-    this.isLoading = true;
-    this.currentStatusMessage = 'Reviewing AI response...';
+    console.log('triggerFollowUpAi called with userMessage:', userMessage, 'and assistantMessage:', assistantMessage);
+    this.currentStatusMessage = 'Reviewing AI response...'; // Update status to reflect follow-up
 
     const systemPromptForFollowUp: ChatMessage = { role: 'system', content: SYSTEM_PROMPT_FOLLOWUP_ASSISTANT };
     const followUpPayload: ChatMessage[] = [
@@ -317,27 +328,30 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       assistantMessage
     ];
 
+    console.log('Calling follow-up AI with payload:', followUpPayload);
     this.aiService.callAi(followUpPayload).subscribe({
       next: (response: string) => {
+        console.log('Follow-up AI response received:', response);
         const doneTagRegex = /\[\[DONE\]\]/;
         const doneMatch = response.match(doneTagRegex);
 
         if (doneMatch) {
-          console.log('Follow-up AI: Previous response was satisfactory.');
+          console.log('Follow-up AI: Previous response was satisfactory. [[DONE]] tag detected.');
           // No message to display, just complete the loading
         } else {
+          console.log('Follow-up AI: Corrective message received.');
           // If no [[DONE]] tag, it's a corrective message
           const followUpMessage: ChatMessage = { role: 'assistant', content: response.trim() };
           this.messages.push(followUpMessage);
           this.saveMessageToDb(followUpMessage);
         }
-        this.isLoading = false;
+        this.isLoading = false; // Final step, set isLoading to false
         this.currentStatusMessage = 'Thinking...';
       },
       error: (error) => {
         console.error('Follow-up AI call failed:', error);
         // Optionally display an error message for the follow-up AI
-        this.isLoading = false;
+        this.isLoading = false; // Ensure isLoading is false on error
         this.currentStatusMessage = 'Thinking...';
       }
     });

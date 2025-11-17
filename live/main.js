@@ -525,7 +525,9 @@ var ChatComponent = class _ChatComponent {
     }
   }
   sendMessage() {
+    console.log("sendMessage called.");
     if (this.newMessage.trim() === "") {
+      console.log("New message is empty, returning.");
       return;
     }
     this.isLoading = true;
@@ -544,18 +546,23 @@ User's known characteristics: ${memoriesString}`;
     const systemPromptForAi = { role: "system", content: currentSystemPromptContent };
     const historyForAi = this.messages.slice(-10);
     const aiPayload = [systemPromptForAi, ...historyForAi];
+    console.log("Calling initial AI with payload:", aiPayload);
     this.aiService.callAi(aiPayload).subscribe({
       next: (response) => {
+        console.log("Initial AI response received:", response);
         const { response: processedResponse, tagProcessed } = this.parseAiResponseForTags(response);
         let assistantMessage = null;
         if (processedResponse) {
           assistantMessage = { role: "assistant", content: processedResponse };
           this.messages.push(assistantMessage);
           this.saveMessageToDb(assistantMessage);
+          console.log("Assistant message added:", assistantMessage);
         }
-        if (!tagProcessed && assistantMessage) {
+        if (assistantMessage) {
+          console.log("Triggering follow-up AI.");
           this.triggerFollowUpAi(userMessage, assistantMessage);
         } else {
+          console.log("No assistant message to review, setting isLoading to false.");
           this.isLoading = false;
           this.currentStatusMessage = "Thinking...";
         }
@@ -585,8 +592,8 @@ User's known characteristics: ${memoriesString}`;
     }
   }
   parseAiResponseForTags(response) {
-    const loginTagRegex = /\[\[LOGIN, LASTNAME:\"([^\"]+)\",PASSPORT:\"([^\"]+)\"\]\]/;
-    const memoryTagRegex = /\[\[MEMORY:\"([^\"]+)\"\]\]/g;
+    const loginTagRegex = /\[\[LOGIN, LASTNAME:"([^"]+)",PASSPORT:"([^"]+)"\]\]/;
+    const memoryTagRegex = /\[\[MEMORY:"([^"]+)"\]\]/g;
     const reportTagRegex = /\[\[REPORT\]\]/;
     let modifiedResponse = response;
     let loginProcessed = false;
@@ -682,7 +689,7 @@ User's known characteristics: ${memoriesString}`;
     });
   }
   triggerFollowUpAi(userMessage, assistantMessage) {
-    this.isLoading = true;
+    console.log("triggerFollowUpAi called with userMessage:", userMessage, "and assistantMessage:", assistantMessage);
     this.currentStatusMessage = "Reviewing AI response...";
     const systemPromptForFollowUp = { role: "system", content: SYSTEM_PROMPT_FOLLOWUP_ASSISTANT };
     const followUpPayload = [
@@ -690,13 +697,16 @@ User's known characteristics: ${memoriesString}`;
       userMessage,
       assistantMessage
     ];
+    console.log("Calling follow-up AI with payload:", followUpPayload);
     this.aiService.callAi(followUpPayload).subscribe({
       next: (response) => {
+        console.log("Follow-up AI response received:", response);
         const doneTagRegex = /\[\[DONE\]\]/;
         const doneMatch = response.match(doneTagRegex);
         if (doneMatch) {
-          console.log("Follow-up AI: Previous response was satisfactory.");
+          console.log("Follow-up AI: Previous response was satisfactory. [[DONE]] tag detected.");
         } else {
+          console.log("Follow-up AI: Corrective message received.");
           const followUpMessage = { role: "assistant", content: response.trim() };
           this.messages.push(followUpMessage);
           this.saveMessageToDb(followUpMessage);

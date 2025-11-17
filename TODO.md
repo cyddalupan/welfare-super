@@ -2,8 +2,7 @@
 
 TODO:
 - status history save*
-- status in sidebar*
-- change all employee text to applicant
+- fix report always triggered
 - make thinking algo
     - or think after replying
         - [[Done]] of its good
