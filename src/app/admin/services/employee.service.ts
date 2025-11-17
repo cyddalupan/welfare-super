@@ -50,7 +50,7 @@ export class EmployeeService {
       employee.address || null,
       employee.phone_number || null,
       employee.email || null,
-      employee.is_support || false, // Assuming default should be false for a boolean
+      (employee.is_support ? 1 : 0),
       employee.token || null,
       employee.user_id || null,
       employee.date_deployment || null,
