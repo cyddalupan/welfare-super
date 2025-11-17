@@ -21,16 +21,20 @@ export class AdminLoginComponent {
 
   async login(): Promise<void> {
     this.errorMessage = '';
+    console.log('Attempting login for:', this.email); // DEBUG
     try {
       const success = await this.authService.login(this.email, this.password);
+      console.log('AuthService.login returned success:', success); // DEBUG
       if (success) {
+        console.log('Login successful, navigating to dashboard.'); // DEBUG
         this.router.navigate(['/admin/dashboard']);
       } else {
         this.errorMessage = 'Invalid email or password.';
+        console.log('Login failed, error message set:', this.errorMessage); // DEBUG
       }
     } catch (error) {
       this.errorMessage = 'An unexpected error occurred. Please try again.';
-      console.error('Login error:', error);
+      console.error('Login error in AdminLoginComponent:', error); // DEBUG
     }
   }
 }
