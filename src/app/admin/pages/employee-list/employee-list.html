@@ -49,6 +49,7 @@
             </span>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <a href="https://welfare.reviewcenterphil.com/api/history.php?app_id={{ emp.id }}" target="_blank" class="text-blue-400 hover:text-blue-300 mr-4">History</a>
             <a [routerLink]="['/admin/employees/edit', emp.id]" class="text-indigo-400 hover:text-indigo-300 mr-4">Edit</a>
             <button (click)="deleteEmployee(emp.id)" class="text-red-400 hover:text-red-300">Delete</button>
           </td>
