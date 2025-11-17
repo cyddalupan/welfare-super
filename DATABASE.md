@@ -218,3 +218,19 @@ Manages live support tickets/sessions.
 | `last_message` | `TextField` | The last message in the conversation before support was triggered. |
 | `is_open` | `BooleanField` | True if the support ticket is currently open. |
 | `created_date` | `DateTimeField` | Timestamp when the support session was initiated. |
+
+---
+
+## `attachments` App
+
+### `attachments_attachment` Table
+Stores information about attachments.
+
+| Column | Type | Description |
+|---|---|---|
+| `id` | `int` | Primary Key |
+| `applicant_id` | `int` | Links to the `employee_employee` table. |
+| `remarks` | `TextField` | Remarks about the attachment. |
+| `attachment` | `CharField(100)` | File path or identifier of the attachment. |
+| `created_at` | `DateTimeField` | Timestamp of creation. |
+| `status` | `CharField(200)` | Current status of the attachment. |

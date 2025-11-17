@@ -22,8 +22,8 @@ export class EmployeeService {
   }
 
   async getEmployeeById(id: number): Promise<Employee | null> {
-    const res = await firstValueFrom(this.db.query(GET_EMPLOYEE_BY_ID, [id])) as Employee[];
-    return res?.[0] ?? null;
+    const res: any = await firstValueFrom(this.db.query(GET_EMPLOYEE_BY_ID, [id]));
+    return (res && res.data && res.data.length > 0) ? res.data[0] as Employee : null;
   }
 
   async createEmployee(employee: Omit<Employee, 'id'>): Promise<any> {
