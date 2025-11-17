@@ -34,6 +34,7 @@ export class EmployeeFormComponent implements OnInit {
 
   async loadEmployeeData(id: number): Promise<void> {
     this.isLoading = true; // Set loading to true
+    this.cdr.detectChanges(); // Force change detection to show loading indicator immediately
     try {
       const data = await this.employeeService.getEmployeeById(id);
       if (data) {
@@ -47,6 +48,7 @@ export class EmployeeFormComponent implements OnInit {
       console.error('Error loading employee data:', error);
     } finally {
       this.isLoading = false; // Set loading to false
+      this.cdr.detectChanges(); // Force change detection to hide loading indicator immediately
     }
   }
 

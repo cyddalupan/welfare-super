@@ -1,9 +1,10 @@
 # TODO
 
 TODO:
-- loading
-- status history save
+- loading*
+- status history save*
 - status in sidebar
+- change all employee text to applicant
 - make thinking algo
     - or think after replying
         - [[Done]] of its good

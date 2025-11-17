@@ -29,6 +29,7 @@ export class EmployeeListComponent implements OnInit {
 
   async loadEmployees(): Promise<void> {
     this.isLoading = true; // Set loading to true
+    this.cdr.detectChanges(); // Force change detection to show loading indicator immediately
     try {
       this.allEmployees = await this.employeeService.getEmployees();
       this.filteredEmployees = [...this.allEmployees];
@@ -37,6 +38,7 @@ export class EmployeeListComponent implements OnInit {
       console.error('Error loading employees:', error);
     } finally {
       this.isLoading = false; // Set loading to false
+      this.cdr.detectChanges(); // Force change detection to hide loading indicator immediately
     }
   }
 

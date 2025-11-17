@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,6 +18,7 @@ export class CaseFormComponent implements OnInit {
   private employeeService = inject(EmployeeService);
   private route = inject(ActivatedRoute);
   public router = inject(Router);
+  private cdr = inject(ChangeDetectorRef); // Inject ChangeDetectorRef
 
   caseItem: Partial<Case> = {
     report_status: 'open' // Default status
@@ -28,6 +29,7 @@ export class CaseFormComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.isLoading = true; // Set loading to true at the start
+    this.cdr.detectChanges(); // Force change detection to show loading indicator immediately
     try {
       await this.loadEmployees(); // Ensure employees are loaded first
       this.route.paramMap.subscribe(async params => { // Use async here for await loadCase
@@ -37,10 +39,12 @@ export class CaseFormComponent implements OnInit {
           await this.loadCase(+id); // Await loadCase
         }
         this.isLoading = false; // Set loading to false after everything is loaded
+        this.cdr.detectChanges(); // Force change detection to hide loading indicator immediately
       });
     } catch (error) {
       console.error('Error during initialization:', error);
       this.isLoading = false; // Ensure loading is false on error
+      this.cdr.detectChanges(); // Force change detection on error
     }
   }
 

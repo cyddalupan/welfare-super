@@ -29,6 +29,7 @@ export class CaseListComponent implements OnInit {
 
   async loadCases(): Promise<void> {
     this.isLoading = true; // Set loading to true
+    this.cdr.detectChanges(); // Force change detection to show loading indicator immediately
     try {
       this.allCases = await this.caseService.getCases();
       this.filteredCases = [...this.allCases];
@@ -37,6 +38,7 @@ export class CaseListComponent implements OnInit {
       console.error('Error loading cases:', error);
     } finally {
       this.isLoading = false; // Set loading to false
+      this.cdr.detectChanges(); // Force change detection to hide loading indicator immediately
     }
   }
 
