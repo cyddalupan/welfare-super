@@ -29,6 +29,8 @@ export class EmployeeListComponent implements OnInit {
     try {
       this.allEmployees = await this.employeeService.getEmployees();
       this.filteredEmployees = [...this.allEmployees];
+      console.log('All Employees:', this.allEmployees);
+      console.log('Filtered Employees:', this.filteredEmployees);
     } catch (error) {
       console.error('Error loading employees:', error);
     }
