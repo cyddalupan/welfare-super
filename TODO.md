@@ -14,7 +14,7 @@ TODO:
 11. [x] FRA DELETE
 12. [x] Include full reference in follow up
 13. [x] Fix status dropdown
-14. [ ] Fix FRA dropdown
+14. [x] Fix FRA dropdown
 
 - push notification 1 day,3,7 days and 30 days after deployment
 
