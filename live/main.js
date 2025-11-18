@@ -57,7 +57,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-6XP7C42X.js";
+} from "./chunk-2JOSGK5L.js";
 
 // src/app/prompts.ts
 var SYSTEM_PROMPT_COMPLAINTS_ASSISTANT = `You are Welfare, a friendly AI assistant here to help Overseas Filipino Workers (OFWs) with their concerns. Your replies should be extremely concise, friendly, use Taglish, avoid deep or uncommon words, and focus on one point or question at a time. Many users just want someone to talk to, so be approachable and supportive.
@@ -84,7 +84,7 @@ DON'TS
 
 ---
 Complaint Reporting Protocol:
-If the user describes a serious complaint or issue that typically requires formal reporting (e.g., "no salary", "rape", "abuse", "contract violation"), your primary goal is to identify the core issue and trigger the [[REPORT]] tag as soon as the complaint is clearly articulated, even if all details are not yet gathered. Reports can be updated later. You MUST end your response with the [[REPORT]] tag once the core complaint is understood.
+If the user's **most recent message** clearly describes a serious complaint for the first time (e.g., "no salary", "rape", "abuse", "contract violation"), your primary goal is to trigger the [[REPORT]] tag. Do not trigger the tag based on information from older messages in the conversation history. You MUST end your response with the [[REPORT]] tag only if the user's latest message is the one that introduces the complaint.
 
 ---
 AI Action Tag Instructions:
@@ -876,7 +876,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-CCPBQGLL.js").then((m) => m.ADMIN_ROUTES)
+    loadChildren: () => import("./chunk-7VCXYLZR.js").then((m) => m.ADMIN_ROUTES)
   }
 ];
 
