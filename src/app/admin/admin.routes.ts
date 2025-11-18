@@ -7,6 +7,8 @@ import { ApplicantListComponent } from './pages/applicant-list/applicant-list';
 import { ApplicantFormComponent } from './components/applicant-form/applicant-form';
 import { CaseListComponent } from './pages/case-list/case-list';
 import { CaseFormComponent } from './pages/case-form/case-form';
+import { FraListComponent } from './pages/fra-list/fra-list'; // Import FraListComponent
+import { FraFormComponent } from './components/fra-form/fra-form'; // Import FraFormComponent
 
 export const ADMIN_ROUTES: Routes = [
   {
@@ -26,6 +28,9 @@ export const ADMIN_ROUTES: Routes = [
       { path: 'cases', component: CaseListComponent },
       { path: 'cases/new', component: CaseFormComponent },
       { path: 'cases/edit/:id', component: CaseFormComponent },
+      { path: 'fras', component: FraListComponent }, // New route for FRA list
+      { path: 'fras/new', component: FraFormComponent }, // New route for adding FRA
+      { path: 'fras/edit/:id', component: FraFormComponent }, // New route for editing FRA
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

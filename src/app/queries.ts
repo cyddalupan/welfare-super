@@ -29,6 +29,21 @@ export const UPDATE_APPLICANT = `
 `;
 export const DELETE_APPLICANT = 'DELETE FROM employee_employee WHERE id = ?';
 
+// FRA CRUD Queries
+export const GET_FRAS = 'SELECT id, name, contact, address, country, agency_id FROM fra_fra ORDER BY name';
+export const GET_FRA_BY_ID = 'SELECT * FROM fra_fra WHERE id = ?';
+export const CREATE_FRA = `
+  INSERT INTO fra_fra (
+    name, contact, address, country, agency_id
+  ) VALUES (?, ?, ?, ?, ?)
+`;
+export const UPDATE_FRA = `
+  UPDATE fra_fra SET
+    name = ?, contact = ?, address = ?, country = ?, agency_id = ?
+  WHERE id = ?
+`;
+export const DELETE_FRA = 'DELETE FROM fra_fra WHERE id = ?';
+
 export const GET_APPLICANT_STATUSES = 'SELECT DISTINCT main_status FROM employee_employee WHERE main_status IS NOT NULL AND main_status != "" ORDER BY main_status';
 
 

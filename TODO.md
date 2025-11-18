@@ -1,13 +1,13 @@
 # TODO
 
 TODO:
-1. [ ] Clean Report Creation
+1. [x] Clean Report Creation
 2. [ ] ionic convert - Full Code Change
 3. [ ] ionic convert - clean chat design
 4. [ ] ionic convert - clean admin dashboard design
 5. [ ] ionic convert - clean admin applicant design
 6. [ ] ionic convert - clean admin reports design
-7. [ ] iFrame dashboard page
+7. [x] iFrame dashboard page
 8. [ ] FRA READ
 9. [ ] FRA ADD
 10. [ ] FRA EDIT

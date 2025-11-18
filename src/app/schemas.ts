@@ -58,6 +58,15 @@ export interface ChatMessage {
   content: string;
 }
 
+export interface Fra {
+  id: number;
+  name: string;
+  contact: string;
+  address: string;
+  country: string;
+  agency_id: number;
+}
+
 export const APPLICANT_TABLE_SCHEMA = `
 Table: applicant
 Columns:
