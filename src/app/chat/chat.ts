@@ -6,7 +6,7 @@ import { AuthService } from '../auth.service'; // Import AuthService
 import { DatabaseService } from '../database.service'; // Import DatabaseService
 import { CaseService } from '../case.service'; // Import CaseService
 import { ChatMessage } from '../schemas'; // Import ChatMessage interface
-import { SYSTEM_PROMPT_COMPLAINTS_ASSISTANT, SYSTEM_PROMPT_LOGIN_ASSISTANT } from '../prompts'; // Import the system prompts
+import { SYSTEM_PROMPT_COMPLAINTS_ASSISTANT, SYSTEM_PROMPT_LOGIN_ASSISTANT, SYSTEM_PROMPT_FOLLOWUP_ASSISTANT } from '../prompts'; // Import the system prompts
 
 const MAX_TEXTAREA_HEIGHT = 150;
 
@@ -323,6 +323,8 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       const memoriesString = this.employeeMemories.map(memory => `"${memory}"`).join(', ');
       currentSystemPromptContent += `\n\nUser's known characteristics: ${memoriesString}`;
     }
+    // Append the specific follow-up assistant prompt
+    currentSystemPromptContent += `\n\n${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
     const systemPromptForAi: ChatMessage = { role: 'system', content: currentSystemPromptContent };
 
     // Send the same context as the initial AI call: system prompt (with memories) + last 10 messages
