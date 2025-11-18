@@ -1,0 +1,196 @@
+[16-Nov-2025 22:53:55 America/Chicago] PHP Warning:  Undefined array key "passport_number " in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 83
+[16-Nov-2025 22:57:06 America/Chicago] PHP Warning:  Undefined array key "applicant_id" in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 35
+[16-Nov-2025 22:57:06 America/Chicago] PHP Deprecated:  mysqli_real_escape_string(): Passing null to parameter #2 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 35
+[16-Nov-2025 22:57:06 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 185
+[16-Nov-2025 22:57:06 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 185
+[16-Nov-2025 22:57:06 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 185
+[16-Nov-2025 22:57:06 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 185
+[16-Nov-2025 22:57:06 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 185
+[16-Nov-2025 22:57:06 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 185
+[16-Nov-2025 22:57:06 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 186
+[16-Nov-2025 22:57:06 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 186
+[16-Nov-2025 22:57:06 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 187
+[16-Nov-2025 22:57:06 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 187
+[16-Nov-2025 22:57:06 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 188
+[16-Nov-2025 22:57:06 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 188
+[16-Nov-2025 22:57:06 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 189
+[16-Nov-2025 22:57:06 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 189
+[16-Nov-2025 22:57:06 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 190
+[16-Nov-2025 22:57:06 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 190
+[16-Nov-2025 22:57:06 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 191
+[16-Nov-2025 22:57:06 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 191
+[16-Nov-2025 22:57:06 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 191
+[16-Nov-2025 22:57:06 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 191
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Undefined array key "applicant_id" in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 35
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  mysqli_real_escape_string(): Passing null to parameter #2 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 35
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 194
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 194
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 194
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 194
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 194
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 194
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 195
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 195
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 196
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 196
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 197
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 197
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 198
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 198
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 199
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 199
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 200
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 200
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 200
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 200
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Undefined array key "applicant_id" in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 244
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  mysqli_real_escape_string(): Passing null to parameter #2 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 244
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 409
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 409
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 409
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 409
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 409
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 409
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 410
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 410
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 411
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 411
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 412
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 412
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 413
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 413
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 414
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 414
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 415
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 415
+[16-Nov-2025 22:59:52 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 415
+[16-Nov-2025 22:59:52 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 415
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Undefined array key "applicant_id" in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 35
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  mysqli_real_escape_string(): Passing null to parameter #2 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 35
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 194
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 194
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 194
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 194
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 194
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 194
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 195
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 195
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 196
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 196
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 197
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 197
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 198
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 198
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 199
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 199
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 200
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 200
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 200
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 200
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Undefined array key "applicant_id" in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 244
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  mysqli_real_escape_string(): Passing null to parameter #2 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 244
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 409
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 409
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 409
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 409
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 409
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 409
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 410
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 410
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 411
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 411
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 412
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 412
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 413
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 413
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 414
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 414
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 415
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 415
+[16-Nov-2025 22:59:55 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 415
+[16-Nov-2025 22:59:55 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 415
+[16-Nov-2025 23:03:11 America/Chicago] PHP Warning:  Undefined array key "applicant_id" in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 35
+[16-Nov-2025 23:03:11 America/Chicago] PHP Deprecated:  mysqli_real_escape_string(): Passing null to parameter #2 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 35
+[16-Nov-2025 23:03:11 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 200
+[16-Nov-2025 23:03:11 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 200
+[16-Nov-2025 23:03:11 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 200
+[16-Nov-2025 23:03:11 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 200
+[16-Nov-2025 23:03:11 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 200
+[16-Nov-2025 23:03:11 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 200
+[16-Nov-2025 23:03:11 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 201
+[16-Nov-2025 23:03:11 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 201
+[16-Nov-2025 23:03:11 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 202
+[16-Nov-2025 23:03:11 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 202
+[16-Nov-2025 23:03:11 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 203
+[16-Nov-2025 23:03:11 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 203
+[16-Nov-2025 23:03:11 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 204
+[16-Nov-2025 23:03:11 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 204
+[16-Nov-2025 23:03:11 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 205
+[16-Nov-2025 23:03:11 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 205
+[16-Nov-2025 23:03:11 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 206
+[16-Nov-2025 23:03:11 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 206
+[16-Nov-2025 23:03:11 America/Chicago] PHP Warning:  Trying to access array offset on value of type null in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 206
+[16-Nov-2025 23:03:11 America/Chicago] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 206
+[16-Nov-2025 23:15:16 America/Chicago] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'CONTINUE WORKING)' at line 2 in /home1/ztbsytte/public_html/welfare-super/live/api/history.php:29
+Stack trace:
+#0 /home1/ztbsytte/public_html/welfare-super/live/api/history.php(29): mysqli_query(Object(mysqli), 'INSERT INTO app...')
+#1 {main}
+  thrown in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 29
+[16-Nov-2025 23:16:05 America/Chicago] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'CONTINUE WORKING)' at line 2 in /home1/ztbsytte/public_html/welfare-super/live/api/history.php:29
+Stack trace:
+#0 /home1/ztbsytte/public_html/welfare-super/live/api/history.php(29): mysqli_query(Object(mysqli), 'INSERT INTO app...')
+#1 {main}
+  thrown in /home1/ztbsytte/public_html/welfare-super/live/api/history.php on line 29
+[17-Nov-2025 00:00:21 America/Chicago] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'email' doesn't have a default value in /home1/ztbsytte/public_html/welfare-super/live/api/registration.php:32
+Stack trace:
+#0 /home1/ztbsytte/public_html/welfare-super/live/api/registration.php(32): mysqli_query(Object(mysqli), 'INSERT INTO emp...')
+#1 {main}
+  thrown in /home1/ztbsytte/public_html/welfare-super/live/api/registration.php on line 32
+[17-Nov-2025 00:02:40 America/Chicago] PHP Fatal error:  Uncaught mysqli_sql_exception: Field 'token' doesn't have a default value in /home1/ztbsytte/public_html/welfare-super/live/api/registration.php:32
+Stack trace:
+#0 /home1/ztbsytte/public_html/welfare-super/live/api/registration.php(32): mysqli_query(Object(mysqli), 'INSERT INTO emp...')
+#1 {main}
+  thrown in /home1/ztbsytte/public_html/welfare-super/live/api/registration.php on line 32
+[17-Nov-2025 02:00:40 America/Chicago] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home1/ztbsytte/public_html/welfare-super/live/api/chat.php:3
+Stack trace:
+#0 /home1/ztbsytte/public_html/welfare-super/live/api/chat.php(3): mysqli_connect('localhost', 'root', Object(SensitiveParameterValue), 'your_database')
+#1 {main}
+  thrown in /home1/ztbsytte/public_html/welfare-super/live/api/chat.php on line 3
+[17-Nov-2025 02:00:43 America/Chicago] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home1/ztbsytte/public_html/welfare-super/live/api/chat.php:3
+Stack trace:
+#0 /home1/ztbsytte/public_html/welfare-super/live/api/chat.php(3): mysqli_connect('localhost', 'root', Object(SensitiveParameterValue), 'your_database')
+#1 {main}
+  thrown in /home1/ztbsytte/public_html/welfare-super/live/api/chat.php on line 3
+[17-Nov-2025 02:00:59 America/Chicago] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home1/ztbsytte/public_html/welfare-super/live/api/chat.php:3
+Stack trace:
+#0 /home1/ztbsytte/public_html/welfare-super/live/api/chat.php(3): mysqli_connect('localhost', 'root', Object(SensitiveParameterValue), 'your_database')
+#1 {main}
+  thrown in /home1/ztbsytte/public_html/welfare-super/live/api/chat.php on line 3
+[17-Nov-2025 02:13:00 America/Chicago] PHP Warning:  Undefined array key "sender" in /home1/ztbsytte/public_html/welfare-super/live/api/sum.php on line 75
+[17-Nov-2025 02:13:00 America/Chicago] PHP Deprecated:  strtolower(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/sum.php on line 75
+[17-Nov-2025 02:13:00 America/Chicago] PHP Warning:  Undefined array key "sender" in /home1/ztbsytte/public_html/welfare-super/live/api/sum.php on line 75
+[17-Nov-2025 02:13:00 America/Chicago] PHP Deprecated:  strtolower(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/sum.php on line 75
+[17-Nov-2025 02:15:05 America/Chicago] PHP Warning:  Undefined array key "sender" in /home1/ztbsytte/public_html/welfare-super/live/api/sum.php on line 91
+[17-Nov-2025 02:15:05 America/Chicago] PHP Deprecated:  strtolower(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/sum.php on line 91
+[17-Nov-2025 02:15:05 America/Chicago] PHP Warning:  Undefined array key "sender" in /home1/ztbsytte/public_html/welfare-super/live/api/sum.php on line 91
+[17-Nov-2025 02:15:05 America/Chicago] PHP Deprecated:  strtolower(): Passing null to parameter #1 ($string) of type string is deprecated in /home1/ztbsytte/public_html/welfare-super/live/api/sum.php on line 91
+[17-Nov-2025 22:09:45 America/Chicago] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'id' in 'order clause' in /home1/ztbsytte/public_html/welfare-super/live/api/dashboard.php:7
+Stack trace:
+#0 /home1/ztbsytte/public_html/welfare-super/live/api/dashboard.php(7): mysqli_query(Object(mysqli), 'SELECT status_n...')
+#1 {main}
+  thrown in /home1/ztbsytte/public_html/welfare-super/live/api/dashboard.php on line 7
+[17-Nov-2025 22:10:07 America/Chicago] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'AND main_status = ''' at line 4 in /home1/ztbsytte/public_html/welfare-super/live/api/dashboard.php:31
+Stack trace:
+#0 /home1/ztbsytte/public_html/welfare-super/live/api/dashboard.php(31): mysqli_query(Object(mysqli), '\r\n        SELEC...')
+#1 {main}
+  thrown in /home1/ztbsytte/public_html/welfare-super/live/api/dashboard.php on line 31
+[17-Nov-2025 22:11:13 America/Chicago] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'id' in 'order clause' in /home1/ztbsytte/public_html/welfare-super/live/api/dashboard.php:13
+Stack trace:
+#0 /home1/ztbsytte/public_html/welfare-super/live/api/dashboard.php(13): mysqli_query(Object(mysqli), 'SELECT status_n...')
+#1 {main}
+  thrown in /home1/ztbsytte/public_html/welfare-super/live/api/dashboard.php on line 13
+[17-Nov-2025 22:13:06 America/Chicago] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'date_deployed' in 'where clause' in /home1/ztbsytte/public_html/welfare-super/live/api/dashboard.php:31
+Stack trace:
+#0 /home1/ztbsytte/public_html/welfare-super/live/api/dashboard.php(31): mysqli_query(Object(mysqli), 'SELECT COUNT(*)...')
+#1 {main}
+  thrown in /home1/ztbsytte/public_html/welfare-super/live/api/dashboard.php on line 31
