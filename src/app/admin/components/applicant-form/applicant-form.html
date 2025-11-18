@@ -104,9 +104,8 @@
         <div class="form-group">
           <label for="main_status" class="form-label">Main Status</label>
           <select id="main_status" name="main_status" [(ngModel)]="applicant.main_status" class="form-field">
-            <option>active</option>
-            <option>with_complain</option>
-            <option>inactive</option>
+            <option value="">Select Status</option>
+            <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
           </select>
         </div>
         <div class="form-group">

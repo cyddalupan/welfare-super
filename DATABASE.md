@@ -244,3 +244,8 @@ remarks | text
 attachment | varchar(100)
 created_at | datetime
 status | varchar(200)
+
+## `status` Table
+
+status_id | int
+status_name | carchar(100)

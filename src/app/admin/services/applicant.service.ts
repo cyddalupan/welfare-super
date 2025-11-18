@@ -39,7 +39,7 @@ export class ApplicantService {
   async getStatuses(): Promise<string[]> {
     const res: any = await firstValueFrom(this.db.query(GET_APPLICANT_STATUSES));
     if (res && res.data && Array.isArray(res.data)) {
-      return res.data.map((item: any) => item.main_status);
+      return res.data.map((item: any) => item.status_name);
     }
     return [];
   }

@@ -57,7 +57,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-MVD66CYB.js";
+} from "./chunk-OPAAVTWJ.js";
 
 // src/app/prompts.ts
 var SYSTEM_PROMPT_COMPLAINTS_ASSISTANT = `You are Welfare, a friendly AI assistant here to help Overseas Filipino Workers (OFWs) with their concerns. Your replies should be extremely concise, friendly, use Taglish, avoid deep or uncommon words, and focus on one point or question at a time. Many users just want someone to talk to, so be approachable and supportive.
@@ -116,15 +116,6 @@ Chat History:
 {{EXISTING_REPORT_PLACEHOLDER}}
 `;
 var SYSTEM_PROMPT_LOGIN_ASSISTANT = `Your goal is to get the passport number and last name of the user to confirm the identity so you can help. take note that we already have the user data we only need to map them on the database to confirm identity so its safe to ask for passport number. In order to help in anything, we prioritize the user log in first. Once you have both the last name and passport number, respond with the exact format: [[LOGIN, LASTNAME:"<last_name>",PASSPORT:"<passport_number>"]]`;
-var SYSTEM_PROMPT_FOLLOWUP_ASSISTANT = `You are a helpful assistant whose sole purpose is to review the immediately preceding AI's response to the user. Your goal is to act as a "good cop" correcting a "bad cop" if the previous AI's response was unclear, had a typo, or could be improved with a gentle clarification, use Taglish, avoid deep or uncommon words.
-
-Instructions:
-1.  Analyze the last AI message in the conversation history.
-2.  If the last AI message is perfectly clear, concise, and appropriate, respond with the exact tag: [[DONE]].
-3.  If the last AI message could be improved, is slightly off-topic, contains a minor error, or needs a gentle clarification, provide a very short, polite, and helpful follow-up message. Examples: "Sorry for the typo.", "I meant to say...", "Apologies, I meant when did you last eat?", "To clarify, I was referring to...".
-4.  Your response should be extremely brief and only provide a correction or the [[DONE]] tag. Do not rephrase the entire previous message.
-5.  Do NOT generate any other action tags (like [[LOGIN]], [[MEMORY]], [[REPORT]]).
-`;
 
 // src/app/ai.service.ts
 var CryptoJS = __toESM(require_crypto_js());
@@ -688,12 +679,16 @@ User's known characteristics: ${memoriesString}`;
   }
   triggerFollowUpAi(userMessage, assistantMessage) {
     console.log("triggerFollowUpAi called with userMessage:", userMessage, "and assistantMessage:", assistantMessage);
-    const systemPromptForFollowUp = { role: "system", content: SYSTEM_PROMPT_FOLLOWUP_ASSISTANT };
-    const followUpPayload = [
-      systemPromptForFollowUp,
-      userMessage,
-      assistantMessage
-    ];
+    let currentSystemPromptContent = this.systemPrompt.content;
+    if (this.userId && this.employeeMemories && this.employeeMemories.length > 0) {
+      const memoriesString = this.employeeMemories.map((memory) => `"${memory}"`).join(", ");
+      currentSystemPromptContent += `
+
+User's known characteristics: ${memoriesString}`;
+    }
+    const systemPromptForAi = { role: "system", content: currentSystemPromptContent };
+    const historyForAi = this.messages.slice(-10);
+    const followUpPayload = [systemPromptForAi, ...historyForAi];
     console.log("Calling follow-up AI with payload:", followUpPayload);
     this.aiService.callAi(followUpPayload).subscribe({
       next: (response) => {
@@ -876,7 +871,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-TVZTAXL5.js").then((m) => m.ADMIN_ROUTES)
+    loadChildren: () => import("./chunk-5YPCKZIA.js").then((m) => m.ADMIN_ROUTES)
   }
 ];
 

@@ -22,13 +22,24 @@ export class ApplicantFormComponent implements OnInit {
   isEditMode = false;
   applicantId: number | null = null;
   isLoading = false; // Add loading state
+  statuses: string[] = []; // Add statuses property
 
   ngOnInit(): void {
+    this.loadStatuses(); // Load statuses when the component initializes
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEditMode = true;
       this.applicantId = +id;
       this.loadApplicantData(this.applicantId);
+    }
+  }
+
+  async loadStatuses(): Promise<void> {
+    try {
+      this.statuses = await this.applicantService.getStatuses();
+    } catch (error) {
+      console.error('Error loading statuses:', error);
     }
   }
 

@@ -6,7 +6,7 @@ import { AuthService } from '../auth.service'; // Import AuthService
 import { DatabaseService } from '../database.service'; // Import DatabaseService
 import { CaseService } from '../case.service'; // Import CaseService
 import { ChatMessage } from '../schemas'; // Import ChatMessage interface
-import { SYSTEM_PROMPT_COMPLAINTS_ASSISTANT, SYSTEM_PROMPT_LOGIN_ASSISTANT, SYSTEM_PROMPT_FOLLOWUP_ASSISTANT } from '../prompts'; // Import the system prompts
+import { SYSTEM_PROMPT_COMPLAINTS_ASSISTANT, SYSTEM_PROMPT_LOGIN_ASSISTANT } from '../prompts'; // Import the system prompts
 
 const MAX_TEXTAREA_HEIGHT = 150;
 
@@ -317,12 +317,17 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   private triggerFollowUpAi(userMessage: ChatMessage, assistantMessage: ChatMessage): void {
     console.log('triggerFollowUpAi called with userMessage:', userMessage, 'and assistantMessage:', assistantMessage);
 
-    const systemPromptForFollowUp: ChatMessage = { role: 'system', content: SYSTEM_PROMPT_FOLLOWUP_ASSISTANT };
-    const followUpPayload: ChatMessage[] = [
-      systemPromptForFollowUp,
-      userMessage,
-      assistantMessage
-    ];
+    // Replicate system prompt construction from sendMessage
+    let currentSystemPromptContent = this.systemPrompt.content;
+    if (this.userId && this.employeeMemories && this.employeeMemories.length > 0) {
+      const memoriesString = this.employeeMemories.map(memory => `"${memory}"`).join(', ');
+      currentSystemPromptContent += `\n\nUser's known characteristics: ${memoriesString}`;
+    }
+    const systemPromptForAi: ChatMessage = { role: 'system', content: currentSystemPromptContent };
+
+    // Send the same context as the initial AI call: system prompt (with memories) + last 10 messages
+    const historyForAi = this.messages.slice(-10);
+    const followUpPayload: ChatMessage[] = [systemPromptForAi, ...historyForAi];
 
     console.log('Calling follow-up AI with payload:', followUpPayload);
     this.aiService.callAi(followUpPayload).subscribe({

@@ -44,7 +44,7 @@ export const UPDATE_FRA = `
 `;
 export const DELETE_FRA = 'DELETE FROM fra_fra WHERE id = ?';
 
-export const GET_APPLICANT_STATUSES = 'SELECT DISTINCT main_status FROM employee_employee WHERE main_status IS NOT NULL AND main_status != "" ORDER BY main_status';
+export const GET_APPLICANT_STATUSES = 'SELECT status_name FROM status ORDER BY status_name';
 
 
 // Case CRUD Queries
