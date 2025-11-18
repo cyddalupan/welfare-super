@@ -8,10 +8,10 @@ TODO:
 5. [ ] ionic convert - clean admin applicant design
 6. [ ] ionic convert - clean admin reports design
 7. [x] iFrame dashboard page
-8. [ ] FRA READ
-9. [ ] FRA ADD
-10. [ ] FRA EDIT
-11. [ ] FRA DELETE
+8. [x] FRA READ
+9. [x] FRA ADD
+10. [x] FRA EDIT
+11. [x] FRA DELETE
 
 - push notification 1 day,3,7 days and 30 days after deployment
 
