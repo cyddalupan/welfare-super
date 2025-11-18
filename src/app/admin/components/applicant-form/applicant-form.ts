@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Applicant } from '../../../schemas';
 import { ApplicantService } from '../../services/applicant.service';
+import { FraService } from '../../services/fra.service';
+import { Fra } from '../../../schemas';
 
 @Component({
   selector: 'app-applicant-form',
@@ -14,6 +16,7 @@ import { ApplicantService } from '../../services/applicant.service';
 })
 export class ApplicantFormComponent implements OnInit {
   private applicantService = inject(ApplicantService);
+  private fraService = inject(FraService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef); // Inject ChangeDetectorRef
@@ -23,15 +26,25 @@ export class ApplicantFormComponent implements OnInit {
   applicantId: number | null = null;
   isLoading = false; // Add loading state
   statuses: string[] = []; // Add statuses property
+  fras: Fra[] = [];
 
   ngOnInit(): void {
     this.loadStatuses(); // Load statuses when the component initializes
+    this.loadFras();
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEditMode = true;
       this.applicantId = +id;
       this.loadApplicantData(this.applicantId);
+    }
+  }
+
+  async loadFras(): Promise<void> {
+    try {
+      this.fras = await this.fraService.getFras();
+    } catch (error) {
+      console.error('Error loading FRAs:', error);
     }
   }
 

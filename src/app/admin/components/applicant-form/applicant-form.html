@@ -116,6 +116,13 @@
           </select>
         </div>
         <div class="form-group">
+          <label for="fra_id" class="form-label">Foreign Recruitment Agency</label>
+          <select id="fra_id" name="fra_id" [(ngModel)]="applicant.fra_id" class="form-field">
+            <option [ngValue]="null">Select Agency</option>
+            <option *ngFor="let fra of fras" [value]="fra.id">{{ fra.name }}</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label for="date_deployment" class="form-label">Deployment Date</label>
           <input type="date" id="date_deployment" name="date_deployment" [(ngModel)]="applicant.date_deployment" class="form-field">
         </div>
