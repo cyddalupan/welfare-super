@@ -16,6 +16,59 @@
 @import "@ionic/angular/css/flex-utils.css";
 @import "@ionic/angular/css/display.css";
 
+/* Ionic Variables */
+:root {
+  /** primary (for user messages) **/
+  --ion-color-primary: #3880ff; /* Light blue for light mode */
+  --ion-color-primary-rgb: 56, 128, 255;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #3171e0;
+  --ion-color-primary-tint: #4c88ff;
+
+  /** success (for green reply bubbles) **/
+  --ion-color-success: #2dd36f; /* Green for light mode */
+  --ion-color-success-rgb: 45, 211, 111;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #28ba62;
+  --ion-color-success-tint: #42d77d;
+
+  /* default background and text colors */
+  --ion-background-color: #ffffff;
+  --ion-background-color-rgb: 255, 255, 255;
+  --ion-text-color: #000000;
+  --ion-text-color-rgb: 0, 0, 0;
+  --ion-color-step-300: #cccccc; /* for borders */
+}
+
+/* Dark mode overrides */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* primary - dark blue for user messages */
+    --ion-color-primary: #007bff; /* Darker blue for dark mode */
+    --ion-color-primary-rgb: 0, 123, 255;
+    --ion-color-primary-contrast: #ffffff;
+    --ion-color-primary-contrast-rgb: 255, 255, 255;
+    --ion-color-primary-shade: #0069d9;
+    --ion-color-primary-tint: #1a8bff;
+
+    /* success - dark green for reply bubbles */
+    --ion-color-success: #218838; /* Darker green for dark mode */
+    --ion-color-success-rgb: 33, 136, 56;
+    --ion-color-success-contrast: #ffffff;
+    --ion-color-success-contrast-rgb: 255, 255, 255;
+    --ion-color-success-shade: #1e7e34;
+    --ion-color-success-tint: #28a745;
+
+    /* dark mode background and text colors */
+    --ion-background-color: #121212;
+    --ion-background-color-rgb: 18, 18, 18;
+    --ion-text-color: #ffffff;
+    --ion-text-color-rgb: 255, 255, 255;
+    --ion-color-step-300: #424242; /* for borders */
+  }
+}
 
 body, html {
   height: 100%;
