@@ -2279,30 +2279,30 @@ sub {
 
 /* src/styles.css */
 :root {
-  --ion-color-primary: #3880ff;
+  --ion-color-primary: #0a70cf;
   --ion-color-primary-rgb:
-    56,
-    128,
-    255;
+    10,
+    112,
+    207;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb:
     255,
     255,
     255;
-  --ion-color-primary-shade: #3171e0;
-  --ion-color-primary-tint: #4c88ff;
-  --ion-color-success: #2dd36f;
+  --ion-color-primary-shade: #0963bb;
+  --ion-color-primary-tint: #237fc9;
+  --ion-color-success: #1e8b4e;
   --ion-color-success-rgb:
-    45,
-    211,
-    111;
+    30,
+    139,
+    78;
   --ion-color-success-contrast: #ffffff;
   --ion-color-success-contrast-rgb:
     255,
     255,
     255;
-  --ion-color-success-shade: #28ba62;
-  --ion-color-success-tint: #42d77d;
+  --ion-color-success-shade: #1a7b45;
+  --ion-color-success-tint: #34985c;
   --ion-background-color: #ffffff;
   --ion-background-color-rgb:
     255,
