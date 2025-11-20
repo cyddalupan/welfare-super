@@ -31561,7 +31561,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
       \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.chatContainer = _t.first);
       \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.messageInput = _t.first);
     }
-  }, decls: 16, vars: 5, consts: [["chatContainer", ""], ["messageInput", ""], [1, "glass-toolbar"], [1, "fas", "fa-hands-helping", "mr-2"], [1, "ion-padding", "custom-scrollbar"], ["class", "flex mb-4", 3, "justify-end", "justify-start", 4, "ngFor", "ngForOf"], ["class", "flex justify-center mb-4", 4, "ngIf"], [1, "flex", "items-center", "p-2"], ["rows", "1", "placeholder", "Type your message...", "autoGrow", "true", 1, "flex-1", "resize-none", "outline-none", "bg-gray-700", "text-white", "placeholder-gray-400", "p-2", "rounded-lg", "custom-scrollbar", 3, "ngModelChange", "ionInput", "keydown.enter", "ngModel", "disabled"], [1, "ml-2", 3, "click", "disabled"], ["name", "send"], [1, "flex", "mb-4"], [1, "p-3", "rounded-lg", "max-w-[70%]"], [1, "chat-message-content", 3, "innerHTML"], [1, "flex", "justify-center", "mb-4"], [1, "p-3", "rounded-lg", "max-w-xl", "flex", "items-center", "space-x-2", "text-white"], ["class", "animate-spin rounded-full h-4 w-4 border-b-2 border-white", 4, "ngIf"], [1, "animate-spin", "rounded-full", "h-4", "w-4", "border-b-2", "border-white"]], template: function ChatComponent_Template(rf, ctx) {
+  }, decls: 16, vars: 5, consts: [["chatContainer", ""], ["messageInput", ""], [1, "glass-toolbar"], [1, "fas", "fa-hands-helping", "mr-2"], [1, "ion-padding", "custom-scrollbar"], ["class", "flex mb-4", 3, "justify-end", "justify-start", 4, "ngFor", "ngForOf"], ["class", "flex justify-center mb-4", 4, "ngIf"], [1, "flex", "items-center", "p-2"], ["rows", "1", "placeholder", "Type your message...", "autoGrow", "true", 1, "flex-1", "resize-none", "outline-none", "bg-transparent", "placeholder-gray-400", "p-2", "rounded-lg", "custom-scrollbar", 3, "ngModelChange", "ionInput", "keydown.enter", "ngModel", "disabled"], [1, "ml-2", 3, "click", "disabled"], ["name", "send"], [1, "flex", "mb-4"], [1, "p-3", "rounded-lg", "max-w-[70%]"], [1, "chat-message-content", 3, "innerHTML"], [1, "flex", "justify-center", "mb-4"], [1, "p-3", "rounded-lg", "max-w-xl", "flex", "items-center", "space-x-2", "text-white"], ["class", "animate-spin rounded-full h-4 w-4 border-b-2 border-white", 4, "ngIf"], [1, "animate-spin", "rounded-full", "h-4", "w-4", "border-b-2", "border-white"]], template: function ChatComponent_Template(rf, ctx) {
     if (rf & 1) {
       const _r1 = \u0275\u0275getCurrentView();
       \u0275\u0275elementStart(0, "ion-header")(1, "ion-toolbar", 2)(2, "ion-title");
@@ -31643,7 +31643,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
       <ion-textarea
         #messageInput
         rows="1"
-        class="flex-1 resize-none outline-none bg-gray-700 text-white placeholder-gray-400 p-2 rounded-lg custom-scrollbar"
+        class="flex-1 resize-none outline-none bg-transparent placeholder-gray-400 p-2 rounded-lg custom-scrollbar"
         placeholder="Type your message..."
         [(ngModel)]="newMessage"
         (ionInput)="adjustTextareaHeight()"
