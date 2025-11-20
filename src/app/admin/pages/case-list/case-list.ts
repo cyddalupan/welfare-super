@@ -2,13 +2,14 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { IonicModule } from '@ionic/angular'; // <--- Added this import
 import { Case } from '../../../schemas';
 import { CaseService } from '../../services/case.service';
 
 @Component({
   selector: 'app-case-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, IonicModule], // <--- Added IonicModule here
   templateUrl: './case-list.html',
   styleUrl: './case-list.css',
 })

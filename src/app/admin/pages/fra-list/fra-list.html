@@ -1,55 +1,49 @@
-<div class="glass-card p-8 text-white rounded-xl">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold">Foreign Recruitment Agencies</h1>
-    <a routerLink="/admin/fras/new"
-       class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-300">
-      New FRA
-    </a>
-  </div>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Foreign Recruitment Agencies</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/admin/fras/new">
+        <ion-icon name="add-outline"></ion-icon>
+        New FRA
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
-  <div class="mb-4">
-    <input type="text" placeholder="Search FRAs..." [(ngModel)]="searchTerm" (ngModelChange)="filterFras()"
-           class="w-full px-4 py-2 bg-white/20 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800">
-  </div>
+<ion-content>
+  <ion-searchbar [(ngModel)]="searchTerm" (ionChange)="filterFras()" placeholder="Search FRAs..."></ion-searchbar>
 
-  <div *ngIf="isLoading" class="text-center py-8">
+  <div *ngIf="isLoading" class="ion-padding ion-text-center">
     <p>Loading FRAs...</p>
-    <!-- You can add a spinner icon here if Font Awesome is available -->
-    <i class="fas fa-spinner fa-spin text-4xl mt-4"></i>
+    <ion-spinner name="crescent"></ion-spinner>
   </div>
 
-  <div *ngIf="!isLoading" class="overflow-x-auto bg-black/30 backdrop-blur-xl rounded-lg shadow-lg">
-    <table class="min-w-full">
-      <thead>
-        <tr class="border-b border-white/20">
-          <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider cursor-pointer" (click)="sort('name')">
-            Name
-          </th>
-          <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider cursor-pointer" (click)="sort('contact')">
-            Contact
-          </th>
-          <th class="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider cursor-pointer" (click)="sort('country')">
-            Country
-          </th>
-          <th class="px-6 py-3 text-right text-sm font-medium uppercase tracking-wider">
-            Actions
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let fra of filteredFras" class="border-b border-white/10 hover:bg-white/5">
-          <td class="px-6 py-4 whitespace-nowrap">{{ fra.name }}</td>
-          <td class="px-6 py-4 whitespace-nowrap">{{ fra.contact }}</td>
-          <td class="px-6 py-4 whitespace-nowrap">{{ fra.country }}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-            <a [routerLink]="['/admin/fras/edit', fra.id]" class="text-indigo-400 hover:text-indigo-300 mr-4">Edit</a>
-            <button (click)="deleteFra(fra.id)" class="text-red-400 hover:text-red-300">Delete</button>
-          </td>
-        </tr>
-        <tr *ngIf="!filteredFras || filteredFras.length === 0">
-          <td colspan="4" class="text-center py-8">No FRAs found.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+  <ion-list *ngIf="!isLoading">
+    <ion-item-divider>
+      <ion-label (click)="sort('name')">Name <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
+      <ion-label (click)="sort('contact')">Contact <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
+      <ion-label (click)="sort('country')">Country <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
+      <ion-label class="ion-text-right">Actions</ion-label>
+    </ion-item-divider>
+
+    <ion-item *ngFor="let fra of filteredFras">
+      <ion-label>
+        <h2>{{ fra.name }}</h2>
+        <p>{{ fra.contact }}</p>
+        <p>{{ fra.country }}</p>
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-button [routerLink]="['/admin/fras/edit', fra.id]" fill="clear">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-button>
+        <ion-button (click)="deleteFra(fra.id)" fill="clear" color="danger">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+
+    <ion-item *ngIf="!filteredFras || filteredFras.length === 0">
+      <ion-label class="ion-text-center">No FRAs found.</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { IonicModule } from '@ionic/angular'; // <--- Added this import
 import { AuthService } from '../../services/auth.service';
 import { ApplicantService } from '../../services/applicant.service';
 import { CommonModule } from '@angular/common';
@@ -7,7 +8,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, IonicModule], // <--- Added IonicModule here
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',
 })

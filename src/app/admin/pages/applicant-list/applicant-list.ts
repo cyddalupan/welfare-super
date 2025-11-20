@@ -2,13 +2,14 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
+import { IonicModule } from '@ionic/angular'; // <--- Added this import
 import { Applicant } from '../../../schemas';
 import { ApplicantService } from '../../services/applicant.service';
 
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, IonicModule], // <--- Added IonicModule here
   templateUrl: './applicant-list.html',
   styleUrl: './applicant-list.css',
 })

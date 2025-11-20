@@ -2,13 +2,14 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { IonicModule } from '@ionic/angular'; // <--- Added this import
 import { Fra } from '../../../schemas';
 import { FraService } from '../../services/fra.service';
 
 @Component({
   selector: 'app-fra-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, IonicModule], // <--- Added IonicModule here
   templateUrl: './fra-list.html',
   styleUrl: './fra-list.css',
 })

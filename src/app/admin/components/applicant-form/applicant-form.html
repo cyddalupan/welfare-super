@@ -1,140 +1,132 @@
-<div class="glass-card w-full p-8 text-white">
-  <h1 class="text-3xl font-bold mb-6">{{ isEditMode ? 'Edit' : 'Create' }} Applicant</h1>
+<ion-content>
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/admin/applicants"></ion-back-button>
+      </ion-buttons>
+      <ion-title>{{ isEditMode ? 'Edit' : 'Create' }} Applicant</ion-title>
+    </ion-toolbar>
+  </ion-header>
 
-  <div *ngIf="isLoading" class="text-center py-8">
-    <p>Loading applicant data...</p>
-    <!-- You can add a spinner icon here if Font Awesome is available -->
-    <i class="fas fa-spinner fa-spin text-4xl mt-4"></i>
-  </div>
+  <ion-grid class="ion-padding">
+    <ion-row class="ion-justify-content-center">
+      <ion-col size-xl="8" size-lg="10" size-md="12" size-sm="12" size="12">
+        <ion-card>
+          <ion-card-content>
+            <div *ngIf="isLoading" class="ion-text-center ion-padding">
+              <p>Loading applicant data...</p>
+              <ion-spinner name="crescent"></ion-spinner>
+            </div>
 
-  <form *ngIf="!isLoading" (ngSubmit)="saveApplicant()" #applicantForm="ngForm">
-    <!-- Personal Information -->
-    <div class="mb-8">
-      <h2 class="text-xl font-semibold mb-4 border-b border-white/20 pb-2">Personal Information</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6">
-        <div class="form-group">
-          <label for="first_name" class="form-label">First Name</label>
-          <input type="text" id="first_name" name="first_name" [(ngModel)]="applicant.first_name" required class="form-field">
-        </div>
-        <div class="form-group">
-          <label for="middle_name" class="form-label">Middle Name</label>
-          <input type="text" id="middle_name" name="middle_name" [(ngModel)]="applicant.middle_name" class="form-field">
-        </div>
-        <div class="form-group">
-          <label for="last_name" class="form-label">Last Name</label>
-          <input type="text" id="last_name" name="last_name" [(ngModel)]="applicant.last_name" required class="form-field">
-        </div>
-        <div class="form-group">
-          <label for="passport_number" class="form-label">Passport Number</label>
-          <input type="text" id="passport_number" name="passport_number" [(ngModel)]="applicant.passport_number" class="form-field">
-        </div>
-        <div class="form-group">
-          <label for="date_of_birth" class="form-label">Date of Birth</label>
-          <input type="date" id="date_of_birth" name="date_of_birth" [(ngModel)]="applicant.date_of_birth" class="form-field">
-        </div>
-        <div class="form-group">
-          <label for="country" class="form-label">Country</label>
-          <select id="country" name="country" [(ngModel)]="applicant.country" class="form-field">
-            <option value="">Select Country</option>
-            <option value="US">United States</option>
-            <option value="CA">Canada</option>
-            <option value="MX">Mexico</option>
-            <option value="BR">Brazil</option>
-            <option value="GB">United Kingdom</option>
-            <option value="FR">France</option>
-            <option value="DE">Germany</option>
-            <option value="IT">Italy</option>
-            <option value="ES">Spain</option>
-            <option value="CN">China</option>
-            <option value="IN">India</option>
-            <option value="JP">Japan</option>
-            <option value="KR">South Korea</option>
-            <option value="AU">Australia</option>
-            <option value="NZ">New Zealand</option>
-            <option value="PH">Philippines</option>
-            <option value="SA">Saudi Arabia</option>
-            <option value="AE">United Arab Emirates</option>
-            <option value="QA">Qatar</option>
-            <option value="KW">Kuwait</option>
-            <option value="BH">Bahrain</option>
-            <option value="OM">Oman</option>
-            <option value="EG">Egypt</option>
-            <option value="JO">Jordan</option>
-            <option value="LB">Lebanon</option>
-            <option value="IQ">Iraq</option>
-            <option value="IR">Iran</option>
-            <option value="TR">Turkey</option>
-            <option value="IL">Israel</option>
-          </select>
-        </div>
-      </div>
-    </div>
+            <form *ngIf="!isLoading" (ngSubmit)="saveApplicant()" #applicantForm="ngForm">
+              <!-- Personal Information -->
+              <ion-card-title class="ion-padding-bottom">Personal Information</ion-card-title>
+              <ion-list lines="full">
+                <ion-item>
+                  <ion-input label="First Name" type="text" [(ngModel)]="applicant.first_name" name="first_name" required></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Middle Name" type="text" [(ngModel)]="applicant.middle_name" name="middle_name"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Last Name" type="text" [(ngModel)]="applicant.last_name" name="last_name" required></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Passport Number" type="text" [(ngModel)]="applicant.passport_number" name="passport_number"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Date of Birth" type="date" [(ngModel)]="applicant.date_of_birth" name="date_of_birth"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-select label="Country" [(ngModel)]="applicant.country" name="country">
+                    <ion-select-option value="">Select Country</ion-select-option>
+                    <ion-select-option value="US">United States</ion-select-option>
+                    <ion-select-option value="CA">Canada</ion-select-option>
+                    <ion-select-option value="MX">Mexico</ion-select-option>
+                    <ion-select-option value="BR">Brazil</ion-select-option>
+                    <ion-select-option value="GB">United Kingdom</ion-select-option>
+                    <ion-select-option value="FR">France</ion-select-option>
+                    <ion-select-option value="DE">Germany</ion-select-option>
+                    <ion-select-option value="IT">Italy</ion-select-option>
+                    <ion-select-option value="ES">Spain</ion-select-option>
+                    <ion-select-option value="CN">China</ion-select-option>
+                    <ion-select-option value="IN">India</ion-select-option>
+                    <ion-select-option value="JP">Japan</ion-select-option>
+                    <ion-select-option value="KR">South Korea</ion-select-option>
+                    <ion-select-option value="AU">Australia</ion-select-option>
+                    <ion-select-option value="NZ">New Zealand</ion-select-option>
+                    <ion-select-option value="PH">Philippines</ion-select-option>
+                    <ion-select-option value="SA">Saudi Arabia</ion-select-option>
+                    <ion-select-option value="AE">United Arab Emirates</ion-select-option>
+                    <ion-select-option value="QA">Qatar</ion-select-option>
+                    <ion-select-option value="KW">Kuwait</ion-select-option>
+                    <ion-select-option value="BH">Bahrain</ion-select-option>
+                    <ion-select-option value="OM">Oman</ion-select-option>
+                    <ion-select-option value="EG">Egypt</ion-select-option>
+                    <ion-select-option value="JO">Jordan</ion-select-option>
+                    <ion-select-option value="LB">Lebanon</ion-select-option>
+                    <ion-select-option value="IQ">Iraq</ion-select-option>
+                    <ion-select-option value="IR">Iran</ion-select-option>
+                    <ion-select-option value="TR">Turkey</ion-select-option>
+                    <ion-select-option value="IL">Israel</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-list>
 
-    <!-- Contact Details -->
-    <div class="mb-8">
-      <h2 class="text-xl font-semibold mb-4 border-b border-white/20 pb-2">Contact Details</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-        <div class="form-group">
-          <label for="email" class="form-label">Email</label>
-          <input type="email" id="email" name="email" [(ngModel)]="applicant.email" class="form-field">
-        </div>
-        <div class="form-group">
-          <label for="phone_number" class="form-label">Phone Number</label>
-          <input type="text" id="phone_number" name="phone_number" [(ngModel)]="applicant.phone_number" class="form-field">
-        </div>
-        <div class="form-group">
-          <label for="whatsapp" class="form-label">WhatsApp</label>
-          <input type="text" id="whatsapp" name="whatsapp" [(ngModel)]="applicant.whatsapp" class="form-field">
-        </div>
-        <div class="form-group">
-          <label for="facebook" class="form-label">Facebook URL</label>
-          <input type="url" id="facebook" name="facebook" [(ngModel)]="applicant.facebook" class="form-field">
-        </div>
-        <div class="form-group md:col-span-2">
-          <label for="address" class="form-label">Address</label>
-          <textarea id="address" name="address" [(ngModel)]="applicant.address" rows="3" class="form-field"></textarea>
-        </div>
-      </div>
-    </div>
+              <!-- Contact Details -->
+              <ion-card-title class="ion-padding-top ion-padding-bottom">Contact Details</ion-card-title>
+              <ion-list lines="full">
+                <ion-item>
+                  <ion-input label="Email" type="email" [(ngModel)]="applicant.email" name="email"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Phone Number" type="text" [(ngModel)]="applicant.phone_number" name="phone_number"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="WhatsApp" type="text" [(ngModel)]="applicant.whatsapp" name="whatsapp"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Facebook URL" type="url" [(ngModel)]="applicant.facebook" name="facebook"></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-textarea label="Address" rows="3" [(ngModel)]="applicant.address" name="address"></ion-textarea>
+                </ion-item>
+              </ion-list>
 
-    <!-- Employment Details -->
-    <div class="mb-8">
-      <h2 class="text-xl font-semibold mb-4 border-b border-white/20 pb-2">Employment Details</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6">
-        <div class="form-group">
-          <label for="main_status" class="form-label">Main Status</label>
-          <select id="main_status" name="main_status" [(ngModel)]="applicant.main_status" class="form-field">
-            <option value="">Select Status</option>
-            <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="applicant_type" class="form-label">Applicant Type</label>
-          <select id="applicant_type" name="applicant_type" [(ngModel)]="applicant.applicant_type" class="form-field">
-            <option>household</option>
-            <option>skilled</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="fra_id" class="form-label">Foreign Recruitment Agency</label>
-          <select id="fra_id" name="fra_id" [(ngModel)]="applicant.fra_id" class="form-field">
-            <option [ngValue]="null">Select Agency</option>
-            <option *ngFor="let fra of fras" [value]="fra.id">{{ fra.name }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="date_deployment" class="form-label">Deployment Date</label>
-          <input type="date" id="date_deployment" name="date_deployment" [(ngModel)]="applicant.date_deployment" class="form-field">
-        </div>
-      </div>
-    </div>
+              <!-- Employment Details -->
+              <ion-card-title class="ion-padding-top ion-padding-bottom">Employment Details</ion-card-title>
+              <ion-list lines="full">
+                <ion-item>
+                  <ion-select label="Main Status" [(ngModel)]="applicant.main_status" name="main_status">
+                    <ion-select-option value="">Select Status</ion-select-option>
+                    <ion-select-option *ngFor="let status of statuses" [value]="status">{{ status }}</ion-select-option>
+                  </ion-select>
+                </ion-item>
+                <ion-item>
+                  <ion-select label="Applicant Type" [(ngModel)]="applicant.applicant_type" name="applicant_type">
+                    <ion-select-option value="household">Household</ion-select-option>
+                    <ion-select-option value="skilled">Skilled</ion-select-option>
+                  </ion-select>
+                </ion-item>
+                <ion-item>
+                  <ion-select label="Foreign Recruitment Agency" [(ngModel)]="applicant.fra_id" name="fra_id">
+                    <ion-select-option [value]="null">Select Agency</ion-select-option>
+                    <ion-select-option *ngFor="let fra of fras" [value]="fra.id">{{ fra.name }}</ion-select-option>
+                  </ion-select>
+                </ion-item>
+                <ion-item>
+                  <ion-input label="Deployment Date" type="date" [(ngModel)]="applicant.date_deployment" name="date_deployment"></ion-input>
+                </ion-item>
+              </ion-list>
 
-    <div class="flex justify-end items-center mt-8">
-      <a routerLink="/admin/applicants" class="text-gray-300 hover:text-white mr-6">Cancel</a>
-      <button type="submit" [disabled]="!applicantForm.form.valid"
-              class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-md transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
-        Save
-      </button>
-    </div>
-  </form>
-</div>
+              <div class="ion-padding-top ion-text-right">
+                <ion-button fill="clear" routerLink="/admin/applicants">Cancel</ion-button>
+                <ion-button type="submit" [disabled]="!applicantForm.form.valid">Save</ion-button>
+              </div>
+            </form>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

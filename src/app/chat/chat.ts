@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular'; // <--- Added this import
 import { AiService } from '../ai.service'; // Import AiService
 import { AuthService } from '../auth.service'; // Import AuthService
 import { DatabaseService } from '../database.service'; // Import DatabaseService
@@ -13,7 +14,7 @@ const MAX_TEXTAREA_HEIGHT = 150;
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, IonicModule], // <--- Added IonicModule here
   templateUrl: './chat.html',
   styleUrls: ['./chat.css']
 })

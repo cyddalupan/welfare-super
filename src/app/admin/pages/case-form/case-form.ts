@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { IonicModule } from '@ionic/angular'; // <--- Added this import
 import { Case, Applicant } from '../../../schemas';
 import { CaseService } from '../../services/case.service';
 import { ApplicantService } from '../../services/applicant.service'; // To get applicants for dropdown
@@ -9,7 +10,7 @@ import { ApplicantService } from '../../services/applicant.service'; // To get a
 @Component({
   selector: 'app-case-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, IonicModule], // <--- Added IonicModule here
   templateUrl: './case-form.html',
   styleUrl: './case-form.css',
 })
