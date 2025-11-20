@@ -16,19 +16,20 @@ ion-header, ion-footer {
 
 ion-toolbar {
   --background: var(--ion-background-color); /* Use Ionic's background color for toolbars */
+  --color: var(--ion-text-color); /* Use Ionic's text color for toolbar content */
   --border-color: transparent;
   --min-height: 56px;
   padding: 0 10px;
-  color: var(--ion-text-color);
 }
 
-.glass-toolbar {
+/* Remove glass-toolbar as it's no longer needed for theming */
+/* .glass-toolbar {
   background: var(--ion-toolbar-background, var(--ion-background-color));
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--ion-color-step-150);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   color: var(--ion-text-color);
-}
+} */
 
 ion-content {
   --background: var(--ion-background-color);
