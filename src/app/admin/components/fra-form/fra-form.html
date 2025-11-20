@@ -42,14 +42,59 @@
 
     <div class="mb-4">
       <label for="country" class="block text-gray-700 text-sm font-bold mb-2">Country:</label>
-      <input
-        type="text"
+      <select
         id="country"
         name="country"
         [(ngModel)]="fra.country"
         required
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-      />
+      >
+        <option value="">Select Country</option>
+        <option value="US">United States</option>
+        <option value="CA">Canada</option>
+        <option value="MX">Mexico</option>
+        <option value="BR">Brazil</option>
+        <option value="GB">United Kingdom</option>
+        <option value="FR">France</option>
+        <option value="DE">Germany</option>
+        <option value="IT">Italy</option>
+        <option value="ES">Spain</option>
+        <option value="CN">China</option>
+        <option value="IN">India</option>
+        <option value="JP">Japan</option>
+        <option value="KR">South Korea</option>
+        <option value="AU">Australia</option>
+        <option value="NZ">New Zealand</option>
+        <option value="PH">Philippines</option>
+        <option value="SA">Saudi Arabia</option>
+        <option value="AE">United Arab Emirates</option>
+        <option value="QA">Qatar</option>
+        <option value="KW">Kuwait</option>
+        <option value="BH">Bahrain</option>
+        <option value="OM">Oman</option>
+        <option value="EG">Egypt</option>
+        <option value="JO">Jordan</option>
+        <option value="LB">Lebanon</option>
+        <option value="IQ">Iraq</option>
+        <option value="IR">Iran</option>
+        <option value="TR">Turkey</option>
+        <option value="IL">Israel</option>
+      </select>
+    </div>
+
+    <div class="mb-4">
+      <label for="applicant_id" class="block text-gray-700 text-sm font-bold mb-2">Applicant:</label>
+      <select
+        id="applicant_id"
+        name="applicant_id"
+        [(ngModel)]="fra.applicant_id"
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      >
+        <option [ngValue]="null">Select Applicant</option>
+        <option *ngFor="let applicant of applicants" [value]="applicant.id">
+          {{ applicant.first_name }} {{ applicant.last_name }}
+        </option>
+      </select>
     </div>
 
     <div class="mb-4">
