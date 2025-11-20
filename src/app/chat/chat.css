@@ -74,8 +74,8 @@ ion-content > div > div {
 
 /* Assistant message bubble */
 .assistant-message-bubble {
-  background: var(--ion-color-secondary); /* Use Ionic secondary color for assistant messages */
-  color: var(--ion-color-secondary-contrast); /* Contrast color for text */
+  background: var(--ion-color-light); /* Use Ionic light color for assistant messages */
+  color: var(--ion-color-dark); /* Ensure dark text for contrast on light background */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   border: 1px solid var(--ion-color-step-300); /* Add a subtle border */
   border-bottom-left-radius: 5px;
