@@ -1,21 +1,24 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Chat</ion-title>
+  <ion-toolbar class="glass-toolbar">
+    <ion-title>
+      <i class="fas fa-hands-helping mr-2"></i>Welfare
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content #chatContainer>
+<ion-content #chatContainer class="ion-padding custom-scrollbar">
   <!-- Chat messages will be rendered here dynamically -->
-  <div *ngFor="let message of messages" class="flex" [class.justify-end]="message.role === 'user'" [class.justify-start]="message.role === 'assistant'">
-    <div class="p-3 rounded-lg max-w-xl"
-         [class.user-message-bubble]="message.role === 'user'">
+<div *ngFor="let message of messages" class="flex mb-4" [class.justify-end]="message.role === 'user'" [class.justify-start]="message.role === 'assistant'">
+    <div class="p-3 rounded-lg max-w-[70%]"
+         [class.user-message-bubble]="message.role === 'user'"
+         [class.assistant-message-bubble]="message.role === 'assistant'">
       <div class="chat-message-content" [innerHTML]="message.content"></div>
     </div>
   </div>
 
   <!-- Status and Thinking Indicator -->
-  <div *ngIf="isLoading || currentStatusMessage !== 'Thinking...'" class="flex justify-center">
-    <div class="p-3 rounded-lg max-w-xl flex items-center space-x-2">
+  <div *ngIf="isLoading || currentStatusMessage !== 'Thinking...'" class="flex justify-center mb-4">
+    <div class="p-3 rounded-lg max-w-xl flex items-center space-x-2 text-white">
       <span>{{ currentStatusMessage }}</span>
       <span *ngIf="isLoading" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
     </div>
@@ -23,20 +26,21 @@
 </ion-content>
 
 <ion-footer>
-  <ion-toolbar>
+  <ion-toolbar class="glass-toolbar">
     <div class="flex items-center p-2">
       <ion-textarea
         #messageInput
         rows="1"
-        class="flex-1 resize-none outline-none bg-transparent text-white placeholder-gray-400 p-2"
+        class="flex-1 resize-none outline-none bg-gray-700 text-white placeholder-gray-400 p-2 rounded-lg custom-scrollbar"
         placeholder="Type your message..."
         [(ngModel)]="newMessage"
         (ionInput)="adjustTextareaHeight()"
         (keydown.enter)="sendMessage(); $event.preventDefault();"
         [disabled]="isLoading"
+        autoGrow="true"
       ></ion-textarea>
-      <ion-button (click)="sendMessage()" [disabled]="isLoading">
-        Send
+      <ion-button (click)="sendMessage()" [disabled]="isLoading" class="ml-2">
+        <ion-icon name="send"></ion-icon>
       </ion-button>
     </div>
   </ion-toolbar>

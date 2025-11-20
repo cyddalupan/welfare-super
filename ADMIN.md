@@ -15,3 +15,14 @@ Admin authentication is handled via a dedicated login page at `/admin/login`.
 
 - **Logout**:
   - Logging out clears the `localStorage` token and redirects the user back to the `/admin/login` page.
+
+## Routing Implementation
+
+The admin panel routes are defined within a lazy-loaded `AdminModule` (`src/app/admin/admin.module.ts`), which is loaded when the `/admin` path is accessed in `src/app/app.routes.ts`.
+
+Key aspects of the admin routing include:
+*   **Lazy Loading:** The `AdminModule` and its associated components are lazy-loaded to optimize initial application load time.
+*   **Route Structure:** Admin routes are defined using the `ADMIN_ROUTES` constant within `AdminModule` and are configured with `RouterModule.forChild()`.
+*   **Authentication Guard:** Navigation to protected admin routes (e.g., `/admin/dashboard`) is secured using the `authGuard`. This guard is implemented as a modern Angular functional guard (`CanActivateFn`), which checks for an authentication token in `localStorage` before allowing access. If no valid token is found, it redirects the user to `/admin/login`.
+*   **Default Redirect:** Accessing the base `/admin` path will automatically redirect to `/admin/dashboard`.
+
