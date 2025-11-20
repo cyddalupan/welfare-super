@@ -1,51 +1,50 @@
 /* src/app/chat/chat.css */
 
-/* Global background for the app - moved to global styles if applicable, otherwise keep here */
 :host {
-  display: flex; /* Use flexbox for the host to manage overall layout */
-  flex-direction: column; /* Stack children vertically */
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  background-image: url('/background.jpg');
-  background-size: cover;
-  background-position: center;
+  /* Removed background-image, relying on Ionic's theme for background */
   font-family: 'Inter', sans-serif;
-  color: white; /* Ensure text is visible on the background */
+  color: var(--ion-text-color); /* Ensure text is visible and theme-aware */
 }
 
 /* Ionic adjustments */
 ion-header, ion-footer {
-  box-shadow: none !important; /* Remove default Ionic shadows if any */
+  box-shadow: none !important;
 }
 
 ion-toolbar {
-  --background: transparent;
+  --background: var(--ion-background-color); /* Use Ionic's background color for toolbars */
   --border-color: transparent;
-  --min-height: 56px; /* Standard toolbar height */
-  padding: 0 10px; /* Add some horizontal padding */
+  --min-height: 56px;
+  padding: 0 10px;
+  color: var(--ion-text-color);
 }
 
 .glass-toolbar {
-  background: rgba(255, 255, 255, 0.1); /* White with 10% opacity */
-  backdrop-filter: blur(10px); /* Frosted glass effect */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle white border */
+  background: var(--ion-toolbar-background, var(--ion-background-color));
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--ion-color-step-150);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  color: var(--ion-text-color);
 }
 
 ion-content {
-  --background: transparent;
+  --background: var(--ion-background-color);
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* Allow content to fill available space */
-  padding-top: 10px; /* Add some padding at the top */
-  padding-bottom: 10px; /* Add some padding at the bottom */
-  overflow-y: auto; /* Enable vertical scrolling */
+  flex-grow: 1;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  overflow-y: auto;
 }
 
 /* Base styles for chat message bubbles */
 ion-content > div {
   width: 100%;
   display: flex;
-  margin-bottom: 10px; /* Space between messages */
+  margin-bottom: 10px;
 }
 
 ion-content > div.justify-end {
@@ -59,25 +58,27 @@ ion-content > div.justify-start {
 ion-content > div > div {
   padding: 10px 15px;
   border-radius: 20px;
-  max-width: 80%; /* Limit bubble width */
+  max-width: 80%;
   word-wrap: break-word;
-  color: white;
+  color: var(--ion-text-color);
 }
 
 /* User message bubble */
 .user-message-bubble {
-  background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(0, 80, 200, 0.8)); /* Blue gradient */
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  border-bottom-right-radius: 5px; /* Tweak for a speech bubble effect */
-  margin-right: 10px; /* Space from the edge */
+  border-bottom-right-radius: 5px;
+  margin-right: 10px;
 }
 
 /* Assistant message bubble */
 .assistant-message-bubble {
-  background: linear-gradient(135deg, rgba(50, 50, 50, 0.8), rgba(20, 20, 20, 0.8)); /* Darker grey gradient */
+  background: var(--ion-color-step-100); /* A lighter step color for assistant */
+  color: var(--ion-color-step-850); /* Darker text for contrast */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  border-bottom-left-radius: 5px; /* Tweak for a speech bubble effect */
-  margin-left: 10px; /* Space from the edge */
+  border-bottom-left-radius: 5px;
+  margin-left: 10px;
 }
 
 /* Chat message content styling */
@@ -90,9 +91,10 @@ ion-content > div > div {
 .chat-message-content pre {
   white-space: pre-wrap;
   word-break: break-all;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: var(--ion-color-step-200); /* Adjust pre background */
   padding: 8px;
   border-radius: 5px;
+  color: var(--ion-text-color);
 }
 
 .chat-message-content table {
@@ -108,7 +110,8 @@ ion-content > div > div {
   max-width: none;
   word-break: break-word;
   padding: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--ion-color-step-300);
+  color: var(--ion-text-color);
 }
 
 .chat-message-content img {
@@ -129,11 +132,11 @@ ion-textarea {
   --padding-end: 10px;
   --padding-top: 10px;
   --padding-bottom: 10px;
-  --background: rgba(255, 255, 255, 0.1);
+  --background: var(--ion-color-light);
   border-radius: 20px;
-  color: white;
-  min-height: 40px; /* Ensure minimum height */
-  max-height: 150px; /* Set max height for auto-grow */
+  color: var(--ion-text-color);
+  min-height: 40px;
+  max-height: 150px;
   overflow-y: auto;
   font-size: 1rem;
 }
@@ -143,23 +146,24 @@ ion-textarea.custom-scrollbar::-webkit-scrollbar {
 }
 
 ion-textarea.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--ion-color-step-50);
   border-radius: 10px;
 }
 
 ion-textarea.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--ion-color-step-200);
   border-radius: 10px;
 }
 
 ion-button {
-  --background: linear-gradient(135deg, #007bff, #0056b3); /* Blue gradient for send button */
-  --background-activated: linear-gradient(135deg, #0056b3, #003f7f);
+  --background: var(--ion-color-tertiary);
+  --background-activated: var(--ion-color-tertiary-tint);
   --border-radius: 20px;
   height: 40px;
   font-size: 1rem;
-  margin-left: 10px; /* Space from textarea */
-  text-transform: none; /* Prevent uppercase */
+  margin-left: 10px;
+  text-transform: none;
+  color: var(--ion-color-tertiary-contrast);
 }
 
 /* Utilities for scrollbar (if needed) */
@@ -168,11 +172,13 @@ ion-button {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--ion-color-step-50);
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--ion-color-step-200);
   border-radius: 10px;
 }
+
+/* Removed glass-container and glass-input/button specific styles as they are now handled by Ionic variables or general component styling */
