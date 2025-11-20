@@ -1,97 +1,178 @@
-/* src/app/app.css */
+/* src/app/chat/chat.css */
 
-/* Global background for the app */
+/* Global background for the app - moved to global styles if applicable, otherwise keep here */
 :host {
-  display: block;
+  display: flex; /* Use flexbox for the host to manage overall layout */
+  flex-direction: column; /* Stack children vertically */
   min-height: 100vh;
   background-image: url('/background.jpg');
   background-size: cover;
   background-position: center;
-  font-family: 'Inter', sans-serif; /* Assuming a modern font, can be changed */
+  font-family: 'Inter', sans-serif;
+  color: white; /* Ensure text is visible on the background */
 }
 
-/* Base styles for glass containers */
-.glass-container {
+/* Ionic adjustments */
+ion-header, ion-footer {
+  box-shadow: none !important; /* Remove default Ionic shadows if any */
+}
+
+ion-toolbar {
+  --background: transparent;
+  --border-color: transparent;
+  --min-height: 56px; /* Standard toolbar height */
+  padding: 0 10px; /* Add some horizontal padding */
+}
+
+.glass-toolbar {
   background: rgba(255, 255, 255, 0.1); /* White with 10% opacity */
   backdrop-filter: blur(10px); /* Frosted glass effect */
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle white border */
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* Soft shadow for depth */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle white border */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* New styles for responsive content within chat bubbles */
-:host::ng-deep .chat-message-content {
+ion-content {
+  --background: transparent;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Allow content to fill available space */
+  padding-top: 10px; /* Add some padding at the top */
+  padding-bottom: 10px; /* Add some padding at the bottom */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+/* Base styles for chat message bubbles */
+ion-content > div {
+  width: 100%;
+  display: flex;
+  margin-bottom: 10px; /* Space between messages */
+}
+
+ion-content > div.justify-end {
+  justify-content: flex-end;
+}
+
+ion-content > div.justify-start {
+  justify-content: flex-start;
+}
+
+ion-content > div > div {
+  padding: 10px 15px;
+  border-radius: 20px;
+  max-width: 80%; /* Limit bubble width */
+  word-wrap: break-word;
+  color: white;
+}
+
+/* User message bubble */
+.user-message-bubble {
+  background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(0, 80, 200, 0.8)); /* Blue gradient */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-bottom-right-radius: 5px; /* Tweak for a speech bubble effect */
+  margin-right: 10px; /* Space from the edge */
+}
+
+/* Assistant message bubble */
+.assistant-message-bubble {
+  background: linear-gradient(135deg, rgba(50, 50, 50, 0.8), rgba(20, 20, 20, 0.8)); /* Darker grey gradient */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-bottom-left-radius: 5px; /* Tweak for a speech bubble effect */
+  margin-left: 10px; /* Space from the edge */
+}
+
+/* Chat message content styling */
+.chat-message-content {
   word-wrap: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
 }
 
-:host::ng-deep .chat-message-content pre {
-  white-space: pre-wrap; /* Allow pre-formatted text to wrap */
+.chat-message-content pre {
+  white-space: pre-wrap;
   word-break: break-all;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 8px;
+  border-radius: 5px;
 }
 
-:host::ng-deep .chat-message-content table {
-  width: 100% !important; /* Force table to fit container */
-  table-layout: fixed; /* Allow table to be responsive */
+.chat-message-content table {
+  width: 100% !important;
+  table-layout: fixed;
   display: block;
-  overflow-x: auto; /* Allow horizontal scrolling for very wide tables */
+  overflow-x: auto;
   border-collapse: collapse;
 }
 
-:host::ng-deep .chat-message-content th,
-:host::ng-deep .chat-message-content td {
-  max-width: none; /* Override any max-width that might be set */
-  word-break: break-word; /* Allow content to wrap within cells */
+.chat-message-content th,
+.chat-message-content td {
+  max-width: none;
+  word-break: break-word;
   padding: 8px;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-:host::ng-deep .chat-message-content img {
+.chat-message-content img {
   max-width: 100%;
   height: auto;
+  border-radius: 8px;
 }
 
-
-
-/* Styles for user message bubbles */
-.user-message-bubble {
-  background: rgba(0, 123, 255, 0.3); /* More opaque blue tint for user messages */
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(0, 123, 255, 0.25);
+/* Status and Thinking Indicator */
+.ion-content > .flex.justify-center {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
-/* Styles for glass input fields */
-.glass-input {
-  background: rgba(255, 255, 255, 0.15); /* Increased opacity */
-  backdrop-filter: blur(8px); /* Increased blur */
-  border: 1px solid rgba(255, 255, 255, 0.2); /* Stronger border */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Added shadow */
-  color: white; /* Ensure text is visible */
-}
-.glass-input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-/* Styles for glass buttons */
-.glass-button {
-  background: rgba(76, 175, 80, 0.2); /* Example green tint */
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(76, 175, 80, 0.3);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-.glass-button:hover {
-  background: rgba(76, 175, 80, 0.3);
+/* Input area styling */
+ion-textarea {
+  --padding-start: 10px;
+  --padding-end: 10px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  --background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  color: white;
+  min-height: 40px; /* Ensure minimum height */
+  max-height: 150px; /* Set max height for auto-grow */
+  overflow-y: auto;
+  font-size: 1rem;
 }
 
-/* Log container styles */
-.log-container-plan,
-.log-container-execution {
-  max-height: 60vh;
+ion-textarea.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
 }
 
-@media (max-width: 768px) {
-  .log-container-plan,
-  .log-container-execution {
-    max-height: 30vh;
-  }
+ion-textarea.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+ion-textarea.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+ion-button {
+  --background: linear-gradient(135deg, #007bff, #0056b3); /* Blue gradient for send button */
+  --background-activated: linear-gradient(135deg, #0056b3, #003f7f);
+  --border-radius: 20px;
+  height: 40px;
+  font-size: 1rem;
+  margin-left: 10px; /* Space from textarea */
+  text-transform: none; /* Prevent uppercase */
+}
+
+/* Utilities for scrollbar (if needed) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
 }

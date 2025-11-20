@@ -18,7 +18,7 @@ import { SidebarComponent } from './components/sidebar/sidebar'; // Assuming sid
 
 import { authGuard } from './guards/auth.guard';
 
-const ADMIN_ROUTES: Routes = [
+export const ADMIN_ROUTES: Routes = [
   {
     path: 'login',
     component: AdminLoginComponent,
