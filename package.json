@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build welfareph --configuration=development && cp -R dist/welfareph/browser/. live/",
+    "build-live": "ng build welfareph && cp -R dist/welfareph/browser/. live/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false --browsers=ChromeHeadless --progress=false",
     "testci": "CHROME_BIN=/usr/bin/chromium-browser ng test --watch=false --browsers=ChromeHeadlessCI --progress=false",
