@@ -38,6 +38,7 @@ export class UserListComponent implements OnInit {
     this.cdr.detectChanges(); // Trigger change detection
     try {
       this.users = await this.adminUsersService.getUsers();
+      this.cdr.detectChanges(); // Trigger change detection immediately after data is set
     } catch (error) {
       console.error('Error loading users:', error);
       // Optionally show an alert to the user
