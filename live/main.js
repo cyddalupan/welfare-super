@@ -31344,7 +31344,7 @@ var ChatComponent = class _ChatComponent {
       return;
     }
     this.isLoading = true;
-    this.currentStatusMessage = "Typing...";
+    this.currentStatusMessage = "";
     const userMessage = { role: "user", content: this.newMessage.trim() };
     this.messages.push(userMessage);
     this.saveMessageToDb(userMessage);
@@ -31384,7 +31384,7 @@ User's known characteristics: ${memoriesString}`;
         this.messages.push(errorMessage);
         this.saveMessageToDb(errorMessage);
         this.isLoading = false;
-        this.currentStatusMessage = "Typing...";
+        this.currentStatusMessage = "";
       }
     });
     this.adjustTextareaHeight();
@@ -31490,7 +31490,7 @@ User's known characteristics: ${memoriesString}`;
       next: (caseId) => {
         console.log(`Report process completed. Case ID: ${caseId}`);
         this.isLoading = false;
-        this.currentStatusMessage = "Typing...";
+        this.currentStatusMessage = "";
       },
       error: (error) => {
         console.error("Error during report processing:", error);
@@ -31666,7 +31666,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-E7RB6N5R.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-VYMEY4HA.js").then((m) => m.AdminModule)
   }
 ];
 

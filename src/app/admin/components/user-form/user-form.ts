@@ -28,6 +28,7 @@ export class UserFormComponent implements OnInit {
   private toastController = inject(ToastController);
 
   ngOnInit() {
+    console.log('UserFormComponent ngOnInit called'); // Debugging line
     this.userId = this.route.snapshot.paramMap.get('id') ? Number(this.route.snapshot.paramMap.get('id')) : null;
     this.isEdit = !!this.userId;
 

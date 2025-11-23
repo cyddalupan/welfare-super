@@ -131,8 +131,10 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     }
 
     this.isLoading = true;
-    this.currentStatusMessage = 'Typing...'; // Reset status message
-    const userMessage: ChatMessage = { role: 'user', content: this.newMessage.trim() };
+    this.currentStatusMessage = ''; // Reset status message
+
+    const userMessage: ChatMessage = { role: 'user', content: this.newMessage.trim() }; // Declare userMessage here
+
     this.messages.push(userMessage);
     this.saveMessageToDb(userMessage);
 
@@ -146,7 +148,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       currentSystemPromptContent += `\n\nUser's known characteristics: ${memoriesString}`;
     }
 
-    const systemPromptForAi: ChatMessage = { role: 'system', content: currentSystemPromptContent };
+    const systemPromptForAi: ChatMessage = { role: 'system', content: currentSystemPromptContent }; // Correctly defined here
 
     // Send only the last 10 messages for context, plus the system prompt (which now includes memories)
     const historyForAi = this.messages.slice(-10);
@@ -181,7 +183,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
         this.messages.push(errorMessage);
         this.saveMessageToDb(errorMessage);
         this.isLoading = false; // Ensure isLoading is false on error
-        this.currentStatusMessage = 'Typing...'; // Reset status message
+        this.currentStatusMessage = ''; // Reset status message
       }
     });
     this.adjustTextareaHeight();
@@ -305,7 +307,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       next: (caseId) => {
         console.log(`Report process completed. Case ID: ${caseId}`);
         this.isLoading = false; // Turn off loading after completion
-        this.currentStatusMessage = 'Typing...'; // Reset status message
+        this.currentStatusMessage = ''; // Reset status message
       },
       error: (error) => {
         console.error('Error during report processing:', error);
