@@ -37,7 +37,8 @@ export class UserListComponent implements OnInit {
     this.isLoading = true; // Set loading to true
     this.cdr.detectChanges(); // Trigger change detection
     try {
-      this.users = await this.adminUsersService.getUsers();
+      const response = await this.adminUsersService.getUsers();
+      this.users = response.data || []; // Extract the data array, default to empty array if not found
       this.cdr.detectChanges(); // Trigger change detection immediately after data is set
     } catch (error) {
       console.error('Error loading users:', error);
