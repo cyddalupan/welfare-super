@@ -134,13 +134,15 @@ ion-textarea {
   --padding-end: 10px;
   --padding-top: 10px;
   --padding-bottom: 10px;
-  --background: var(--ion-color-light);
+  --background: var(--ion-background-color);
   border-radius: 20px;
   color: var(--ion-text-color);
   min-height: 40px;
   max-height: 150px;
   overflow-y: auto;
   font-size: 1rem;
+  /* Adjust placeholder color */
+  --placeholder-color: rgba(var(--ion-text-color-rgb), 0.5);
 }
 
 ion-textarea.custom-scrollbar::-webkit-scrollbar {

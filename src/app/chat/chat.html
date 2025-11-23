@@ -17,7 +17,7 @@
   </div>
 
   <!-- Status and Thinking Indicator -->
-  <div *ngIf="isLoading || currentStatusMessage !== 'Thinking...'" class="flex justify-center mb-4">
+  <div *ngIf="isLoading || currentStatusMessage !== 'Typing...'" class="flex justify-center mb-4">
     <div class="p-3 rounded-lg max-w-xl flex items-center space-x-2 text-white">
       <span>{{ currentStatusMessage }}</span>
       <span *ngIf="isLoading" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
@@ -31,7 +31,7 @@
       <ion-textarea
         #messageInput
         rows="1"
-        class="flex-1 resize-none outline-none bg-transparent placeholder-gray-400 p-2 rounded-lg custom-scrollbar"
+        class="flex-1 resize-none outline-none placeholder-gray-400 p-2 rounded-lg custom-scrollbar"
         placeholder="Type your message..."
         [(ngModel)]="newMessage"
         (ionInput)="adjustTextareaHeight()"

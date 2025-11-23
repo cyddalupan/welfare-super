@@ -28,7 +28,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   private systemPrompt: ChatMessage; // Will be set dynamically
   public newMessage: string = ''; // Input field binding
   public isLoading: boolean = false; // Loading indicator
-  public currentStatusMessage: string = 'Thinking...'; // New: For displaying current status
+  public currentStatusMessage: string = 'Typing...'; // New: For displaying current status
   public userId: string | null = null; // Stores the logged-in user's ID
   public agencyId: string | null = null; // Stores the logged-in user's agency ID
   public employeeMemories: string[] = []; // Stores employee memories
@@ -131,7 +131,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     }
 
     this.isLoading = true;
-    this.currentStatusMessage = 'Thinking...'; // Reset status message
+    this.currentStatusMessage = 'Typing...'; // Reset status message
     const userMessage: ChatMessage = { role: 'user', content: this.newMessage.trim() };
     this.messages.push(userMessage);
     this.saveMessageToDb(userMessage);
@@ -181,7 +181,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
         this.messages.push(errorMessage);
         this.saveMessageToDb(errorMessage);
         this.isLoading = false; // Ensure isLoading is false on error
-        this.currentStatusMessage = 'Thinking...'; // Reset status message
+        this.currentStatusMessage = 'Typing...'; // Reset status message
       }
     });
     this.adjustTextareaHeight();
@@ -305,7 +305,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       next: (caseId) => {
         console.log(`Report process completed. Case ID: ${caseId}`);
         this.isLoading = false; // Turn off loading after completion
-        this.currentStatusMessage = 'Thinking...'; // Reset status message
+        this.currentStatusMessage = 'Typing...'; // Reset status message
       },
       error: (error) => {
         console.error('Error during report processing:', error);
