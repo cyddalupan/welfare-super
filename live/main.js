@@ -31345,6 +31345,7 @@ var ChatComponent = class _ChatComponent {
     }
     this.isLoading = true;
     this.currentStatusMessage = "Typing...";
+    this.scrollToBottom();
     const userMessage = { role: "user", content: this.newMessage.trim() };
     this.messages.push(userMessage);
     this.saveMessageToDb(userMessage);

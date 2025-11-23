@@ -132,6 +132,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
 
     this.isLoading = true;
     this.currentStatusMessage = 'Typing...'; // Reset status message
+    this.scrollToBottom(); // Scroll to bottom when typing indicator shows
 
     const userMessage: ChatMessage = { role: 'user', content: this.newMessage.trim() }; // Declare userMessage here
 
