@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular'; // <--- Added this import
 import { Fra } from '../../../schemas';
 import { FraService } from '../../services/fra.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-fra-list',
@@ -16,16 +17,19 @@ import { FraService } from '../../services/fra.service';
 export class FraListComponent implements OnInit {
   private fraService = inject(FraService);
   private cdr = inject(ChangeDetectorRef);
+  private authService = inject(AuthService); // Inject AuthService
 
   allFras: Fra[] = [];
   filteredFras: Fra[] = [];
   searchTerm = '';
   isLoading = false;
+  isAdminUser: boolean = false; // New property for admin status
 
   private sortDirection: { [key: string]: 'asc' | 'desc' } = {};
 
   ngOnInit(): void {
     this.loadFras();
+    this.isAdminUser = this.authService.getUserType() === 'admin'; // Initialize isAdminUser
   }
 
   async loadFras(): Promise<void> {

@@ -10,11 +10,29 @@ Admin authentication is handled via a dedicated login page at `/admin/login`.
   1. The user enters their email and password.
   2. The application queries the `admin_users` table to find a user with the matching email.
   3. The entered password is compared against the plaintext password stored in the database.
-  4. Upon successful authentication, an auth token is stored in the browser's `localStorage`.
+  4. Upon successful authentication, the user's `user_type` and an auth token are stored in the browser's `localStorage`.
   5. The user is redirected to the admin dashboard at `/admin/dashboard`.
 
 - **Logout**:
-  - Logging out clears the `localStorage` token and redirects the user back to the `/admin/login` page.
+  - Logging out clears the `localStorage` token (and `user_type`) and redirects the user back to the `/admin/login` page.
+
+## User Types and Permissions
+
+A new `user_type` column has been introduced in the `admin_users` table to manage different levels of administrative access.
+
+- **`admin`**: Full administrative privileges, including the ability to create, read, update, and delete all resources.
+- **`staff`**: Limited administrative privileges. Staff users can create, read, and update resources, but **do not have the ability to delete** any resources within the admin panel.
+
+## Admin User Management (CRUD)
+
+Admin users now have dedicated functionality to manage other admin and staff accounts. This includes:
+
+- **Viewing Users**: A list of all registered admin and staff users, accessible via `/admin/users`.
+- **Creating Users**: A form to add new admin or staff accounts, accessible via `/admin/users/new`.
+- **Editing Users**: Functionality to modify existing user details (full name, email, password, user type), accessible via `/admin/users/edit/:id`.
+- **Deleting Users**: Only 'admin' type users can delete other admin or staff accounts. This operation is protected by a confirmation dialog.
+
+This functionality is implemented through `UserListComponent` and `UserFormComponent` within the `AdminModule`.
 
 ## Routing Implementation
 
@@ -25,4 +43,3 @@ Key aspects of the admin routing include:
 *   **Route Structure:** Admin routes are defined using the `ADMIN_ROUTES` constant within `AdminModule` and are configured with `RouterModule.forChild()`.
 *   **Authentication Guard:** Navigation to protected admin routes (e.g., `/admin/dashboard`) is secured using the `authGuard`. This guard is implemented as a modern Angular functional guard (`CanActivateFn`), which checks for an authentication token in `localStorage` before allowing access. If no valid token is found, it redirects the user to `/admin/login`.
 *   **Default Redirect:** Accessing the base `/admin` path will automatically redirect to `/admin/dashboard`.
-

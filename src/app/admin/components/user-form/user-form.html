@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/users"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isEdit ? 'Edit User' : 'Create User' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="saveUser()">
+    <ion-item>
+      <ion-input label="Full Name" type="text" [(ngModel)]="user.full_name" name="full_name" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input label="Email" type="email" [(ngModel)]="user.email" name="email" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input label="Password" type="password" [(ngModel)]="user.password" name="password" [required]="!isEdit"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-select label="User Type" [(ngModel)]="user.user_type" name="user_type">
+        <ion-select-option value="admin">Admin</ion-select-option>
+        <ion-select-option value="staff">Staff</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-button expand="block" type="submit" class="ion-margin-top">Save User</ion-button>
+  </form>
+</ion-content>

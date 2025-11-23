@@ -16,6 +16,7 @@ Stores credentials for admin users.
 | `full_name` | `CharField(255)` | Admin's full name. |
 | `created_at` | `DateTimeField` | Timestamp of creation. |
 | `updated_at` | `DateTimeField` | Timestamp of the last update. |
+| `user_type` | `VARCHAR(50)` | Defines the type of admin user (e.g., 'admin', 'supervisor'). |
 
 ---
 

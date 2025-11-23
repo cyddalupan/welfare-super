@@ -45,6 +45,13 @@
     </ion-item>
   </ion-menu-toggle>
 
+  <ion-menu-toggle autoHide="false">
+    <ion-item routerLink="/admin/users" routerLinkActive="selected" routerDirection="root" detail="false">
+      <ion-icon slot="start" name="people-circle-outline"></ion-icon>
+      <ion-label>Admin Users</ion-label>
+    </ion-item>
+  </ion-menu-toggle>
+
   <ion-footer>
     <ion-toolbar>
       <ion-button expand="full" color="danger" (click)="logout()">

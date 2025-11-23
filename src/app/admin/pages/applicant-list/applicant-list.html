@@ -40,7 +40,7 @@
         <ion-button [routerLink]="['/admin/applicants/edit', app.id]" fill="clear">
           <ion-icon name="create-outline"></ion-icon>
         </ion-button>
-        <ion-button (click)="deleteApplicant(app.id)" fill="clear" color="danger">
+        <ion-button (click)="deleteApplicant(app.id)" fill="clear" color="danger" *ngIf="isAdminUser">
           <ion-icon name="trash-outline"></ion-icon>
         </ion-button>
         <!-- History link might need to open in a browser or a webview, so it's kept as a regular link for now -->

@@ -3,6 +3,7 @@ export interface AdminUser {
   email: string;
   password: string; // Note: In a real app, this should not be here.
   full_name: string;
+  user_type: string;
 }
 
 export interface Applicant {

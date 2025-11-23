@@ -18,6 +18,7 @@ import {
   Directive,
   ENABLE_HTML_CONTENT_DEFAULT,
   ElementRef,
+  EncryptionService,
   EnvironmentInjector,
   FOCUS_TRAP_DISABLE_CLASS,
   FormsModule,
@@ -156,7 +157,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-PPZUU5BC.js";
+} from "./chunk-BKAAV3YS.js";
 import "./chunk-B7UJR2GH.js";
 import "./chunk-W7NNY2EY.js";
 import "./chunk-HTLDGIIN.js";
@@ -31008,30 +31009,21 @@ Instructions:
 `;
 
 // src/app/ai.service.ts
-var CryptoJS = __toESM(require_crypto_js());
 var AiService = class _AiService {
-  http;
   apiUrl = "/api/ai.php";
-  constructor(http) {
-    this.http = http;
-  }
-  encrypt(data) {
-    const key = CryptoJS.enc.Hex.parse(environment.encryptionKey);
-    const iv = CryptoJS.lib.WordArray.random(16);
-    const encrypted = CryptoJS.AES.encrypt(data, key, { iv });
-    const concatenated = iv.clone().concat(encrypted.ciphertext);
-    return concatenated.toString(CryptoJS.enc.Base64);
-  }
+  http = inject(HttpClient);
+  encryptionService = inject(EncryptionService);
+  // Inject the EncryptionService
   callAi(messages) {
     const payload = JSON.stringify({ messages });
-    const base64Payload = this.encrypt(payload);
+    const base64Payload = this.encryptionService.encrypt(payload);
     return this.http.post(this.apiUrl, base64Payload, {
       headers: { "Content-Type": "text/plain" },
       responseType: "text"
     });
   }
   static \u0275fac = function AiService_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _AiService)(\u0275\u0275inject(HttpClient));
+    return new (__ngFactoryType__ || _AiService)();
   };
   static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _AiService, factory: _AiService.\u0275fac, providedIn: "root" });
 };
@@ -31041,11 +31033,11 @@ var AiService = class _AiService {
     args: [{
       providedIn: "root"
     }]
-  }], () => [{ type: HttpClient }], null);
+  }], null, null);
 })();
 
 // src/app/auth.service.ts
-var CryptoJS2 = __toESM(require_crypto_js());
+var CryptoJS = __toESM(require_crypto_js());
 var AuthService = class _AuthService {
   http;
   apiUrl = "api/database.php";
@@ -31080,15 +31072,15 @@ var AuthService = class _AuthService {
     localStorage.removeItem("agency_id");
   }
   encryptPayload(payload) {
-    const key = CryptoJS2.enc.Hex.parse(this.encryptionKey);
-    const iv = CryptoJS2.lib.WordArray.random(16);
-    const encrypted = CryptoJS2.AES.encrypt(payload, key, {
+    const key = CryptoJS.enc.Hex.parse(this.encryptionKey);
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const encrypted = CryptoJS.AES.encrypt(payload, key, {
       iv,
-      mode: CryptoJS2.mode.CBC,
-      padding: CryptoJS2.pad.Pkcs7
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7
     });
-    const combined = CryptoJS2.lib.WordArray.create().concat(iv).concat(encrypted.ciphertext);
-    return combined.toString(CryptoJS2.enc.Base64);
+    const combined = CryptoJS.lib.WordArray.create().concat(iv).concat(encrypted.ciphertext);
+    return combined.toString(CryptoJS.enc.Base64);
   }
   static \u0275fac = function AuthService_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _AuthService)(\u0275\u0275inject(HttpClient));
@@ -31674,7 +31666,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-QFJ55UAC.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-JVFYIKIT.js").then((m) => m.AdminModule)
   }
 ];
 

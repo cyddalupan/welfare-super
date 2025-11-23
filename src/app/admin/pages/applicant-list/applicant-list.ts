@@ -5,6 +5,7 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { IonicModule } from '@ionic/angular'; // <--- Added this import
 import { Applicant } from '../../../schemas';
 import { ApplicantService } from '../../services/applicant.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -17,12 +18,14 @@ export class ApplicantListComponent implements OnInit {
   private applicantService = inject(ApplicantService);
   private cdr = inject(ChangeDetectorRef);
   private route = inject(ActivatedRoute);
+  private authService = inject(AuthService); // Inject AuthService
 
   allApplicants: Applicant[] = [];
   filteredApplicants: Applicant[] = [];
   searchTerm = '';
   isLoading = false;
   currentStatus: string | null = null;
+  isAdminUser: boolean = false; // New property for admin status
 
   private sortDirection: { [key: string]: 'asc' | 'desc' } = {};
 
@@ -31,6 +34,7 @@ export class ApplicantListComponent implements OnInit {
       this.currentStatus = params.get('status');
       this.loadApplicants(this.currentStatus ?? undefined);
     });
+    this.isAdminUser = this.authService.getUserType() === 'admin'; // Initialize isAdminUser
   }
 
   async loadApplicants(status?: string): Promise<void> {

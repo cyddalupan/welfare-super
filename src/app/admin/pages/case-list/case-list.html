@@ -40,7 +40,7 @@
         <ion-button [routerLink]="['/admin/cases/edit', caseItem.id]" fill="clear">
           <ion-icon name="create-outline"></ion-icon>
         </ion-button>
-        <ion-button (click)="deleteCase(caseItem.id)" fill="clear" color="danger">
+        <ion-button (click)="deleteCase(caseItem.id)" fill="clear" color="danger" *ngIf="isAdminUser">
           <ion-icon name="trash-outline"></ion-icon>
         </ion-button>
       </ion-buttons>

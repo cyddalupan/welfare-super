@@ -14,7 +14,10 @@ import { CaseListComponent } from './pages/case-list/case-list';
 import { CaseFormComponent } from './pages/case-form/case-form';
 import { FraListComponent } from './pages/fra-list/fra-list';
 import { FraFormComponent } from './components/fra-form/fra-form';
-import { SidebarComponent } from './components/sidebar/sidebar'; // Assuming sidebar is part of admin module
+import { SidebarComponent } from './components/sidebar/sidebar';
+import { UserListComponent } from './pages/user-list/user-list';
+import { UserFormComponent } from './components/user-form/user-form';
+import { AdminUsersService } from './services/admin-users.service'; // Import AdminUsersService
 
 import { authGuard } from './guards/auth.guard';
 
@@ -39,6 +42,9 @@ export const ADMIN_ROUTES: Routes = [
       { path: 'fras', component: FraListComponent },
       { path: 'fras/new', component: FraFormComponent },
       { path: 'fras/edit/:id', component: FraFormComponent },
+      { path: 'users', component: UserListComponent }, // New route for user listing
+      { path: 'users/new', component: UserFormComponent }, // New route for creating user
+      { path: 'users/edit/:id', component: UserFormComponent }, // New route for editing user
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
@@ -59,11 +65,13 @@ export const ADMIN_ROUTES: Routes = [
     CaseFormComponent,
     FraListComponent,
     FraFormComponent,
-    SidebarComponent
+    SidebarComponent,
+    UserListComponent, // Add UserListComponent here
+    UserFormComponent // Add UserFormComponent here
   ],
   declarations: [],
   providers: [
-    // Providers specific to the admin module, if any
+    AdminUsersService // Provide AdminUsersService here
   ]
 })
 export class AdminModule { }
