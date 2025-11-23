@@ -68,6 +68,14 @@ export interface Fra {
   agency_id: number;
 }
 
+export interface Referral {
+  id: number;
+  name: string;
+  contact: string;
+  referred_by: string; // Assuming 'referred_by' is a user ID or name as a string
+  timestamp: string; // Assuming timestamp is a string (e.g., ISO format)
+}
+
 export const APPLICANT_TABLE_SCHEMA = `
 Table: applicant
 Columns:

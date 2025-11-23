@@ -7,6 +7,22 @@
 </ion-header>
 
 <ion-content #chatContainer class="ion-padding custom-scrollbar">
+  <ion-card *ngIf="showAnnouncementBanner && announcements.length > 0" class="glass-card ion-no-margin ion-margin-bottom">
+    <ion-card-content class="flex items-start justify-between">
+      <div>
+        <h2 class="font-bold text-lg mb-2">Important Announcements:</h2>
+        <ion-list lines="none" class="bg-transparent">
+          <ion-item *ngFor="let announcement of announcements" class="bg-transparent ion-no-padding">
+            <ion-label class="ion-text-wrap">{{ announcement }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+      <ion-button fill="clear" color="dark" (click)="dismissAnnouncementBanner()">
+        <ion-icon name="close-circle-outline" size="large"></ion-icon>
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
   <!-- Chat messages will be rendered here dynamically -->
 <div *ngFor="let message of messages" class="flex mb-4" [class.justify-end]="message.role === 'user'" [class.justify-start]="message.role === 'assistant'">
     <div class="p-3 rounded-lg max-w-[70%]"

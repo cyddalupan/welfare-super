@@ -46,6 +46,20 @@
   </ion-menu-toggle>
 
   <ion-menu-toggle autoHide="false">
+    <ion-item routerLink="/admin/referrals" routerLinkActive="selected" routerDirection="root" detail="false">
+      <ion-icon slot="start" name="people-outline"></ion-icon>
+      <ion-label>Referrals</ion-label>
+    </ion-item>
+  </ion-menu-toggle>
+
+  <ion-menu-toggle autoHide="false">
+    <ion-item routerLink="/admin/announcements" routerLinkActive="selected" routerDirection="root" detail="false">
+      <ion-icon slot="start" name="megaphone-outline"></ion-icon>
+      <ion-label>Announcements</ion-label>
+    </ion-item>
+  </ion-menu-toggle>
+
+  <ion-menu-toggle autoHide="false" *ngIf="isAdmin">
     <ion-item routerLink="/admin/users" routerLinkActive="selected" routerDirection="root" detail="false">
       <ion-icon slot="start" name="people-circle-outline"></ion-icon>
       <ion-label>Admin Users</ion-label>

@@ -19,11 +19,13 @@ export class SidebarComponent implements OnInit {
 
   isApplicantMenuOpen = false;
   applicantStatuses: string[] = [];
+  isAdmin: boolean = false; // New property for admin status
 
   ngOnInit(): void {
     this.applicantService.getStatuses().then(statuses => {
       this.applicantStatuses = statuses;
     });
+    this.isAdmin = this.authService.getUserType() === 'admin'; // Initialize isAdmin
   }
 
   toggleApplicantMenu(): void {

@@ -2,6 +2,7 @@ import {
   APP_INITIALIZER,
   ActivatedRoute,
   AngularDelegate,
+  AnnouncementService,
   Attribute,
   BACKDROP,
   ChangeDetectionStrategy,
@@ -31,10 +32,15 @@ import {
   IonApp,
   IonBackButton,
   IonButton,
+  IonCard,
+  IonCardContent,
   IonContent,
   IonFooter,
   IonHeader,
   IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
   IonModal,
   IonNav,
   IonPopover,
@@ -157,7 +163,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-BKAAV3YS.js";
+} from "./chunk-CQJW44PI.js";
 import "./chunk-B7UJR2GH.js";
 import "./chunk-W7NNY2EY.js";
 import "./chunk-HTLDGIIN.js";
@@ -25494,7 +25500,7 @@ IonButtons = __decorate([ProxyCmp2({
     }];
   }, null);
 })();
-var IonCard = class IonCard2 {
+var IonCard2 = class IonCard3 {
   z;
   el;
   constructor(c, r, z) {
@@ -25504,11 +25510,11 @@ var IonCard = class IonCard2 {
   }
   /** @nocollapse */
   static \u0275fac = function IonCard_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || IonCard2)(\u0275\u0275directiveInject(ChangeDetectorRef), \u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(NgZone));
+    return new (__ngFactoryType__ || IonCard3)(\u0275\u0275directiveInject(ChangeDetectorRef), \u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(NgZone));
   };
   /** @nocollapse */
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
-    type: IonCard2,
+    type: IonCard3,
     selectors: [["ion-card"]],
     inputs: {
       button: "button",
@@ -25536,12 +25542,12 @@ var IonCard = class IonCard2 {
     changeDetection: 0
   });
 };
-IonCard = __decorate([ProxyCmp2({
+IonCard2 = __decorate([ProxyCmp2({
   defineCustomElementFn: defineCustomElement26,
   inputs: ["button", "color", "disabled", "download", "href", "mode", "rel", "routerAnimation", "routerDirection", "target", "type"]
-})], IonCard);
+})], IonCard2);
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonCard, [{
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonCard2, [{
     type: Component,
     args: [{
       selector: "ion-card",
@@ -25561,7 +25567,7 @@ IonCard = __decorate([ProxyCmp2({
     }];
   }, null);
 })();
-var IonCardContent = class IonCardContent2 {
+var IonCardContent2 = class IonCardContent3 {
   z;
   el;
   constructor(c, r, z) {
@@ -25571,11 +25577,11 @@ var IonCardContent = class IonCardContent2 {
   }
   /** @nocollapse */
   static \u0275fac = function IonCardContent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || IonCardContent2)(\u0275\u0275directiveInject(ChangeDetectorRef), \u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(NgZone));
+    return new (__ngFactoryType__ || IonCardContent3)(\u0275\u0275directiveInject(ChangeDetectorRef), \u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(NgZone));
   };
   /** @nocollapse */
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
-    type: IonCardContent2,
+    type: IonCardContent3,
     selectors: [["ion-card-content"]],
     inputs: {
       mode: "mode"
@@ -25593,12 +25599,12 @@ var IonCardContent = class IonCardContent2 {
     changeDetection: 0
   });
 };
-IonCardContent = __decorate([ProxyCmp2({
+IonCardContent2 = __decorate([ProxyCmp2({
   defineCustomElementFn: defineCustomElement27,
   inputs: ["mode"]
-})], IonCardContent);
+})], IonCardContent2);
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonCardContent, [{
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonCardContent2, [{
     type: Component,
     args: [{
       selector: "ion-card-content",
@@ -26662,7 +26668,7 @@ IonInputPasswordToggle = __decorate([ProxyCmp2({
     }];
   }, null);
 })();
-var IonItem = class IonItem2 {
+var IonItem2 = class IonItem3 {
   z;
   el;
   constructor(c, r, z) {
@@ -26672,11 +26678,11 @@ var IonItem = class IonItem2 {
   }
   /** @nocollapse */
   static \u0275fac = function IonItem_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || IonItem2)(\u0275\u0275directiveInject(ChangeDetectorRef), \u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(NgZone));
+    return new (__ngFactoryType__ || IonItem3)(\u0275\u0275directiveInject(ChangeDetectorRef), \u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(NgZone));
   };
   /** @nocollapse */
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
-    type: IonItem2,
+    type: IonItem3,
     selectors: [["ion-item"]],
     inputs: {
       button: "button",
@@ -26707,12 +26713,12 @@ var IonItem = class IonItem2 {
     changeDetection: 0
   });
 };
-IonItem = __decorate([ProxyCmp2({
+IonItem2 = __decorate([ProxyCmp2({
   defineCustomElementFn: defineCustomElement49,
   inputs: ["button", "color", "detail", "detailIcon", "disabled", "download", "href", "lines", "mode", "rel", "routerAnimation", "routerDirection", "target", "type"]
-})], IonItem);
+})], IonItem2);
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonItem, [{
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonItem2, [{
     type: Component,
     args: [{
       selector: "ion-item",
@@ -27026,7 +27032,7 @@ IonItemSliding = __decorate([ProxyCmp2({
     }];
   }, null);
 })();
-var IonLabel = class IonLabel2 {
+var IonLabel2 = class IonLabel3 {
   z;
   el;
   constructor(c, r, z) {
@@ -27036,11 +27042,11 @@ var IonLabel = class IonLabel2 {
   }
   /** @nocollapse */
   static \u0275fac = function IonLabel_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || IonLabel2)(\u0275\u0275directiveInject(ChangeDetectorRef), \u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(NgZone));
+    return new (__ngFactoryType__ || IonLabel3)(\u0275\u0275directiveInject(ChangeDetectorRef), \u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(NgZone));
   };
   /** @nocollapse */
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
-    type: IonLabel2,
+    type: IonLabel3,
     selectors: [["ion-label"]],
     inputs: {
       color: "color",
@@ -27060,12 +27066,12 @@ var IonLabel = class IonLabel2 {
     changeDetection: 0
   });
 };
-IonLabel = __decorate([ProxyCmp2({
+IonLabel2 = __decorate([ProxyCmp2({
   defineCustomElementFn: defineCustomElement56,
   inputs: ["color", "mode", "position"]
-})], IonLabel);
+})], IonLabel2);
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonLabel, [{
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonLabel2, [{
     type: Component,
     args: [{
       selector: "ion-label",
@@ -27085,7 +27091,7 @@ IonLabel = __decorate([ProxyCmp2({
     }];
   }, null);
 })();
-var IonList = class IonList2 {
+var IonList2 = class IonList3 {
   z;
   el;
   constructor(c, r, z) {
@@ -27095,11 +27101,11 @@ var IonList = class IonList2 {
   }
   /** @nocollapse */
   static \u0275fac = function IonList_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || IonList2)(\u0275\u0275directiveInject(ChangeDetectorRef), \u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(NgZone));
+    return new (__ngFactoryType__ || IonList3)(\u0275\u0275directiveInject(ChangeDetectorRef), \u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(NgZone));
   };
   /** @nocollapse */
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
-    type: IonList2,
+    type: IonList3,
     selectors: [["ion-list"]],
     inputs: {
       inset: "inset",
@@ -27119,13 +27125,13 @@ var IonList = class IonList2 {
     changeDetection: 0
   });
 };
-IonList = __decorate([ProxyCmp2({
+IonList2 = __decorate([ProxyCmp2({
   defineCustomElementFn: defineCustomElement58,
   inputs: ["inset", "lines", "mode"],
   methods: ["closeSlidingItems"]
-})], IonList);
+})], IonList2);
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonList, [{
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(IonList2, [{
     type: Component,
     args: [{
       selector: "ion-list",
@@ -31202,40 +31208,76 @@ ${existingReport}`);
 // src/app/chat/chat.ts
 var _c02 = ["chatContainer"];
 var _c12 = ["messageInput"];
-function ChatComponent_div_7_Template(rf, ctx) {
+function ChatComponent_ion_card_7_ion_item_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 11)(1, "div", 12);
-    \u0275\u0275element(2, "div", 13);
+    \u0275\u0275elementStart(0, "ion-item", 19)(1, "ion-label", 20);
+    \u0275\u0275text(2);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
-    const message_r2 = ctx.$implicit;
-    \u0275\u0275classProp("justify-end", message_r2.role === "user")("justify-start", message_r2.role === "assistant");
-    \u0275\u0275advance();
-    \u0275\u0275classProp("user-message-bubble", message_r2.role === "user")("assistant-message-bubble", message_r2.role === "assistant");
-    \u0275\u0275advance();
-    \u0275\u0275property("innerHTML", message_r2.content, \u0275\u0275sanitizeHtml);
+    const announcement_r3 = ctx.$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(announcement_r3);
   }
 }
-function ChatComponent_div_8_span_4_Template(rf, ctx) {
+function ChatComponent_ion_card_7_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "span", 17);
+    const _r2 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "ion-card", 12)(1, "ion-card-content", 13)(2, "div")(3, "h2", 14);
+    \u0275\u0275text(4, "Important Announcements:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "ion-list", 15);
+    \u0275\u0275template(6, ChatComponent_ion_card_7_ion_item_6_Template, 3, 1, "ion-item", 16);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(7, "ion-button", 17);
+    \u0275\u0275listener("click", function ChatComponent_ion_card_7_Template_ion_button_click_7_listener() {
+      \u0275\u0275restoreView(_r2);
+      const ctx_r3 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r3.dismissAnnouncementBanner());
+    });
+    \u0275\u0275element(8, "ion-icon", 18);
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const ctx_r3 = \u0275\u0275nextContext();
+    \u0275\u0275advance(6);
+    \u0275\u0275property("ngForOf", ctx_r3.announcements);
   }
 }
 function ChatComponent_div_8_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 14)(1, "div", 15)(2, "span");
-    \u0275\u0275text(3);
-    \u0275\u0275elementEnd();
-    \u0275\u0275template(4, ChatComponent_div_8_span_4_Template, 1, 0, "span", 16);
+    \u0275\u0275elementStart(0, "div", 21)(1, "div", 22);
+    \u0275\u0275element(2, "div", 23);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
-    const ctx_r2 = \u0275\u0275nextContext();
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(ctx_r2.currentStatusMessage);
+    const message_r5 = ctx.$implicit;
+    \u0275\u0275classProp("justify-end", message_r5.role === "user")("justify-start", message_r5.role === "assistant");
     \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ctx_r2.isLoading);
+    \u0275\u0275classProp("user-message-bubble", message_r5.role === "user")("assistant-message-bubble", message_r5.role === "assistant");
+    \u0275\u0275advance();
+    \u0275\u0275property("innerHTML", message_r5.content, \u0275\u0275sanitizeHtml);
+  }
+}
+function ChatComponent_div_9_span_4_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "span", 27);
+  }
+}
+function ChatComponent_div_9_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 24)(1, "div", 25)(2, "span");
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(4, ChatComponent_div_9_span_4_Template, 1, 0, "span", 26);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r3 = \u0275\u0275nextContext();
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(ctx_r3.currentStatusMessage);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r3.isLoading);
   }
 }
 var MAX_TEXTAREA_HEIGHT = 150;
@@ -31244,37 +31286,34 @@ var ChatComponent = class _ChatComponent {
   authService;
   databaseService;
   caseService;
+  announcementService;
   title = "analytics-agent";
   chatContainer;
   messageInput;
   messages = [];
-  // Local chat history
   systemPrompt;
-  // Will be set dynamically
   newMessage = "";
-  // Input field binding
   isLoading = false;
-  // Loading indicator
   currentStatusMessage = "Typing...";
-  // New: For displaying current status
   userId = null;
-  // Stores the logged-in user's ID
   agencyId = null;
-  // Stores the logged-in user's agency ID
   employeeMemories = [];
-  // Stores employee memories
-  constructor(aiService, authService, databaseService, caseService) {
+  announcements = [];
+  // New: Stores active announcement messages
+  showAnnouncementBanner = true;
+  // New: Controls announcement banner visibility
+  constructor(aiService, authService, databaseService, caseService, announcementService) {
     this.aiService = aiService;
     this.authService = authService;
     this.databaseService = databaseService;
     this.caseService = caseService;
+    this.announcementService = announcementService;
     this.systemPrompt = {
       role: "system",
       content: ""
-      // Initialize with empty content, will be set in ngOnInit
     };
   }
-  ngOnInit() {
+  async ngOnInit() {
     let userId = localStorage.getItem("user_id");
     let agencyId = localStorage.getItem("agency_id");
     if (userId && (!agencyId || agencyId === "null" || agencyId === "undefined") || !userId && agencyId) {
@@ -31292,6 +31331,14 @@ var ChatComponent = class _ChatComponent {
       this.messages = [];
       this.messages.push({ role: "assistant", content: "Welcome! To get started, please provide your last name and passport number so I can assist you." });
     }
+    try {
+      this.announcements = await this.announcementService.getActiveAnnouncements();
+    } catch (error) {
+      console.error("Error loading announcements:", error);
+    }
+  }
+  dismissAnnouncementBanner() {
+    this.showAnnouncementBanner = false;
   }
   setInitialSystemPrompt() {
     if (this.userId) {
@@ -31345,7 +31392,9 @@ var ChatComponent = class _ChatComponent {
     }
     this.isLoading = true;
     this.currentStatusMessage = "Typing...";
-    this.scrollToBottom();
+    setTimeout(() => {
+      this.scrollToBottom();
+    }, 0);
     const userMessage = { role: "user", content: this.newMessage.trim() };
     this.messages.push(userMessage);
     this.saveMessageToDb(userMessage);
@@ -31396,7 +31445,6 @@ User's known characteristics: ${memoriesString}`;
       console.log("UserID and AgencyID are present. Calling database service.");
       this.databaseService.saveChatMessage(message, parseInt(this.userId, 10), parseInt(this.agencyId, 10)).subscribe({
         next: () => console.log("Message saved successfully."),
-        // DEBUG
         error: (err2) => console.error("Failed to save message:", err2)
       });
     } else {
@@ -31518,7 +31566,6 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
     console.log("Calling follow-up AI with payload:", followUpPayload);
     this.aiService.callAi(followUpPayload).subscribe({
       next: (response) => {
-        console.log("Follow-up AI response received:", response);
         const doneTagRegex = /\[\[DONE\]\]/;
         const doneMatch = response.match(doneTagRegex);
         if (doneMatch) {
@@ -31542,7 +31589,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
     }
   }
   static \u0275fac = function ChatComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ChatComponent)(\u0275\u0275directiveInject(AiService), \u0275\u0275directiveInject(AuthService), \u0275\u0275directiveInject(DatabaseService), \u0275\u0275directiveInject(CaseService));
+    return new (__ngFactoryType__ || _ChatComponent)(\u0275\u0275directiveInject(AiService), \u0275\u0275directiveInject(AuthService), \u0275\u0275directiveInject(DatabaseService), \u0275\u0275directiveInject(CaseService), \u0275\u0275directiveInject(AnnouncementService));
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ChatComponent, selectors: [["app-chat"]], viewQuery: function ChatComponent_Query(rf, ctx) {
     if (rf & 1) {
@@ -31554,7 +31601,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
       \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.chatContainer = _t.first);
       \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.messageInput = _t.first);
     }
-  }, decls: 16, vars: 5, consts: [["chatContainer", ""], ["messageInput", ""], [1, "glass-toolbar"], [1, "fas", "fa-hands-helping", "mr-2"], [1, "ion-padding", "custom-scrollbar"], ["class", "flex mb-4", 3, "justify-end", "justify-start", 4, "ngFor", "ngForOf"], ["class", "flex justify-center mb-4", 4, "ngIf"], [1, "flex", "items-center", "p-2"], ["rows", "1", "placeholder", "Type your message...", "autoGrow", "true", 1, "flex-1", "resize-none", "outline-none", "placeholder-gray-400", "p-2", "rounded-lg", "custom-scrollbar", 3, "ngModelChange", "ionInput", "keydown.enter", "ngModel", "disabled"], [1, "ml-2", 3, "click", "disabled"], ["name", "send"], [1, "flex", "mb-4"], [1, "p-3", "rounded-lg", "max-w-[70%]"], [1, "chat-message-content", 3, "innerHTML"], [1, "flex", "justify-center", "mb-4"], [1, "p-3", "rounded-lg", "max-w-xl", "flex", "items-center", "space-x-2", "text-white"], ["class", "animate-spin rounded-full h-4 w-4 border-b-2 border-white", 4, "ngIf"], [1, "animate-spin", "rounded-full", "h-4", "w-4", "border-b-2", "border-white"]], template: function ChatComponent_Template(rf, ctx) {
+  }, decls: 17, vars: 6, consts: [["chatContainer", ""], ["messageInput", ""], [1, "glass-toolbar"], [1, "fas", "fa-hands-helping", "mr-2"], [1, "ion-padding", "custom-scrollbar"], ["class", "glass-card ion-no-margin ion-margin-bottom", 4, "ngIf"], ["class", "flex mb-4", 3, "justify-end", "justify-start", 4, "ngFor", "ngForOf"], ["class", "flex justify-center mb-4", 4, "ngIf"], [1, "flex", "items-center", "p-2"], ["rows", "1", "placeholder", "Type your message...", "autoGrow", "true", 1, "flex-1", "resize-none", "outline-none", "placeholder-gray-400", "p-2", "rounded-lg", "custom-scrollbar", 3, "ngModelChange", "ionInput", "keydown.enter", "ngModel", "disabled"], [1, "ml-2", 3, "click", "disabled"], ["name", "send"], [1, "glass-card", "ion-no-margin", "ion-margin-bottom"], [1, "flex", "items-start", "justify-between"], [1, "font-bold", "text-lg", "mb-2"], ["lines", "none", 1, "bg-transparent"], ["class", "bg-transparent ion-no-padding", 4, "ngFor", "ngForOf"], ["fill", "clear", "color", "dark", 3, "click"], ["name", "close-circle-outline", "size", "large"], [1, "bg-transparent", "ion-no-padding"], [1, "ion-text-wrap"], [1, "flex", "mb-4"], [1, "p-3", "rounded-lg", "max-w-[70%]"], [1, "chat-message-content", 3, "innerHTML"], [1, "flex", "justify-center", "mb-4"], [1, "p-3", "rounded-lg", "max-w-xl", "flex", "items-center", "space-x-2", "text-white"], ["class", "animate-spin rounded-full h-4 w-4 border-b-2 border-white", 4, "ngIf"], [1, "animate-spin", "rounded-full", "h-4", "w-4", "border-b-2", "border-white"]], template: function ChatComponent_Template(rf, ctx) {
     if (rf & 1) {
       const _r1 = \u0275\u0275getCurrentView();
       \u0275\u0275elementStart(0, "ion-header")(1, "ion-toolbar", 2)(2, "ion-title");
@@ -31562,33 +31609,35 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
       \u0275\u0275text(4, "Welfare ");
       \u0275\u0275elementEnd()()();
       \u0275\u0275elementStart(5, "ion-content", 4, 0);
-      \u0275\u0275template(7, ChatComponent_div_7_Template, 3, 9, "div", 5)(8, ChatComponent_div_8_Template, 5, 2, "div", 6);
+      \u0275\u0275template(7, ChatComponent_ion_card_7_Template, 9, 1, "ion-card", 5)(8, ChatComponent_div_8_Template, 3, 9, "div", 6)(9, ChatComponent_div_9_Template, 5, 2, "div", 7);
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(9, "ion-footer")(10, "ion-toolbar", 2)(11, "div", 7)(12, "ion-textarea", 8, 1);
-      \u0275\u0275twoWayListener("ngModelChange", function ChatComponent_Template_ion_textarea_ngModelChange_12_listener($event) {
+      \u0275\u0275elementStart(10, "ion-footer")(11, "ion-toolbar", 2)(12, "div", 8)(13, "ion-textarea", 9, 1);
+      \u0275\u0275twoWayListener("ngModelChange", function ChatComponent_Template_ion_textarea_ngModelChange_13_listener($event) {
         \u0275\u0275restoreView(_r1);
         \u0275\u0275twoWayBindingSet(ctx.newMessage, $event) || (ctx.newMessage = $event);
         return \u0275\u0275resetView($event);
       });
-      \u0275\u0275listener("ionInput", function ChatComponent_Template_ion_textarea_ionInput_12_listener() {
+      \u0275\u0275listener("ionInput", function ChatComponent_Template_ion_textarea_ionInput_13_listener() {
         \u0275\u0275restoreView(_r1);
         return \u0275\u0275resetView(ctx.adjustTextareaHeight());
-      })("keydown.enter", function ChatComponent_Template_ion_textarea_keydown_enter_12_listener($event) {
+      })("keydown.enter", function ChatComponent_Template_ion_textarea_keydown_enter_13_listener($event) {
         \u0275\u0275restoreView(_r1);
         ctx.sendMessage();
         return \u0275\u0275resetView($event.preventDefault());
       });
       \u0275\u0275elementEnd();
-      \u0275\u0275elementStart(14, "ion-button", 9);
-      \u0275\u0275listener("click", function ChatComponent_Template_ion_button_click_14_listener() {
+      \u0275\u0275elementStart(15, "ion-button", 10);
+      \u0275\u0275listener("click", function ChatComponent_Template_ion_button_click_15_listener() {
         \u0275\u0275restoreView(_r1);
         return \u0275\u0275resetView(ctx.sendMessage());
       });
-      \u0275\u0275element(15, "ion-icon", 10);
+      \u0275\u0275element(16, "ion-icon", 11);
       \u0275\u0275elementEnd()()()();
     }
     if (rf & 2) {
       \u0275\u0275advance(7);
+      \u0275\u0275property("ngIf", ctx.showAnnouncementBanner && ctx.announcements.length > 0);
+      \u0275\u0275advance();
       \u0275\u0275property("ngForOf", ctx.messages);
       \u0275\u0275advance();
       \u0275\u0275property("ngIf", ctx.isLoading || ctx.currentStatusMessage !== "Typing...");
@@ -31598,7 +31647,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
       \u0275\u0275advance(2);
       \u0275\u0275property("disabled", ctx.isLoading);
     }
-  }, dependencies: [CommonModule, NgForOf, NgIf, FormsModule, NgControlStatus, NgModel, IonicModule, IonButton, IonContent, IonFooter, IonHeader, IonIcon, IonTextarea, IonTitle, IonToolbar, TextValueAccessorDirective], styles: ['\n\n[_nghost-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  min-height: 100vh;\n  font-family: "Inter", sans-serif;\n  color: var(--ion-text-color);\n}\nion-header[_ngcontent-%COMP%], \nion-footer[_ngcontent-%COMP%] {\n  box-shadow: none !important;\n}\nion-toolbar[_ngcontent-%COMP%] {\n  --background: var(--ion-background-color);\n  --color: var(--ion-text-color);\n  --border-color: transparent;\n  --min-height: 56px;\n  padding: 0 10px;\n}\nion-content[_ngcontent-%COMP%] {\n  --background: var(--ion-background-color);\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  overflow-y: auto;\n}\nion-content[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%] {\n  width: 100%;\n  display: flex;\n  margin-bottom: 10px;\n}\nion-content[_ngcontent-%COMP%]    > div.justify-end[_ngcontent-%COMP%] {\n  justify-content: flex-end;\n}\nion-content[_ngcontent-%COMP%]    > div.justify-start[_ngcontent-%COMP%] {\n  justify-content: flex-start;\n}\nion-content[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%] {\n  padding: 10px 15px;\n  border-radius: 20px;\n  max-width: 80%;\n  word-wrap: break-word;\n  color: var(--ion-text-color);\n}\n.user-message-bubble[_ngcontent-%COMP%] {\n  background: var(--ion-color-primary);\n  color: var(--ion-color-primary-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border-bottom-right-radius: 5px;\n  margin-right: 10px;\n}\n.assistant-message-bubble[_ngcontent-%COMP%] {\n  background: var(--ion-color-success);\n  color: var(--ion-color-success-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border: 1px solid var(--ion-color-step-300);\n  border-bottom-left-radius: 5px;\n  margin-left: 10px;\n}\n.chat-message-content[_ngcontent-%COMP%] {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n.chat-message-content[_ngcontent-%COMP%]   pre[_ngcontent-%COMP%] {\n  white-space: pre-wrap;\n  word-break: break-all;\n  background-color: var(--ion-color-step-200);\n  padding: 8px;\n  border-radius: 5px;\n  color: var(--ion-text-color);\n}\n.chat-message-content[_ngcontent-%COMP%]   table[_ngcontent-%COMP%] {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n.chat-message-content[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.chat-message-content[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid var(--ion-color-step-300);\n  color: var(--ion-text-color);\n}\n.chat-message-content[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  max-width: 100%;\n  height: auto;\n  border-radius: 8px;\n}\n.ion-content[_ngcontent-%COMP%]    > .flex.justify-center[_ngcontent-%COMP%] {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\nion-textarea[_ngcontent-%COMP%] {\n  --padding-start: 10px;\n  --padding-end: 10px;\n  --padding-top: 10px;\n  --padding-bottom: 10px;\n  --background: var(--ion-background-color);\n  border-radius: 20px;\n  color: var(--ion-text-color);\n  min-height: 40px;\n  max-height: 150px;\n  overflow-y: auto;\n  font-size: 1rem;\n  --placeholder-color: rgba(var(--ion-text-color-rgb), 0.5);\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 8px;\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\nion-button[_ngcontent-%COMP%] {\n  --background: var(--ion-color-tertiary);\n  --background-activated: var(--ion-color-tertiary-tint);\n  --border-radius: 20px;\n  height: 40px;\n  font-size: 1rem;\n  margin-left: 10px;\n  text-transform: none;\n  color: var(--ion-color-tertiary-contrast);\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 8px;\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\n/*# sourceMappingURL=chat.css.map */'] });
+  }, dependencies: [CommonModule, NgForOf, NgIf, FormsModule, NgControlStatus, NgModel, IonicModule, IonButton, IonCard, IonCardContent, IonContent, IonFooter, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonTextarea, IonTitle, IonToolbar, TextValueAccessorDirective], styles: ['\n\n[_nghost-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  min-height: 100vh;\n  font-family: "Inter", sans-serif;\n  color: var(--ion-text-color);\n}\nion-header[_ngcontent-%COMP%], \nion-footer[_ngcontent-%COMP%] {\n  box-shadow: none !important;\n}\nion-toolbar[_ngcontent-%COMP%] {\n  --background: var(--ion-background-color);\n  --color: var(--ion-text-color);\n  --border-color: transparent;\n  --min-height: 56px;\n  padding: 0 10px;\n}\nion-content[_ngcontent-%COMP%] {\n  --background: var(--ion-background-color);\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  overflow-y: auto;\n}\nion-content[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%] {\n  width: 100%;\n  display: flex;\n  margin-bottom: 10px;\n}\nion-content[_ngcontent-%COMP%]    > div.justify-end[_ngcontent-%COMP%] {\n  justify-content: flex-end;\n}\nion-content[_ngcontent-%COMP%]    > div.justify-start[_ngcontent-%COMP%] {\n  justify-content: flex-start;\n}\nion-content[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%] {\n  padding: 10px 15px;\n  border-radius: 20px;\n  max-width: 80%;\n  word-wrap: break-word;\n  color: var(--ion-text-color);\n}\n.user-message-bubble[_ngcontent-%COMP%] {\n  background: var(--ion-color-primary);\n  color: var(--ion-color-primary-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border-bottom-right-radius: 5px;\n  margin-right: 10px;\n}\n.assistant-message-bubble[_ngcontent-%COMP%] {\n  background: var(--ion-color-success);\n  color: var(--ion-color-success-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border: 1px solid var(--ion-color-step-300);\n  border-bottom-left-radius: 5px;\n  margin-left: 10px;\n}\n.chat-message-content[_ngcontent-%COMP%] {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n.chat-message-content[_ngcontent-%COMP%]   pre[_ngcontent-%COMP%] {\n  white-space: pre-wrap;\n  word-break: break-all;\n  background-color: var(--ion-color-step-200);\n  padding: 8px;\n  border-radius: 5px;\n  color: var(--ion-text-color);\n}\n.chat-message-content[_ngcontent-%COMP%]   table[_ngcontent-%COMP%] {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n.chat-message-content[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.chat-message-content[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid var(--ion-color-step-300);\n  color: var(--ion-text-color);\n}\n.chat-message-content[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  max-width: 100%;\n  height: auto;\n  border-radius: 8px;\n}\n.ion-content[_ngcontent-%COMP%]    > .flex.justify-center[_ngcontent-%COMP%] {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\nion-textarea[_ngcontent-%COMP%] {\n  --padding-start: 10px;\n  --padding-end: 10px;\n  --padding-top: 10px;\n  --padding-bottom: 10px;\n  --background: var(--ion-background-color);\n  border-radius: 20px;\n  color: var(--ion-text-color);\n  min-height: 40px;\n  max-height: 150px;\n  overflow-y: auto;\n  font-size: 1rem;\n  --placeholder-color: rgba(var(--ion-text-color-rgb), 0.5);\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 8px;\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\nion-button[_ngcontent-%COMP%] {\n  --background: var(--ion-color-tertiary);\n  --background-activated: var(--ion-color-tertiary-tint);\n  --border-radius: 20px;\n  height: 40px;\n  font-size: 1rem;\n  margin-left: 10px;\n  text-transform: none;\n  color: var(--ion-color-tertiary-contrast);\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 8px;\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\n/*# sourceMappingURL=chat.css.map */'] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ChatComponent, [{
@@ -31612,6 +31661,22 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
 </ion-header>
 
 <ion-content #chatContainer class="ion-padding custom-scrollbar">
+  <ion-card *ngIf="showAnnouncementBanner && announcements.length > 0" class="glass-card ion-no-margin ion-margin-bottom">
+    <ion-card-content class="flex items-start justify-between">
+      <div>
+        <h2 class="font-bold text-lg mb-2">Important Announcements:</h2>
+        <ion-list lines="none" class="bg-transparent">
+          <ion-item *ngFor="let announcement of announcements" class="bg-transparent ion-no-padding">
+            <ion-label class="ion-text-wrap">{{ announcement }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+      <ion-button fill="clear" color="dark" (click)="dismissAnnouncementBanner()">
+        <ion-icon name="close-circle-outline" size="large"></ion-icon>
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
   <!-- Chat messages will be rendered here dynamically -->
 <div *ngFor="let message of messages" class="flex mb-4" [class.justify-end]="message.role === 'user'" [class.justify-start]="message.role === 'assistant'">
     <div class="p-3 rounded-lg max-w-[70%]"
@@ -31650,7 +31715,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
     </div>
   </ion-toolbar>
 </ion-footer>`, styles: ['/* src/app/chat/chat.css */\n:host {\n  display: flex;\n  flex-direction: column;\n  min-height: 100vh;\n  font-family: "Inter", sans-serif;\n  color: var(--ion-text-color);\n}\nion-header,\nion-footer {\n  box-shadow: none !important;\n}\nion-toolbar {\n  --background: var(--ion-background-color);\n  --color: var(--ion-text-color);\n  --border-color: transparent;\n  --min-height: 56px;\n  padding: 0 10px;\n}\nion-content {\n  --background: var(--ion-background-color);\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  overflow-y: auto;\n}\nion-content > div {\n  width: 100%;\n  display: flex;\n  margin-bottom: 10px;\n}\nion-content > div.justify-end {\n  justify-content: flex-end;\n}\nion-content > div.justify-start {\n  justify-content: flex-start;\n}\nion-content > div > div {\n  padding: 10px 15px;\n  border-radius: 20px;\n  max-width: 80%;\n  word-wrap: break-word;\n  color: var(--ion-text-color);\n}\n.user-message-bubble {\n  background: var(--ion-color-primary);\n  color: var(--ion-color-primary-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border-bottom-right-radius: 5px;\n  margin-right: 10px;\n}\n.assistant-message-bubble {\n  background: var(--ion-color-success);\n  color: var(--ion-color-success-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border: 1px solid var(--ion-color-step-300);\n  border-bottom-left-radius: 5px;\n  margin-left: 10px;\n}\n.chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n.chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n  background-color: var(--ion-color-step-200);\n  padding: 8px;\n  border-radius: 5px;\n  color: var(--ion-text-color);\n}\n.chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n.chat-message-content th,\n.chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid var(--ion-color-step-300);\n  color: var(--ion-text-color);\n}\n.chat-message-content img {\n  max-width: 100%;\n  height: auto;\n  border-radius: 8px;\n}\n.ion-content > .flex.justify-center {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\nion-textarea {\n  --padding-start: 10px;\n  --padding-end: 10px;\n  --padding-top: 10px;\n  --padding-bottom: 10px;\n  --background: var(--ion-background-color);\n  border-radius: 20px;\n  color: var(--ion-text-color);\n  min-height: 40px;\n  max-height: 150px;\n  overflow-y: auto;\n  font-size: 1rem;\n  --placeholder-color: rgba(var(--ion-text-color-rgb), 0.5);\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar {\n  width: 8px;\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\nion-button {\n  --background: var(--ion-color-tertiary);\n  --background-activated: var(--ion-color-tertiary-tint);\n  --border-radius: 20px;\n  height: 40px;\n  font-size: 1rem;\n  margin-left: 10px;\n  text-transform: none;\n  color: var(--ion-color-tertiary-contrast);\n}\n.custom-scrollbar::-webkit-scrollbar {\n  width: 8px;\n}\n.custom-scrollbar::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\n.custom-scrollbar::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\n/*# sourceMappingURL=chat.css.map */\n'] }]
-  }], () => [{ type: AiService }, { type: AuthService }, { type: DatabaseService }, { type: CaseService }], { chatContainer: [{
+  }], () => [{ type: AiService }, { type: AuthService }, { type: DatabaseService }, { type: CaseService }, { type: AnnouncementService }], { chatContainer: [{
     type: ViewChild,
     args: ["chatContainer"]
   }], messageInput: [{
@@ -31659,7 +31724,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
   }] });
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ChatComponent, { className: "ChatComponent", filePath: "src/app/chat/chat.ts", lineNumber: 21 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ChatComponent, { className: "ChatComponent", filePath: "src/app/chat/chat.ts", lineNumber: 22 });
 })();
 
 // src/app/app.routes.ts
@@ -31667,7 +31732,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-MFPI74VI.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-TMJJW6VL.js").then((m) => m.AdminModule)
   }
 ];
 
