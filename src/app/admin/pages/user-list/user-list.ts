@@ -91,4 +91,9 @@ export class UserListComponent implements OnInit {
     });
     await alert.present();
   }
+
+  navigateToNewUser() {
+    console.log('Attempting to navigate to /admin/users/new');
+    this.router.navigate(['/admin/users/new']);
+  }
 }
