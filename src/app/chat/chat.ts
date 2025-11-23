@@ -131,7 +131,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     }
 
     this.isLoading = true;
-    this.currentStatusMessage = ''; // Reset status message
+    this.currentStatusMessage = 'Typing...'; // Reset status message
 
     const userMessage: ChatMessage = { role: 'user', content: this.newMessage.trim() }; // Declare userMessage here
 
@@ -169,7 +169,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
 
         // Set isLoading to false and reset status message after the initial AI response is processed
         this.isLoading = false;
-        this.currentStatusMessage = 'Thinking...';
+        this.currentStatusMessage = '';
 
         // Then, trigger follow-up if an assistant message was generated
         if (assistantMessage) {

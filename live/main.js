@@ -31344,7 +31344,7 @@ var ChatComponent = class _ChatComponent {
       return;
     }
     this.isLoading = true;
-    this.currentStatusMessage = "";
+    this.currentStatusMessage = "Typing...";
     const userMessage = { role: "user", content: this.newMessage.trim() };
     this.messages.push(userMessage);
     this.saveMessageToDb(userMessage);
@@ -31372,7 +31372,7 @@ User's known characteristics: ${memoriesString}`;
           console.log("Assistant message added:", assistantMessage);
         }
         this.isLoading = false;
-        this.currentStatusMessage = "Thinking...";
+        this.currentStatusMessage = "";
         if (assistantMessage) {
           console.log("Triggering follow-up AI.");
           this.triggerFollowUpAi(userMessage, assistantMessage);
