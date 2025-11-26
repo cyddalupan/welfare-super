@@ -31456,8 +31456,7 @@ User's known characteristics: ${memoriesString}`;
     const memoryTagRegex = /\[\[MEMORY:"([^"]+)"\]\]/g;
     const reportTagRegex = /\[\[REPORT\]\]/;
     let modifiedResponse = response;
-    let loginProcessed = false;
-    let reportTriggered = false;
+    let tagProcessed = false;
     const loginMatch = modifiedResponse.match(loginTagRegex);
     if (loginMatch) {
       const lastName = loginMatch[1];
@@ -31485,11 +31484,10 @@ User's known characteristics: ${memoriesString}`;
         }
       });
       modifiedResponse = modifiedResponse.replace(loginTagRegex, "").trim();
-      loginProcessed = true;
+      tagProcessed = true;
     }
-    let memoryMatch;
-    let responseWithoutMemoryTags = modifiedResponse;
-    while ((memoryMatch = memoryTagRegex.exec(modifiedResponse)) !== null) {
+    const memoryMatches = [...modifiedResponse.matchAll(memoryTagRegex)];
+    for (const memoryMatch of memoryMatches) {
       const memoryContent = memoryMatch[1];
       if (this.userId) {
         this.databaseService.saveEmployeeMemory(parseInt(this.userId, 10), memoryContent).subscribe({
@@ -31502,12 +31500,12 @@ User's known characteristics: ${memoriesString}`;
       } else {
         console.warn("Attempted to save memory for unauthenticated user:", memoryContent);
       }
-      responseWithoutMemoryTags = responseWithoutMemoryTags.replace(memoryMatch[0], "").trim();
+      tagProcessed = true;
     }
-    modifiedResponse = responseWithoutMemoryTags;
+    modifiedResponse = modifiedResponse.replace(memoryTagRegex, "").trim();
     const reportMatch = modifiedResponse.match(reportTagRegex);
     if (reportMatch) {
-      reportTriggered = true;
+      tagProcessed = true;
       modifiedResponse = modifiedResponse.replace(reportTagRegex, "").trim();
       if (this.userId) {
         this.handleReportTag();
@@ -31520,7 +31518,7 @@ User's known characteristics: ${memoriesString}`;
     }
     return {
       response: modifiedResponse,
-      tagProcessed: loginProcessed || reportTriggered
+      tagProcessed
     };
   }
   handleReportTag() {
