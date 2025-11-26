@@ -1,15 +1,17 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Fra, Applicant } from '../../../schemas';
+import { IonicModule } from '@ionic/angular';
+
 import { FraService } from '../../services/fra.service';
 import { ApplicantService } from '../../services/applicant.service';
 
 @Component({
   selector: 'app-fra-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, IonicModule, ReactiveFormsModule],
   templateUrl: './fra-form.html',
   styleUrls: ['./fra-form.css'],
 })

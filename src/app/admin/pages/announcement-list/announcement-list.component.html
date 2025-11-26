@@ -1,0 +1,57 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Announcements</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/admin/announcements/new">
+        <ion-icon name="add-outline"></ion-icon>
+        New Announcement
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-searchbar [(ngModel)]="searchTerm" (ionChange)="filterAnnouncements()" placeholder="Search announcements..."></ion-searchbar>
+
+  <div *ngIf="isLoading" class="ion-padding ion-text-center">
+    <p>Loading announcements...</p>
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <ion-list *ngIf="!isLoading">
+    <ion-item-divider>
+      <ion-label (click)="sort('message')">Message <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
+      <ion-label (click)="sort('is_active')">Active <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
+      <ion-label (click)="sort('created_at')">Created At <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
+      <ion-label (click)="sort('updated_at')">Updated At <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
+      <ion-label class="ion-text-right">Actions</ion-label>
+    </ion-item-divider>
+
+    <ion-item *ngFor="let announcement of filteredAnnouncements">
+      <ion-label>
+        <h2>{{ announcement.message | slice:0:50 }}{{ announcement.message.length > 50 ? '...' : '' }}</h2>
+      </ion-label>
+      <ion-label>
+        <ion-toggle [checked]="announcement.is_active" (ionChange)="toggleActive(announcement)" [disabled]="!isAdminUser"></ion-toggle>
+      </ion-label>
+      <ion-label>
+        <p>{{ announcement.created_at | date:'short' }}</p>
+      </ion-label>
+      <ion-label>
+        <p>{{ announcement.updated_at | date:'short' }}</p>
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-button [routerLink]="['/admin/announcements/edit', announcement.id]" fill="clear">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-button>
+        <ion-button (click)="deleteAnnouncement(announcement.id)" fill="clear" color="danger" *ngIf="isAdminUser">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+
+    <ion-item *ngIf="!filteredAnnouncements || filteredAnnouncements.length === 0">
+      <ion-label class="ion-text-center">No announcements found.</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

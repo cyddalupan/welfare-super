@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular'; // <--- Added this import
 import { DatabaseService } from './database.service';
 import { AiService } from './ai.service';
 import { ChatMessage } from './schemas';
@@ -8,7 +9,7 @@ import { ChatMessage } from './schemas';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, IonicModule], // <--- Added IonicModule here
   templateUrl: './app.component.html',
   styleUrl: './app.css'
 })

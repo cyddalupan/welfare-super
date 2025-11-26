@@ -91,9 +91,34 @@ The `npm run build` command handles the entire build process:
 
 This setup allows backend PHP files to persist in `live/api` across builds.
 
+### SPA Routing on Static Servers
+
+When deploying this Angular (Ionic) application to a static web server (e.g., Apache, Nginx), it's crucial to configure the server for Single Page Application (SPA) routing. Without this configuration, direct navigation to deep links (e.g., `/admin`, `/admin/dashboard`) will result in a 404 "Not Found" error from the web server, as it won't find a physical file corresponding to that URL path.
+
+To ensure correct client-side routing, the web server must be configured to:
+1. Serve the `index.html` file for any requests that do not correspond to an existing static file or directory.
+2. Allow the Angular router to then take control and render the appropriate component based on the URL path.
+
+For **Apache** servers, this typically involves placing a `.htaccess` file in the root of the deployed application (e.g., in the `live/` directory) with URL rewrite rules:
+
+```apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # If an existing asset or directory is requested go to it as it is
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  # If the requested resource doesn't exist, use index.html
+  RewriteRule ^ index.html [L]
+</IfModule>
+```
+
+For **Nginx** servers, the `try_files` directive is used in the server block configuration.
+
+
 # Development Conventions
 
-*   **Database Structure:** The detailed database schema is documented in `DATABASE.md`.
+*   **Dependency Management:** Ensuring all framework-level dependencies, especially core ones like `@ionic/angular`, are correctly installed and managed is critical. Missing or unresolved dependencies can lead to fundamental build failures, particularly during project migrations (e.g., Angular to Ionic-Angular conversions). Running `npm install` and verifying `package.json` for all necessary packages is essential to maintain a stable build process.*   **Database Structure:** The detailed database schema is documented in `DATABASE.md`.
 *   **API Interaction:** For every interaction with the `api/database.php` endpoint, a dedicated Angular service should be created. These services must use strict typings for all request payloads and expected responses to ensure type safety and maintainability.
 *   **Styling:** The project uses Tailwind CSS for styling.
 *   **AI Workflow:** The application uses a simplified workflow where the frontend directly calls the backend AI endpoint. The `AiService` encrypts the entire chat message history and sends it to `api/ai.php`, which then proxies the request to an external AI service (e.g., OpenAI).

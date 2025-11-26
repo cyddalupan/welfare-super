@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Referrals</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/admin/referrals/new">
+        <ion-icon name="add-outline"></ion-icon>
+        New Referral
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-searchbar [(ngModel)]="searchTerm" (ionChange)="filterReferrals()" placeholder="Search Referrals..."></ion-searchbar>
+
+  <div *ngIf="isLoading" class="ion-padding ion-text-center">
+    <p>Loading Referrals...</p>
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <ion-list *ngIf="!isLoading">
+    <ion-item-divider>
+      <ion-label (click)="sort('name')">Name <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
+      <ion-label (click)="sort('contact')">Contact <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
+      <ion-label (click)="sort('referred_by')">Referred By <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
+      <ion-label class="ion-text-right">Actions</ion-label>
+    </ion-item-divider>
+
+    <ion-item *ngFor="let referral of filteredReferrals">
+      <ion-label>
+        <h2>{{ referral.name }}</h2>
+        <p>{{ referral.contact }}</p>
+        <p>{{ referral.referred_by }}</p>
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-button [routerLink]="['/admin/referrals/edit', referral.id]" fill="clear">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-button>
+        <ion-button (click)="deleteReferral(referral.id)" fill="clear" color="danger" *ngIf="isAdminUser">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+
+    <ion-item *ngIf="!filteredReferrals || filteredReferrals.length === 0">
+      <ion-label class="ion-text-center">No Referrals found.</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/announcements"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isEditMode ? 'Edit Announcement' : 'New Announcement' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="announcementForm" (ngSubmit)="saveAnnouncement()">
+    <ion-item>
+      <ion-textarea label="Message" labelPlacement="stacked" formControlName="message" rows="5" placeholder="Enter announcement message"></ion-textarea>
+    </ion-item>
+    <div *ngIf="announcementForm.get('message')?.invalid && announcementForm.get('message')?.touched" class="ion-padding-start ion-text-danger">
+      Message is required.
+    </div>
+
+    <ion-item class="ion-margin-top">
+      <ion-toggle formControlName="is_active" justify="space-between">Active</ion-toggle>
+    </ion-item>
+
+    <ion-button expand="block" type="submit" [disabled]="announcementForm.invalid || isLoading" class="ion-margin-top">
+      <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+      <span *ngIf="!isLoading">{{ isEditMode ? 'Update Announcement' : 'Create Announcement' }}</span>
+    </ion-button>
+
+    <ion-button expand="block" color="medium" (click)="cancel()" class="ion-margin-top">
+      Cancel
+    </ion-button>
+  </form>
+</ion-content>

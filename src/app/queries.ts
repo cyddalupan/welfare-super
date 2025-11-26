@@ -131,3 +131,26 @@ export const UPDATE_CASE_REPORT = `
   SET report = ?, updated_date = NOW(), report_status = 'open'
   WHERE id = ?
 `;
+
+// Announcement CRUD Queries
+export const GET_ANNOUNCEMENTS = 'SELECT * FROM announcements ORDER BY created_at DESC';
+export const GET_ACTIVE_ANNOUNCEMENTS = 'SELECT message FROM announcements WHERE is_active = TRUE ORDER BY created_at DESC';
+export const GET_ANNOUNCEMENT_BY_ID = 'SELECT * FROM announcements WHERE id = ?';
+export const CREATE_ANNOUNCEMENT = 'INSERT INTO announcements (message, is_active, created_at, updated_at) VALUES (?, ?, NOW(), NOW())';
+export const UPDATE_ANNOUNCEMENT = 'UPDATE announcements SET message = ?, is_active = ?, updated_at = NOW() WHERE id = ?';
+export const DELETE_ANNOUNCEMENT = 'DELETE FROM announcements WHERE id = ?';
+
+// Referral CRUD Queries
+export const GET_REFERRALS = 'SELECT id, name, contact, referred_by, timestamp FROM referal ORDER BY timestamp DESC';
+export const GET_REFERRAL_BY_ID = 'SELECT * FROM referal WHERE id = ?';
+export const CREATE_REFERRAL = `
+  INSERT INTO referal (
+    name, contact, referred_by, timestamp
+  ) VALUES (?, ?, ?, NOW())
+`;
+export const UPDATE_REFERRAL = `
+  UPDATE referal SET
+    name = ?, contact = ?, referred_by = ?
+  WHERE id = ?
+`;
+export const DELETE_REFERRAL = 'DELETE FROM referal WHERE id = ?';

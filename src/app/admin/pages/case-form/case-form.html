@@ -1,61 +1,57 @@
-<div class="glass-card p-8 text-white rounded-xl">
-  <h1 class="text-3xl font-bold mb-6">{{ isEditMode ? 'Edit Case' : 'New Case' }}</h1>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/cases"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isEditMode ? 'Edit Case' : 'New Case' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-  <div *ngIf="isLoading" class="text-center py-8">
-    <p>Loading case details...</p>
-    <!-- You can add a spinner icon here if Font Awesome is available -->
-    <i class="fas fa-spinner fa-spin text-4xl mt-4"></i>
-  </div>
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-content>
+      <div *ngIf="isLoading" class="ion-text-center ion-padding">
+        <p>Loading case details...</p>
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
 
-  <form *ngIf="!isLoading" (ngSubmit)="saveCase()" class="space-y-4">
-    <div>
-      <label for="employee_id" class="block text-sm font-medium text-gray-300">Employee</label>
-      <select id="employee_id" name="employee_id" [(ngModel)]="caseItem.employee_id" required
-              class="mt-1 block w-full px-3 py-2 bg-white/20 border border-transparent rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-800">
-        <option [ngValue]="null" disabled>Select an Employee</option>
-        <option *ngFor="let app of applicants" [ngValue]="app.id">
-          {{ app.last_name }}, {{ app.first_name }} ({{ app.passport_number }})
-        </option>
-      </select>
-    </div>
+      <form *ngIf="!isLoading" (ngSubmit)="saveCase()">
+        <ion-list lines="full">
+          <ion-item>
+            <ion-select label="Employee" [(ngModel)]="caseItem.employee_id" name="employee_id" required>
+              <ion-select-option [value]="null" disabled>Select an Employee</ion-select-option>
+              <ion-select-option *ngFor="let app of applicants" [value]="app.id">
+                {{ app.last_name }}, {{ app.first_name }} ({{ app.passport_number }})
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
 
-    <div>
-      <label for="category" class="block text-sm font-medium text-gray-300">Category</label>
-      <input type="text" id="category" name="category" [(ngModel)]="caseItem.category" required
-             class="mt-1 block w-full px-3 py-2 bg-white/20 border border-transparent rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-800">
-    </div>
+          <ion-item>
+            <ion-input label="Category" type="text" [(ngModel)]="caseItem.category" name="category" required></ion-input>
+          </ion-item>
 
-    <div>
-      <label for="report" class="block text-sm font-medium text-gray-300">Report</label>
-      <textarea id="report" name="report" [(ngModel)]="caseItem.report" rows="5" required
-                class="mt-1 block w-full px-3 py-2 bg-white/20 border border-transparent rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-800"></textarea>
-    </div>
+          <ion-item>
+            <ion-textarea label="Report" rows="5" [(ngModel)]="caseItem.report" name="report" required></ion-textarea>
+          </ion-item>
 
-    <div>
-      <label for="report_status" class="block text-sm font-medium text-gray-300">Status</label>
-      <select id="report_status" name="report_status" [(ngModel)]="caseItem.report_status" required
-              class="mt-1 block w-full px-3 py-2 bg-white/20 border border-transparent rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-800">
-        <option value="open">Open</option>
-        <option value="closed">Closed</option>
-        <option value="pending">Pending</option>
-      </select>
-    </div>
+          <ion-item>
+            <ion-select label="Status" [(ngModel)]="caseItem.report_status" name="report_status" required>
+              <ion-select-option value="open">Open</ion-select-option>
+              <ion-select-option value="closed">Closed</ion-select-option>
+              <ion-select-option value="pending">Pending</ion-select-option>
+            </ion-select>
+          </ion-item>
 
-    <div>
-      <label for="agency_id" class="block text-sm font-medium text-gray-300">Agency ID (Optional)</label>
-      <input type="number" id="agency_id" name="agency_id" [(ngModel)]="caseItem.agency_id"
-             class="mt-1 block w-full px-3 py-2 bg-white/20 border border-transparent rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-800">
-    </div>
+          <ion-item>
+            <ion-input label="Agency ID (Optional)" type="number" [(ngModel)]="caseItem.agency_id" name="agency_id"></ion-input>
+          </ion-item>
+        </ion-list>
 
-    <div class="flex justify-end space-x-3">
-      <button type="button" (click)="router.navigate(['/admin/cases'])"
-              class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-        Cancel
-      </button>
-      <button type="submit"
-              class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-        {{ isEditMode ? 'Update Case' : 'Create Case' }}
-      </button>
-    </div>
-  </form>
-</div>
+        <div class="ion-padding-top ion-text-right">
+          <ion-button fill="clear" (click)="router.navigate(['/admin/cases'])">Cancel</ion-button>
+          <ion-button type="submit">{{ isEditMode ? 'Update Case' : 'Create Case' }}</ion-button>
+        </div>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

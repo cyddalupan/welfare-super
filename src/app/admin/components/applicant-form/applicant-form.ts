@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { IonicModule } from '@ionic/angular'; // <--- Added this import
 import { Applicant } from '../../../schemas';
 import { ApplicantService } from '../../services/applicant.service';
 import { FraService } from '../../services/fra.service';
@@ -10,7 +11,7 @@ import { Fra } from '../../../schemas';
 @Component({
   selector: 'app-applicant-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, IonicModule], // <--- Added IonicModule here
   templateUrl: './applicant-form.html',
   styleUrls: ['./applicant-form.css'],
 })

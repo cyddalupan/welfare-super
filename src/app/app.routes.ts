@@ -5,6 +5,6 @@ export const routes: Routes = [
   { path: '', component: ChatComponent },
   {
     path: 'admin',
-    loadChildren: () => import('./admin/admin.routes').then(m => m.ADMIN_ROUTES)
+    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
   }
 ];

@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin/referrals"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isEditMode ? 'Edit Referral' : 'Add New Referral' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-content>
+      <div *ngIf="isLoading" class="ion-text-center ion-padding">
+        <p>Loading Referral data...</p>
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+
+      <form *ngIf="!isLoading" (ngSubmit)="saveReferral()">
+        <ion-list lines="full">
+          <ion-item>
+            <ion-input label="Name" type="text" [(ngModel)]="referral.name" name="name" required></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-input label="Contact" type="text" [(ngModel)]="referral.contact" name="contact" required></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-input label="Referred By" type="text" [(ngModel)]="referral.referred_by" name="referred_by" required></ion-input>
+          </ion-item>
+        </ion-list>
+
+        <div class="ion-padding-top ion-text-right">
+          <ion-button fill="clear" (click)="router.navigate(['/admin/referrals'])">Cancel</ion-button>
+          <ion-button type="submit">{{ isEditMode ? 'Update Referral' : 'Create Referral' }}</ion-button>
+        </div>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

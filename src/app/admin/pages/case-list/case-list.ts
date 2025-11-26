@@ -2,29 +2,34 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { IonicModule } from '@ionic/angular'; // <--- Added this import
 import { Case } from '../../../schemas';
 import { CaseService } from '../../services/case.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-case-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, IonicModule], // <--- Added IonicModule here
   templateUrl: './case-list.html',
   styleUrl: './case-list.css',
 })
 export class CaseListComponent implements OnInit {
   private caseService = inject(CaseService);
   private cdr = inject(ChangeDetectorRef);
+  private authService = inject(AuthService); // Inject AuthService
 
   allCases: Case[] = [];
   filteredCases: Case[] = [];
   searchTerm = '';
   isLoading = false; // Add loading state
+  isAdminUser: boolean = false; // New property for admin status
 
   private sortDirection: { [key: string]: 'asc' | 'desc' } = {};
 
   ngOnInit(): void {
     this.loadCases();
+    this.isAdminUser = this.authService.getUserType() === 'admin'; // Initialize isAdminUser
   }
 
   async loadCases(): Promise<void> {

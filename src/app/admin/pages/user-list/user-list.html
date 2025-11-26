@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Admin Users</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="navigateToNewUser()">
+        <ion-icon name="add-circle-outline"></ion-icon>
+        New User
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="isLoading" class="ion-padding ion-text-center">
+    <p>Loading users...</p>
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <ion-list *ngIf="!isLoading">
+    <ion-item *ngFor="let user of users">
+      <ion-label>
+        <h2>{{ user.full_name }}</h2>
+        <p>{{ user.email }} - {{ user.user_type }}</p>
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-button (click)="editUser(user.id)">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-button>
+        <ion-button color="danger" (click)="deleteUser(user.id)" *ngIf="isAdmin">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+
+  <ion-card *ngIf="users.length === 0">
+    <ion-card-content>
+      <p class="ion-text-center">No admin users found.</p>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

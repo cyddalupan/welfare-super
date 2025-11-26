@@ -1,12 +1,83 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+@import "@ionic/angular/css/display.css";
+
+/* Ionic Variables */
+:root {
+  /** primary (for user messages) **/
+  --ion-color-primary: #0a70cf; /* Darker blue for light mode */
+  --ion-color-primary-rgb: 10, 112, 207;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #0963bb;
+  --ion-color-primary-tint: #237fc9;
+
+  /** success (for green reply bubbles) **/
+  --ion-color-success: #1e8b4e; /* Darker green for light mode */
+  --ion-color-success-rgb: 30, 139, 78;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #1a7b45;
+  --ion-color-success-tint: #34985c;
+
+  /* default background and text colors */
+  --ion-background-color: #ffffff;
+  --ion-background-color-rgb: 255, 255, 255;
+  --ion-text-color: #000000;
+  --ion-text-color-rgb: 0, 0, 0;
+  --ion-color-step-300: #cccccc; /* for borders */
+}
+
+/* Dark mode overrides */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* primary - dark blue for user messages */
+    --ion-color-primary: #007bff; /* Darker blue for dark mode */
+    --ion-color-primary-rgb: 0, 123, 255;
+    --ion-color-primary-contrast: #ffffff;
+    --ion-color-primary-contrast-rgb: 255, 255, 255;
+    --ion-color-primary-shade: #0069d9;
+    --ion-color-primary-tint: #1a8bff;
+
+    /* success - dark green for reply bubbles */
+    --ion-color-success: #218838; /* Darker green for dark mode */
+    --ion-color-success-rgb: 33, 136, 56;
+    --ion-color-success-contrast: #ffffff;
+    --ion-color-success-contrast-rgb: 255, 255, 255;
+    --ion-color-success-shade: #1e7e34;
+    --ion-color-success-tint: #28a745;
+
+    /* dark mode background and text colors */
+    --ion-background-color: #121212;
+    --ion-background-color-rgb: 18, 18, 18;
+    --ion-text-color: #ffffff;
+    --ion-text-color-rgb: 255, 255, 255;
+    --ion-color-step-300: #424242; /* for borders */
+  }
+}
+
 body, html {
   height: 100%;
   margin: 0;
+  background: var(--ion-background-color, #ffffff); /* Use Ionic background color, fallback to white */
 }
 
 body {
-  background-image: url('/background.jpg');
+  /* background-image: url('/background.jpg'); */
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -15,12 +86,10 @@ body {
 }
 
 /* Styles for glass cards/panels (used for chat bubbles) */
-.glass-card {
-  background: rgba(255, 255, 255, 0.2); /* More opaque for chat bubbles */
-  backdrop-filter: blur(5px); /* Slightly less blur */
-  -webkit-backdrop-filter: blur(5px); /* For compatibility */
+/* .glass-card {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: #ffffff;
-}
-
-
+} */

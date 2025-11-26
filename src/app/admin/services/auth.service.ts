@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { DatabaseService } from '../../database.service';
 import { GET_ADMIN_USER_BY_EMAIL } from '../../queries';
-import { AdminUser } from '../../schemas';
+import { AdminUser } from '../schemas';
 import { firstValueFrom } from 'rxjs'; // Import firstValueFrom
 
 interface DbQueryResult<T> {
@@ -24,8 +24,8 @@ export class AuthService {
         const user = result.data[0]; // Access user from result.data
         // NOTE: This is an insecure plaintext password comparison as requested.
         if (user.password === password) {
-          const token = JSON.stringify({ userId: user.id, email: user.email });
-          localStorage.setItem(this.TOKEN_KEY, token);
+          const adminSession = { userId: user.id, email: user.email, user_type: user.user_type };
+          localStorage.setItem(this.TOKEN_KEY, JSON.stringify(adminSession));
           return true;
         }
       }
@@ -48,11 +48,16 @@ export class AuthService {
     const token = localStorage.getItem(this.TOKEN_KEY);
     if (token) {
       try {
-        return JSON.parse(token);
+        return JSON.parse(token) as AdminUser;
       } catch (e) {
         return null;
       }
     }
     return null;
+  }
+
+  getUserType(): string | null {
+    const adminSession = this.getCurrentUser();
+    return adminSession ? adminSession.user_type : null;
   }
 }

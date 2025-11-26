@@ -1,8 +1,27 @@
-<div class="flex h-screen p-8 bg-transparent">
-  <app-sidebar></app-sidebar>
-  <main class="flex-1 overflow-y-auto">
-    <div class="w-full h-full bg-transparent px-8">
-      <router-outlet></router-outlet>
-    </div>
-  </main>
-</div>
+<ion-app>
+  <ion-menu contentId="main-content">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Admin Menu</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <!-- Original SidebarComponent will be placed here -->
+      <app-sidebar></app-sidebar>
+    </ion-content>
+  </ion-menu>
+
+  <div class="ion-page" id="main-content">
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Admin Dashboard</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-router-outlet></ion-router-outlet>
+    </ion-content>
+  </div>
+</ion-app>

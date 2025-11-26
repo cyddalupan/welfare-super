@@ -16,6 +16,7 @@ Stores credentials for admin users.
 | `full_name` | `CharField(255)` | Admin's full name. |
 | `created_at` | `DateTimeField` | Timestamp of creation. |
 | `updated_at` | `DateTimeField` | Timestamp of the last update. |
+| `user_type` | `VARCHAR(50)` | Defines the type of admin user (e.g., 'admin', 'supervisor'). |
 
 ---
 
@@ -218,6 +219,36 @@ Manages live support tickets/sessions.
 | `last_message` | `TextField` | The last message in the conversation before support was triggered. |
 | `is_open` | `BooleanField` | True if the support ticket is currently open. |
 | `created_date` | `DateTimeField` | Timestamp when the support session was initiated. |
+
+---
+
+## `announcements` App
+
+### `announcements` Table
+Stores site-wide announcements for display on the homepage.
+
+| Column | Type | Description |
+|---|---|---|
+| `id` | `INT` | Primary Key, Auto-increment |
+| `message` | `TEXT` | The content of the announcement. |
+| `is_active` | `BOOLEAN` | A flag to control visibility (true for active, false for inactive). |
+| `created_at` | `DATETIME` | Timestamp of creation. |
+| `updated_at` | `DATETIME` | Timestamp of the last update. |
+
+---
+
+## `Referral` App
+
+### `referal` Table
+Stores information about referrals.
+
+| Column        | Type              | Description                               |
+|---------------|-------------------|-------------------------------------------|
+| `id`          | `BigAutoField`    | Primary Key                               |
+| `name`        | `CharField(255)`  | Name of the referred person.              |
+| `contact`     | `CharField(255)`  | Contact information of the referred person.|
+| `referred_by` | `CharField(255)`  | ID or name of the referrer.               |
+| `timestamp`   | `DateTimeField`   | Timestamp of the referral.                |
 
 ---
 
