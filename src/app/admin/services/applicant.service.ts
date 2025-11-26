@@ -6,6 +6,7 @@ import {
   CREATE_APPLICANT,
   UPDATE_APPLICANT,
   DELETE_APPLICANT,
+  DELETE_APPLICANT_MEMORY,
   GET_APPLICANT_STATUSES
 } from '../../queries';
 import { Applicant, ApplicantHistory } from '../../schemas';
@@ -88,6 +89,10 @@ export class ApplicantService {
   }
 
   async deleteApplicant(id: number): Promise<any> {
+    // First, delete related records from employee_employeememory
+    await firstValueFrom(this.db.query(DELETE_APPLICANT_MEMORY, [id]));
+
+    // Then, delete the applicant
     return firstValueFrom(this.db.query(DELETE_APPLICANT, [id]));
   }
 

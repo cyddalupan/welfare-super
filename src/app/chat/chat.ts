@@ -217,9 +217,9 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       const reportTagRegex = /\[\[REPORT\]\]/;
   
       let modifiedResponse = response;
-      let loginProcessed = false;
-      let reportTriggered = false;
+      let tagProcessed = false;
   
+      // 1. Process LOGIN tag
       const loginMatch = modifiedResponse.match(loginTagRegex);
       if (loginMatch) {
         const lastName = loginMatch[1];
@@ -247,12 +247,12 @@ export class ChatComponent implements AfterViewChecked, OnInit {
           }
         });
         modifiedResponse = modifiedResponse.replace(loginTagRegex, '').trim();
-        loginProcessed = true;
+        tagProcessed = true;
       }
   
-      let memoryMatch;
-      let responseWithoutMemoryTags = modifiedResponse;
-      while ((memoryMatch = memoryTagRegex.exec(modifiedResponse)) !== null) {
+      // 2. Process MEMORY tags
+      const memoryMatches = [...modifiedResponse.matchAll(memoryTagRegex)];
+      for (const memoryMatch of memoryMatches) {
         const memoryContent = memoryMatch[1];
         if (this.userId) {
           this.databaseService.saveEmployeeMemory(parseInt(this.userId, 10), memoryContent)
@@ -266,13 +266,14 @@ export class ChatComponent implements AfterViewChecked, OnInit {
         } else {
           console.warn('Attempted to save memory for unauthenticated user:', memoryContent);
         }
-        responseWithoutMemoryTags = responseWithoutMemoryTags.replace(memoryMatch[0], '').trim();
+        tagProcessed = true;
       }
-      modifiedResponse = responseWithoutMemoryTags;
+      modifiedResponse = modifiedResponse.replace(memoryTagRegex, '').trim();
   
+      // 3. Process REPORT tag
       const reportMatch = modifiedResponse.match(reportTagRegex);
       if (reportMatch) {
-        reportTriggered = true;
+        tagProcessed = true;
         modifiedResponse = modifiedResponse.replace(reportTagRegex, '').trim();
         if (this.userId) {
           this.handleReportTag();
@@ -286,7 +287,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   
       return {
         response: modifiedResponse,
-        tagProcessed: loginProcessed || reportTriggered
+        tagProcessed: tagProcessed
       };
     }
   private handleReportTag(): void {

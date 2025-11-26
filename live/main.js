@@ -163,7 +163,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-CQJW44PI.js";
+} from "./chunk-2I3Z6U25.js";
 import "./chunk-B7UJR2GH.js";
 import "./chunk-W7NNY2EY.js";
 import "./chunk-HTLDGIIN.js";
@@ -31732,7 +31732,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-IXWQYXUQ.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-FDM2IQTJ.js").then((m) => m.AdminModule)
   }
 ];
 

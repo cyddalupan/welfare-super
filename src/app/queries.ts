@@ -28,6 +28,7 @@ export const UPDATE_APPLICANT = `
   WHERE id = ?
 `;
 export const DELETE_APPLICANT = 'DELETE FROM employee_employee WHERE id = ?';
+export const DELETE_APPLICANT_MEMORY = 'DELETE FROM employee_employeememory WHERE employee_id = ?';
 
 // FRA CRUD Queries
 export const GET_FRAS = 'SELECT id, name, contact, address, country, agency_id FROM fra_fra ORDER BY name';
