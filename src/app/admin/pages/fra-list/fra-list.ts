@@ -2,7 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular'; // <--- Added this import
+import { IonicModule, ViewWillEnter } from '@ionic/angular'; // <--- Added this import
 import { Fra } from '../../../schemas';
 import { FraService } from '../../services/fra.service';
 import { AuthService } from '../../services/auth.service';
@@ -14,7 +14,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './fra-list.html',
   styleUrl: './fra-list.css',
 })
-export class FraListComponent implements OnInit {
+export class FraListComponent implements OnInit, ViewWillEnter {
   private fraService = inject(FraService);
   private cdr = inject(ChangeDetectorRef);
   private authService = inject(AuthService); // Inject AuthService
@@ -30,6 +30,10 @@ export class FraListComponent implements OnInit {
   ngOnInit(): void {
     this.loadFras();
     this.isAdminUser = this.authService.getUserType() === 'admin'; // Initialize isAdminUser
+  }
+
+  ionViewWillEnter(): void {
+    this.loadFras();
   }
 
   async loadFras(): Promise<void> {
