@@ -66,7 +66,7 @@
 
           <ion-item>
             <ion-select label="Applicant" [(ngModel)]="fra.applicant_id" name="applicant_id">
-              <ion-select-option [ngValue]="null">Select Applicant</ion-select-option>
+              <ion-select-option [value]="null">Select Applicant</ion-select-option>
               <ion-select-option *ngFor="let applicant of applicants" [value]="applicant.id">
                 {{ applicant.first_name }} {{ applicant.last_name }}
               </ion-select-option>
