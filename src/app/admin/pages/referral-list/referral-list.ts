@@ -2,7 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ViewWillEnter } from '@ionic/angular';
 import { Referral } from '../../../schemas'; // Changed from Fra
 import { ReferralService } from '../../services/referral.service'; // Changed from FraService
 import { AuthService } from '../../services/auth.service';
@@ -14,7 +14,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './referral-list.html', // Changed from ./fra-list.html
   styleUrl: './referral-list.css', // Changed from ./fra-list.css
 })
-export class ReferralListComponent implements OnInit { // Changed from FraListComponent
+export class ReferralListComponent implements OnInit, ViewWillEnter { // Changed from FraListComponent
   private referralService = inject(ReferralService); // Changed from fraService
   private cdr = inject(ChangeDetectorRef);
   private authService = inject(AuthService);
@@ -30,6 +30,10 @@ export class ReferralListComponent implements OnInit { // Changed from FraListCo
   ngOnInit(): void {
     this.loadReferrals(); // Changed from loadFras
     this.isAdminUser = this.authService.getUserType() === 'admin';
+  }
+
+  ionViewWillEnter(): void {
+    this.loadReferrals();
   }
 
   async loadReferrals(): Promise<void> { // Changed from loadFras

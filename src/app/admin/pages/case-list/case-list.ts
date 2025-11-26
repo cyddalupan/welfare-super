@@ -2,7 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular'; // <--- Added this import
+import { IonicModule, ViewWillEnter } from '@ionic/angular'; // <--- Added this import
 import { Case } from '../../../schemas';
 import { CaseService } from '../../services/case.service';
 import { AuthService } from '../../services/auth.service';
@@ -14,7 +14,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './case-list.html',
   styleUrl: './case-list.css',
 })
-export class CaseListComponent implements OnInit {
+export class CaseListComponent implements OnInit, ViewWillEnter {
   private caseService = inject(CaseService);
   private cdr = inject(ChangeDetectorRef);
   private authService = inject(AuthService); // Inject AuthService
@@ -30,6 +30,10 @@ export class CaseListComponent implements OnInit {
   ngOnInit(): void {
     this.loadCases();
     this.isAdminUser = this.authService.getUserType() === 'admin'; // Initialize isAdminUser
+  }
+
+  ionViewWillEnter(): void {
+    this.loadCases();
   }
 
   async loadCases(): Promise<void> {

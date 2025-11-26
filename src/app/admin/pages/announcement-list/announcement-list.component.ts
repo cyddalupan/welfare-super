@@ -2,7 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ViewWillEnter } from '@ionic/angular';
 import { Announcement } from '../../../schemas/announcement';
 import { AnnouncementService } from '../../services/announcement.service';
 import { AuthService } from '../../services/auth.service'; // Still need AuthService for user_type
@@ -14,7 +14,7 @@ import { AuthService } from '../../services/auth.service'; // Still need AuthSer
   templateUrl: './announcement-list.component.html',
   styleUrl: './announcement-list.component.css',
 })
-export class AnnouncementListComponent implements OnInit {
+export class AnnouncementListComponent implements OnInit, ViewWillEnter {
   private announcementService = inject(AnnouncementService);
   private cdr = inject(ChangeDetectorRef);
   private authService = inject(AuthService);
@@ -30,6 +30,10 @@ export class AnnouncementListComponent implements OnInit {
   ngOnInit(): void {
     this.loadAnnouncements();
     this.isAdminUser = this.authService.getUserType() === 'admin';
+  }
+
+  ionViewWillEnter(): void {
+    this.loadAnnouncements();
   }
 
   async loadAnnouncements(): Promise<void> {

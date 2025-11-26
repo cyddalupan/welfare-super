@@ -2,7 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-import { IonicModule } from '@ionic/angular'; // <--- Added this import
+import { IonicModule, ViewWillEnter } from '@ionic/angular'; // <--- Added this import
 import { Applicant } from '../../../schemas';
 import { ApplicantService } from '../../services/applicant.service';
 import { AuthService } from '../../services/auth.service';
@@ -14,7 +14,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './applicant-list.html',
   styleUrl: './applicant-list.css',
 })
-export class ApplicantListComponent implements OnInit {
+export class ApplicantListComponent implements OnInit, ViewWillEnter {
   private applicantService = inject(ApplicantService);
   private cdr = inject(ChangeDetectorRef);
   private route = inject(ActivatedRoute);
@@ -35,6 +35,11 @@ export class ApplicantListComponent implements OnInit {
       this.loadApplicants(this.currentStatus ?? undefined);
     });
     this.isAdminUser = this.authService.getUserType() === 'admin'; // Initialize isAdminUser
+  }
+
+  ionViewWillEnter(): void {
+    // Reload applicants when the view is entered, preserving the current status
+    this.loadApplicants(this.currentStatus ?? undefined);
   }
 
   async loadApplicants(status?: string): Promise<void> {

@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, AlertController } from '@ionic/angular';
+import { IonicModule, AlertController, ViewWillEnter } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { AdminUsersService } from '../../services/admin-users.service';
@@ -13,7 +13,7 @@ import { AdminUsersService } from '../../services/admin-users.service';
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule],
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit, ViewWillEnter {
   users: any[] = [];
   isAdmin = false;
   isLoading = false; // Add isLoading property
@@ -26,6 +26,10 @@ export class UserListComponent implements OnInit {
 
   ngOnInit() {
     this.checkAdminStatus();
+    this.loadUsers();
+  }
+
+  ionViewWillEnter(): void {
     this.loadUsers();
   }
 
