@@ -15,22 +15,33 @@
         <ion-spinner name="crescent"></ion-spinner>
       </div>
 
-      <form *ngIf="!isLoading" (ngSubmit)="saveFra()">
+      <form *ngIf="!isLoading" [formGroup]="fraForm" (ngSubmit)="saveFra()">
         <ion-list lines="full">
           <ion-item>
-            <ion-input label="Name" type="text" [(ngModel)]="fra.name" name="name" required></ion-input>
+            <ion-input label="Name" type="text" formControlName="name" placeholder="Enter FRA name"></ion-input>
           </ion-item>
+          <div *ngIf="fraForm.get('name')?.invalid && fraForm.get('name')?.touched" class="ion-padding-start ion-text-danger">
+            <span *ngIf="fraForm.get('name')?.errors?.['required']">FRA Name is required.</span>
+            <span *ngIf="fraForm.get('name')?.errors?.['maxlength']">FRA Name cannot exceed 255 characters.</span>
+          </div>
 
           <ion-item>
-            <ion-input label="Contact Person" type="text" [(ngModel)]="fra.contact" name="contact" required></ion-input>
+            <ion-input label="Contact Person" type="text" formControlName="contact" placeholder="Enter contact person"></ion-input>
           </ion-item>
+          <div *ngIf="fraForm.get('contact')?.invalid && fraForm.get('contact')?.touched" class="ion-padding-start ion-text-danger">
+            <span *ngIf="fraForm.get('contact')?.errors?.['required']">Contact Person is required.</span>
+            <span *ngIf="fraForm.get('contact')?.errors?.['maxlength']">Contact Person cannot exceed 255 characters.</span>
+          </div>
 
           <ion-item>
-            <ion-textarea label="Address" rows="3" [(ngModel)]="fra.address" name="address" required></ion-textarea>
+            <ion-textarea label="Address" rows="3" formControlName="address" placeholder="Enter address"></ion-textarea>
           </ion-item>
+          <div *ngIf="fraForm.get('address')?.invalid && fraForm.get('address')?.touched" class="ion-padding-start ion-text-danger">
+            Address is required.
+          </div>
 
           <ion-item>
-            <ion-select label="Country" [(ngModel)]="fra.country" name="country" required>
+            <ion-select label="Country" formControlName="country" placeholder="Select Country">
               <ion-select-option value="">Select Country</ion-select-option>
               <ion-select-option value="US">United States</ion-select-option>
               <ion-select-option value="CA">Canada</ion-select-option>
@@ -63,24 +74,19 @@
               <ion-select-option value="IL">Israel</ion-select-option>
             </ion-select>
           </ion-item>
+          <div *ngIf="fraForm.get('country')?.invalid && fraForm.get('country')?.touched" class="ion-padding-start ion-text-danger">
+            <span *ngIf="fraForm.get('country')?.errors?.['required']">Country is required.</span>
+            <span *ngIf="fraForm.get('country')?.errors?.['maxlength']">Country cannot exceed 50 characters.</span>
+          </div>
 
           <ion-item>
-            <ion-select label="Applicant" [(ngModel)]="fra.applicant_id" name="applicant_id">
-              <ion-select-option [value]="null">Select Applicant</ion-select-option>
-              <ion-select-option *ngFor="let applicant of applicants" [value]="applicant.id">
-                {{ applicant.first_name }} {{ applicant.last_name }}
-              </ion-select-option>
-            </ion-select>
-          </ion-item>
-
-          <ion-item>
-            <ion-input label="Agency ID" type="number" [(ngModel)]="fra.agency_id" name="agency_id"></ion-input>
+            <ion-input label="Agency ID" type="number" formControlName="agency_id" placeholder="Enter agency ID"></ion-input>
           </ion-item>
         </ion-list>
 
         <div class="ion-padding-top ion-text-right">
           <ion-button fill="clear" (click)="router.navigate(['/admin/fras'])">Cancel</ion-button>
-          <ion-button type="submit">{{ isEditMode ? 'Update FRA' : 'Create FRA' }}</ion-button>
+          <ion-button type="submit" [disabled]="fraForm.invalid">{{ isEditMode ? 'Update FRA' : 'Create FRA' }}</ion-button>
         </div>
       </form>
     </ion-card-content>

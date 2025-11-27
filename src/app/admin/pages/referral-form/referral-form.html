@@ -15,24 +15,36 @@
         <ion-spinner name="crescent"></ion-spinner>
       </div>
 
-      <form *ngIf="!isLoading" (ngSubmit)="saveReferral()">
+      <form *ngIf="!isLoading" [formGroup]="referralForm" (ngSubmit)="saveReferral()">
         <ion-list lines="full">
           <ion-item>
-            <ion-input label="Name" type="text" [(ngModel)]="referral.name" name="name" required></ion-input>
+            <ion-input label="Name" type="text" formControlName="name" placeholder="Enter name"></ion-input>
           </ion-item>
+          <div *ngIf="referralForm.get('name')?.invalid && referralForm.get('name')?.touched" class="ion-padding-start ion-text-danger">
+            <span *ngIf="referralForm.get('name')?.errors?.['required']">Name is required.</span>
+            <span *ngIf="referralForm.get('name')?.errors?.['maxlength']">Name cannot exceed 255 characters.</span>
+          </div>
 
           <ion-item>
-            <ion-input label="Contact" type="text" [(ngModel)]="referral.contact" name="contact" required></ion-input>
+            <ion-input label="Contact" type="text" formControlName="contact" placeholder="Enter contact information"></ion-input>
           </ion-item>
+          <div *ngIf="referralForm.get('contact')?.invalid && referralForm.get('contact')?.touched" class="ion-padding-start ion-text-danger">
+            <span *ngIf="referralForm.get('contact')?.errors?.['required']">Contact is required.</span>
+            <span *ngIf="referralForm.get('contact')?.errors?.['maxlength']">Contact cannot exceed 255 characters.</span>
+          </div>
 
           <ion-item>
-            <ion-input label="Referred By" type="text" [(ngModel)]="referral.referred_by" name="referred_by" required></ion-input>
+            <ion-input label="Referred By" type="text" formControlName="referred_by" placeholder="Enter referrer"></ion-input>
           </ion-item>
+          <div *ngIf="referralForm.get('referred_by')?.invalid && referralForm.get('referred_by')?.touched" class="ion-padding-start ion-text-danger">
+            <span *ngIf="referralForm.get('referred_by')?.errors?.['required']">Referred By is required.</span>
+            <span *ngIf="referralForm.get('referred_by')?.errors?.['maxlength']">Referred By cannot exceed 255 characters.</span>
+          </div>
         </ion-list>
 
         <div class="ion-padding-top ion-text-right">
           <ion-button fill="clear" (click)="router.navigate(['/admin/referrals'])">Cancel</ion-button>
-          <ion-button type="submit">{{ isEditMode ? 'Update Referral' : 'Create Referral' }}</ion-button>
+          <ion-button type="submit" [disabled]="referralForm.invalid">{{ isEditMode ? 'Update Referral' : 'Create Referral' }}</ion-button>
         </div>
       </form>
     </ion-card-content>

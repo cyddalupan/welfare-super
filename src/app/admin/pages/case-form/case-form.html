@@ -15,41 +15,55 @@
         <ion-spinner name="crescent"></ion-spinner>
       </div>
 
-      <form *ngIf="!isLoading" (ngSubmit)="saveCase()">
+      <form *ngIf="!isLoading" [formGroup]="caseForm" (ngSubmit)="saveCase()">
         <ion-list lines="full">
           <ion-item>
-            <ion-select label="Employee" [(ngModel)]="caseItem.employee_id" name="employee_id" required>
+            <ion-select label="Employee" formControlName="employee_id" placeholder="Select an Employee">
               <ion-select-option [value]="null" disabled>Select an Employee</ion-select-option>
               <ion-select-option *ngFor="let app of applicants" [value]="app.id">
                 {{ app.last_name }}, {{ app.first_name }} ({{ app.passport_number }})
               </ion-select-option>
             </ion-select>
           </ion-item>
+          <div *ngIf="caseForm.get('employee_id')?.invalid && caseForm.get('employee_id')?.touched" class="ion-padding-start ion-text-danger">
+            Employee is required.
+          </div>
 
           <ion-item>
-            <ion-input label="Category" type="text" [(ngModel)]="caseItem.category" name="category" required></ion-input>
+            <ion-input label="Category" type="text" formControlName="category" placeholder="Enter category"></ion-input>
           </ion-item>
+          <div *ngIf="caseForm.get('category')?.invalid && caseForm.get('category')?.touched" class="ion-padding-start ion-text-danger">
+            <span *ngIf="caseForm.get('category')?.errors?.['required']">Category is required.</span>
+            <span *ngIf="caseForm.get('category')?.errors?.['maxlength']">Category cannot exceed 50 characters.</span>
+          </div>
 
           <ion-item>
-            <ion-textarea label="Report" rows="5" [(ngModel)]="caseItem.report" name="report" required></ion-textarea>
+            <ion-textarea label="Report" rows="5" formControlName="report" placeholder="Enter report details"></ion-textarea>
           </ion-item>
+          <div *ngIf="caseForm.get('report')?.invalid && caseForm.get('report')?.touched" class="ion-padding-start ion-text-danger">
+            Report is required.
+          </div>
 
           <ion-item>
-            <ion-select label="Status" [(ngModel)]="caseItem.report_status" name="report_status" required>
+            <ion-select label="Status" formControlName="report_status" placeholder="Select Status">
               <ion-select-option value="open">Open</ion-select-option>
               <ion-select-option value="closed">Closed</ion-select-option>
               <ion-select-option value="pending">Pending</ion-select-option>
             </ion-select>
           </ion-item>
+          <div *ngIf="caseForm.get('report_status')?.invalid && caseForm.get('report_status')?.touched" class="ion-padding-start ion-text-danger">
+            <span *ngIf="caseForm.get('report_status')?.errors?.['required']">Status is required.</span>
+            <span *ngIf="caseForm.get('report_status')?.errors?.['maxlength']">Status cannot exceed 15 characters.</span>
+          </div>
 
           <ion-item>
-            <ion-input label="Agency ID (Optional)" type="number" [(ngModel)]="caseItem.agency_id" name="agency_id"></ion-input>
+            <ion-input label="Agency ID (Optional)" type="number" formControlName="agency_id" placeholder="Enter agency ID"></ion-input>
           </ion-item>
         </ion-list>
 
         <div class="ion-padding-top ion-text-right">
           <ion-button fill="clear" (click)="router.navigate(['/admin/cases'])">Cancel</ion-button>
-          <ion-button type="submit">{{ isEditMode ? 'Update Case' : 'Create Case' }}</ion-button>
+          <ion-button type="submit" [disabled]="caseForm.invalid">{{ isEditMode ? 'Update Case' : 'Create Case' }}</ion-button>
         </div>
       </form>
     </ion-card-content>

@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular'; // <--- Added this import
+import { IonicModule } from '@ionic/angular';
 import { Applicant } from '../../../schemas';
 import { ApplicantService } from '../../services/applicant.service';
 import { FraService } from '../../services/fra.service';
@@ -11,7 +11,7 @@ import { Fra } from '../../../schemas';
 @Component({
   selector: 'app-applicant-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, IonicModule], // <--- Added IonicModule here
+  imports: [CommonModule, FormsModule, RouterModule, IonicModule, ReactiveFormsModule],
   templateUrl: './applicant-form.html',
   styleUrls: ['./applicant-form.css'],
 })
@@ -20,17 +20,44 @@ export class ApplicantFormComponent implements OnInit {
   private fraService = inject(FraService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private cdr = inject(ChangeDetectorRef); // Inject ChangeDetectorRef
+  private cdr = inject(ChangeDetectorRef);
+  private fb = inject(FormBuilder);
 
-  applicant: Partial<Applicant> = {};
+  applicantForm!: FormGroup;
   isEditMode = false;
   applicantId: number | null = null;
-  isLoading = false; // Add loading state
-  statuses: string[] = []; // Add statuses property
+  isLoading = false;
+  statuses: string[] = [];
   fras: Fra[] = [];
 
   ngOnInit(): void {
-    this.loadStatuses(); // Load statuses when the component initializes
+    this.applicantForm = this.fb.group({
+      first_name: ['', [Validators.required, Validators.maxLength(100)]],
+      middle_name: ['', Validators.maxLength(100)],
+      last_name: ['', [Validators.required, Validators.maxLength(100)]],
+      passport_number: ['', Validators.maxLength(50)],
+      date_of_birth: [null],
+      address: ['', Validators.maxLength(255)],
+      phone_number: ['', Validators.maxLength(20)],
+      email: ['', [Validators.email, Validators.maxLength(255)]],
+      is_support: [false],
+      token: ['', Validators.maxLength(255)],
+      user_id: [null],
+      date_deployment: [null],
+      fra_id: [null],
+      main_status: ['', Validators.required],
+      applicant_type: ['', Validators.required],
+      created_date_of_report: [null],
+      country: ['', Validators.maxLength(50)], // Assuming max 50 for country name
+      facebook: ['', Validators.pattern(/^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})$/)],
+      whatsapp: ['', Validators.maxLength(20)],
+      consistency_percentage: [0, [Validators.min(0), Validators.max(100)]],
+      agency_id: [null],
+      emergency_contact_name: ['', Validators.maxLength(100)],
+      emergency_contact_phone: ['', Validators.maxLength(20)],
+    });
+
+    this.loadStatuses();
     this.loadFras();
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -58,31 +85,37 @@ export class ApplicantFormComponent implements OnInit {
   }
 
   async loadApplicantData(id: number): Promise<void> {
-    this.isLoading = true; // Set loading to true
-    this.cdr.detectChanges(); // Force change detection to show loading indicator immediately
+    this.isLoading = true;
+    this.cdr.detectChanges();
     try {
       const data = await this.applicantService.getApplicantById(id);
       if (data) {
-        this.applicant = data;
-        this.cdr.detectChanges(); // Manually trigger change detection
+        this.applicantForm.patchValue(data);
       } else {
-        // Handle case where applicant is not found
         this.router.navigate(['/admin/applicants']);
       }
     } catch (error) {
       console.error('Error loading applicant data:', error);
     } finally {
-      this.isLoading = false; // Set loading to false
-      this.cdr.detectChanges(); // Force change detection to hide loading indicator immediately
+      this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
 
   async saveApplicant(): Promise<void> {
+    if (this.applicantForm.invalid) {
+      this.applicantForm.markAllAsTouched();
+      // Optionally, add a toast message to inform the user
+      // this.presentToast('Please fill all required fields correctly.', 'danger');
+      return;
+    }
+
     try {
+      const applicantData = this.applicantForm.value;
       if (this.isEditMode && this.applicantId) {
-        await this.applicantService.updateApplicant({ ...this.applicant, id: this.applicantId } as Applicant);
+        await this.applicantService.updateApplicant({ ...applicantData, id: this.applicantId } as Applicant);
       } else {
-        await this.applicantService.createApplicant(this.applicant as Omit<Applicant, 'id'>);
+        await this.applicantService.createApplicant(applicantData as Omit<Applicant, 'id'>);
       }
       this.router.navigate(['/admin/applicants']);
     } catch (error) {

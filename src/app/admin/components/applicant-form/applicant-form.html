@@ -18,27 +18,46 @@
               <ion-spinner name="crescent"></ion-spinner>
             </div>
 
-            <form *ngIf="!isLoading" (ngSubmit)="saveApplicant()" #applicantForm="ngForm">
+            <form *ngIf="!isLoading" [formGroup]="applicantForm" (ngSubmit)="saveApplicant()">
               <!-- Personal Information -->
               <ion-card-title class="ion-padding-bottom">Personal Information</ion-card-title>
               <ion-list lines="full">
                 <ion-item>
-                  <ion-input label="First Name" type="text" [(ngModel)]="applicant.first_name" name="first_name" required></ion-input>
+                  <ion-input label="First Name" type="text" formControlName="first_name" placeholder="Enter first name"></ion-input>
                 </ion-item>
+                <div *ngIf="applicantForm.get('first_name')?.invalid && applicantForm.get('first_name')?.touched" class="ion-padding-start ion-text-danger">
+                  <span *ngIf="applicantForm.get('first_name')?.errors?.['required']">First Name is required.</span>
+                  <span *ngIf="applicantForm.get('first_name')?.errors?.['maxlength']">First Name cannot exceed 100 characters.</span>
+                </div>
+
                 <ion-item>
-                  <ion-input label="Middle Name" type="text" [(ngModel)]="applicant.middle_name" name="middle_name"></ion-input>
+                  <ion-input label="Middle Name" type="text" formControlName="middle_name" placeholder="Enter middle name"></ion-input>
                 </ion-item>
+                <div *ngIf="applicantForm.get('middle_name')?.invalid && applicantForm.get('middle_name')?.touched" class="ion-padding-start ion-text-danger">
+                  <span *ngIf="applicantForm.get('middle_name')?.errors?.['maxlength']">Middle Name cannot exceed 100 characters.</span>
+                </div>
+
                 <ion-item>
-                  <ion-input label="Last Name" type="text" [(ngModel)]="applicant.last_name" name="last_name" required></ion-input>
+                  <ion-input label="Last Name" type="text" formControlName="last_name" placeholder="Enter last name"></ion-input>
                 </ion-item>
+                <div *ngIf="applicantForm.get('last_name')?.invalid && applicantForm.get('last_name')?.touched" class="ion-padding-start ion-text-danger">
+                  <span *ngIf="applicantForm.get('last_name')?.errors?.['required']">Last Name is required.</span>
+                  <span *ngIf="applicantForm.get('last_name')?.errors?.['maxlength']">Last Name cannot exceed 100 characters.</span>
+                </div>
+
                 <ion-item>
-                  <ion-input label="Passport Number" type="text" [(ngModel)]="applicant.passport_number" name="passport_number"></ion-input>
+                  <ion-input label="Passport Number" type="text" formControlName="passport_number" placeholder="Enter passport number"></ion-input>
                 </ion-item>
+                <div *ngIf="applicantForm.get('passport_number')?.invalid && applicantForm.get('passport_number')?.touched" class="ion-padding-start ion-text-danger">
+                  <span *ngIf="applicantForm.get('passport_number')?.errors?.['maxlength']">Passport Number cannot exceed 50 characters.</span>
+                </div>
+
                 <ion-item>
-                  <ion-input label="Date of Birth" type="date" [(ngModel)]="applicant.date_of_birth" name="date_of_birth"></ion-input>
+                  <ion-input label="Date of Birth" type="date" formControlName="date_of_birth"></ion-input>
                 </ion-item>
+
                 <ion-item>
-                  <ion-select label="Country" [(ngModel)]="applicant.country" name="country">
+                  <ion-select label="Country" formControlName="country" placeholder="Select Country">
                     <ion-select-option value="">Select Country</ion-select-option>
                     <ion-select-option value="US">United States</ion-select-option>
                     <ion-select-option value="CA">Canada</ion-select-option>
@@ -71,57 +90,111 @@
                     <ion-select-option value="IL">Israel</ion-select-option>
                   </ion-select>
                 </ion-item>
+                <div *ngIf="applicantForm.get('country')?.invalid && applicantForm.get('country')?.touched" class="ion-padding-start ion-text-danger">
+                  <span *ngIf="applicantForm.get('country')?.errors?.['maxlength']">Country cannot exceed 50 characters.</span>
+                </div>
               </ion-list>
 
               <!-- Contact Details -->
               <ion-card-title class="ion-padding-top ion-padding-bottom">Contact Details</ion-card-title>
               <ion-list lines="full">
                 <ion-item>
-                  <ion-input label="Email" type="email" [(ngModel)]="applicant.email" name="email"></ion-input>
+                  <ion-input label="Email" type="email" formControlName="email" placeholder="Enter email"></ion-input>
                 </ion-item>
+                <div *ngIf="applicantForm.get('email')?.invalid && applicantForm.get('email')?.touched" class="ion-padding-start ion-text-danger">
+                  <span *ngIf="applicantForm.get('email')?.errors?.['email']">Please enter a valid email.</span>
+                  <span *ngIf="applicantForm.get('email')?.errors?.['maxlength']">Email cannot exceed 255 characters.</span>
+                </div>
+
                 <ion-item>
-                  <ion-input label="Phone Number" type="text" [(ngModel)]="applicant.phone_number" name="phone_number"></ion-input>
+                  <ion-input label="Phone Number" type="text" formControlName="phone_number" placeholder="Enter phone number"></ion-input>
                 </ion-item>
+                <div *ngIf="applicantForm.get('phone_number')?.invalid && applicantForm.get('phone_number')?.touched" class="ion-padding-start ion-text-danger">
+                  <span *ngIf="applicantForm.get('phone_number')?.errors?.['maxlength']">Phone Number cannot exceed 20 characters.</span>
+                </div>
+
                 <ion-item>
-                  <ion-input label="WhatsApp" type="text" [(ngModel)]="applicant.whatsapp" name="whatsapp"></ion-input>
+                  <ion-input label="WhatsApp" type="text" formControlName="whatsapp" placeholder="Enter WhatsApp number"></ion-input>
                 </ion-item>
+                <div *ngIf="applicantForm.get('whatsapp')?.invalid && applicantForm.get('whatsapp')?.touched" class="ion-padding-start ion-text-danger">
+                  <span *ngIf="applicantForm.get('whatsapp')?.errors?.['maxlength']">WhatsApp number cannot exceed 20 characters.</span>
+                </div>
+
                 <ion-item>
-                  <ion-input label="Facebook URL" type="url" [(ngModel)]="applicant.facebook" name="facebook"></ion-input>
+                  <ion-input label="Facebook URL" type="url" formControlName="facebook" placeholder="Enter Facebook URL"></ion-input>
                 </ion-item>
+                <div *ngIf="applicantForm.get('facebook')?.invalid && applicantForm.get('facebook')?.touched" class="ion-padding-start ion-text-danger">
+                  <span *ngIf="applicantForm.get('facebook')?.errors?.['pattern']">Please enter a valid URL.</span>
+                </div>
+
                 <ion-item>
-                  <ion-textarea label="Address" rows="3" [(ngModel)]="applicant.address" name="address"></ion-textarea>
+                  <ion-textarea label="Address" rows="3" formControlName="address" placeholder="Enter address"></ion-textarea>
                 </ion-item>
+                <div *ngIf="applicantForm.get('address')?.invalid && applicantForm.get('address')?.touched" class="ion-padding-start ion-text-danger">
+                  <span *ngIf="applicantForm.get('address')?.errors?.['maxlength']">Address cannot exceed 255 characters.</span>
+                </div>
               </ion-list>
 
               <!-- Employment Details -->
               <ion-card-title class="ion-padding-top ion-padding-bottom">Employment Details</ion-card-title>
               <ion-list lines="full">
                 <ion-item>
-                  <ion-select label="Main Status" [(ngModel)]="applicant.main_status" name="main_status">
+                  <ion-select label="Main Status" formControlName="main_status" placeholder="Select Status">
                     <ion-select-option value="">Select Status</ion-select-option>
                     <ion-select-option *ngFor="let status of statuses" [value]="status">{{ status }}</ion-select-option>
                   </ion-select>
                 </ion-item>
+                <div *ngIf="applicantForm.get('main_status')?.invalid && applicantForm.get('main_status')?.touched" class="ion-padding-start ion-text-danger">
+                  Main Status is required.
+                </div>
+
                 <ion-item>
-                  <ion-select label="Applicant Type" [(ngModel)]="applicant.applicant_type" name="applicant_type">
+                  <ion-select label="Applicant Type" formControlName="applicant_type" placeholder="Select Applicant Type">
                     <ion-select-option value="household">Household</ion-select-option>
-                    <ion-select-option value="skilled">Skilled</ion-select-option>
+                    <ion-select-option value="skilled">Skion-select-option</ion-select-option>
                   </ion-select>
                 </ion-item>
+                <div *ngIf="applicantForm.get('applicant_type')?.invalid && applicantForm.get('applicant_type')?.touched" class="ion-padding-start ion-text-danger">
+                  Applicant Type is required.
+                </div>
+
                 <ion-item>
-                  <ion-select label="Foreign Recruitment Agency" [(ngModel)]="applicant.fra_id" name="fra_id">
+                  <ion-select label="Foreign Recruitment Agency" formControlName="fra_id" placeholder="Select Agency">
                     <ion-select-option [value]="null">Select Agency</ion-select-option>
                     <ion-select-option *ngFor="let fra of fras" [value]="fra.id">{{ fra.name }}</ion-select-option>
                   </ion-select>
                 </ion-item>
+
                 <ion-item>
-                  <ion-input label="Deployment Date" type="date" [(ngModel)]="applicant.date_deployment" name="date_deployment"></ion-input>
+                  <ion-input label="Deployment Date" type="date" formControlName="date_deployment"></ion-input>
                 </ion-item>
+
+                <ion-item>
+                  <ion-input label="Consistency Percentage" type="number" formControlName="consistency_percentage"></ion-input>
+                </ion-item>
+                <div *ngIf="applicantForm.get('consistency_percentage')?.invalid && applicantForm.get('consistency_percentage')?.touched" class="ion-padding-start ion-text-danger">
+                  <span *ngIf="applicantForm.get('consistency_percentage')?.errors?.['min']">Consistency Percentage must be at least 0.</span>
+                  <span *ngIf="applicantForm.get('consistency_percentage')?.errors?.['max']">Consistency Percentage cannot exceed 100.</span>
+                </div>
+
+                <ion-item>
+                  <ion-input label="Emergency Contact Name" type="text" formControlName="emergency_contact_name"></ion-input>
+                </ion-item>
+                <div *ngIf="applicantForm.get('emergency_contact_name')?.invalid && applicantForm.get('emergency_contact_name')?.touched" class="ion-padding-start ion-text-danger">
+                  <span *ngIf="applicantForm.get('emergency_contact_name')?.errors?.['maxlength']">Emergency Contact Name cannot exceed 100 characters.</span>
+                </div>
+
+                <ion-item>
+                  <ion-input label="Emergency Contact Phone" type="text" formControlName="emergency_contact_phone"></ion-input>
+                </ion-item>
+                <div *ngIf="applicantForm.get('emergency_contact_phone')?.invalid && applicantForm.get('emergency_contact_phone')?.touched" class="ion-padding-start ion-text-danger">
+                  <span *ngIf="applicantForm.get('emergency_contact_phone')?.errors?.['maxlength']">Emergency Contact Phone cannot exceed 20 characters.</span>
+                </div>
               </ion-list>
 
               <div class="ion-padding-top ion-text-right">
                 <ion-button fill="clear" routerLink="/admin/applicants">Cancel</ion-button>
-                <ion-button type="submit" [disabled]="!applicantForm.form.valid">Save</ion-button>
+                <ion-button type="submit" [disabled]="applicantForm.invalid">Save</ion-button>
               </div>
             </form>
           </ion-card-content>

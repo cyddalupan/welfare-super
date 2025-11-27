@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular'; // <--- Added this import
+import { IonicModule } from '@ionic/angular';
 import { Case, Applicant } from '../../../schemas';
 import { CaseService } from '../../services/case.service';
 import { ApplicantService } from '../../services/applicant.service'; // To get applicants for dropdown
@@ -10,7 +10,7 @@ import { ApplicantService } from '../../services/applicant.service'; // To get a
 @Component({
   selector: 'app-case-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule], // <--- Added IonicModule here
+  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule],
   templateUrl: './case-form.html',
   styleUrl: './case-form.css',
 })
@@ -19,33 +19,40 @@ export class CaseFormComponent implements OnInit {
   private applicantService = inject(ApplicantService);
   private route = inject(ActivatedRoute);
   public router = inject(Router);
-  private cdr = inject(ChangeDetectorRef); // Inject ChangeDetectorRef
+  private cdr = inject(ChangeDetectorRef);
+  private fb = inject(FormBuilder);
 
-  caseItem: Partial<Case> = {
-    report_status: 'open' // Default status
-  };
+  caseForm!: FormGroup;
   applicants: Applicant[] = []; // For the applicant dropdown
   isEditMode = false;
   isLoading = false; // Add loading state
 
   async ngOnInit(): Promise<void> {
-    this.isLoading = true; // Set loading to true at the start
-    this.cdr.detectChanges(); // Force change detection to show loading indicator immediately
+    this.caseForm = this.fb.group({
+      employee_id: [null, Validators.required],
+      category: ['', [Validators.required, Validators.maxLength(50)]],
+      report: ['', Validators.required],
+      report_status: ['open', [Validators.required, Validators.maxLength(15)]], // Default to 'open'
+      agency_id: [null],
+    });
+
+    this.isLoading = true;
+    this.cdr.detectChanges();
     try {
-      await this.loadApplicants(); // Ensure applicants are loaded first
-      this.route.paramMap.subscribe(async params => { // Use async here for await loadCase
+      await this.loadApplicants();
+      this.route.paramMap.subscribe(async params => {
         const id = params.get('id');
         if (id) {
           this.isEditMode = true;
-          await this.loadCase(+id); // Await loadCase
+          await this.loadCase(+id);
         }
-        this.isLoading = false; // Set loading to false after everything is loaded
-        this.cdr.detectChanges(); // Force change detection to hide loading indicator immediately
+        this.isLoading = false;
+        this.cdr.detectChanges();
       });
     } catch (error) {
       console.error('Error during initialization:', error);
-      this.isLoading = false; // Ensure loading is false on error
-      this.cdr.detectChanges(); // Force change detection on error
+      this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -61,7 +68,13 @@ export class CaseFormComponent implements OnInit {
     try {
       const fetchedCase = await this.caseService.getCaseById(id);
       if (fetchedCase) {
-        this.caseItem = fetchedCase;
+        this.caseForm.patchValue({
+          employee_id: fetchedCase.employee_id,
+          category: fetchedCase.category,
+          report: fetchedCase.report,
+          report_status: fetchedCase.report_status,
+          agency_id: fetchedCase.agency_id,
+        });
       } else {
         console.error('Case not found');
         this.router.navigate(['/admin/cases']);
@@ -72,11 +85,19 @@ export class CaseFormComponent implements OnInit {
   }
 
   async saveCase(): Promise<void> {
+    if (this.caseForm.invalid) {
+      this.caseForm.markAllAsTouched();
+      // Optionally, add a toast message to inform the user
+      // this.presentToast('Please fill all required fields correctly.', 'danger');
+      return;
+    }
+
     try {
+      const caseData = this.caseForm.value;
       if (this.isEditMode) {
-        await this.caseService.updateCase(this.caseItem as Case);
+        await this.caseService.updateCase({ ...caseData, id: this.route.snapshot.params['id'] } as Case);
       } else {
-        await this.caseService.createCase(this.caseItem as Omit<Case, 'id' | 'date_reported' | 'updated_date'>);
+        await this.caseService.createCase(caseData as Omit<Case, 'id' | 'date_reported' | 'updated_date'>);
       }
       this.router.navigate(['/admin/cases']);
     } catch (error) {
