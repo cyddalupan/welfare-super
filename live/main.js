@@ -74,6 +74,7 @@ import {
   SkipSelf,
   TextValueAccessorDirective,
   UPDATE_CASE_REPORT,
+  UPDATE_EMPLOYEE_MAIN_STATUS_TO_COMPLAINT,
   ValueAccessor,
   ViewChild,
   ViewContainerRef,
@@ -90,6 +91,7 @@ import {
   dismiss,
   environment,
   eventMethod,
+  firstValueFrom,
   focusFirstDescendant,
   focusLastDescendant,
   forwardRef,
@@ -163,7 +165,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-G5Y7YVLD.js";
+} from "./chunk-BUW772YV.js";
 import "./chunk-B7UJR2GH.js";
 import "./chunk-W7NNY2EY.js";
 import "./chunk-HTLDGIIN.js";
@@ -31020,8 +31022,8 @@ var AiService = class _AiService {
   http = inject(HttpClient);
   encryptionService = inject(EncryptionService);
   // Inject the EncryptionService
-  callAi(messages) {
-    const payload = JSON.stringify({ messages });
+  callAi(aiPayload, employeeId) {
+    const payload = JSON.stringify({ messages: aiPayload, employee_id: employeeId });
     const base64Payload = this.encryptionService.encrypt(payload);
     return this.http.post(this.apiUrl, base64Payload, {
       headers: { "Content-Type": "text/plain" },
@@ -31139,8 +31141,8 @@ var CaseService = class _CaseService {
   }
   createNewCase(employeeId, agencyId, chatHistory, onStatusUpdate) {
     onStatusUpdate("Generating a summary of your complaint...");
-    const prompt = this.buildReportGenerationPrompt(chatHistory);
-    return this.aiService.callAi([{ role: "system", content: prompt }]).pipe(switchMap((aiResponseString) => {
+    const aiPromptContent = this.buildReportGenerationPrompt(chatHistory);
+    return this.aiService.callAi([{ role: "system", content: aiPromptContent }], employeeId).pipe(switchMap((aiResponseString) => {
       const aiResponse = JSON.parse(aiResponseString);
       onStatusUpdate("Saving the report to your file...");
       return this.databaseService.query(INSERT_CASE, [
@@ -31151,7 +31153,7 @@ var CaseService = class _CaseService {
       ]).pipe(switchMap((insertResult) => {
         const caseId = insertResult.insertId;
         onStatusUpdate(`Your report has been successfully filed. Your case ID is ${caseId}.`);
-        return of(caseId);
+        return this.databaseService.query(UPDATE_EMPLOYEE_MAIN_STATUS_TO_COMPLAINT, [employeeId]).pipe(switchMap(() => of(caseId)));
       }));
     }), catchError((error) => {
       console.error("Error creating new case:", error);
@@ -31161,8 +31163,8 @@ var CaseService = class _CaseService {
   }
   updateExistingCase(employeeId, existingCase, chatHistory, onStatusUpdate) {
     onStatusUpdate("Updating the summary of your complaint...");
-    const prompt = this.buildReportGenerationPrompt(chatHistory, existingCase.report);
-    return this.aiService.callAi([{ role: "system", content: prompt }]).pipe(switchMap((aiResponseString) => {
+    const aiPromptContent = this.buildReportGenerationPrompt(chatHistory, existingCase.report);
+    return this.aiService.callAi([{ role: "system", content: aiPromptContent }], employeeId).pipe(switchMap((aiResponseString) => {
       const aiResponse = JSON.parse(aiResponseString);
       onStatusUpdate("Saving the updated report to your file...");
       return this.databaseService.query(UPDATE_CASE_REPORT, [
@@ -31171,7 +31173,7 @@ var CaseService = class _CaseService {
         // Assuming existingCase.id is available
       ]).pipe(switchMap(() => {
         onStatusUpdate(`Your report (Case ID: ${existingCase.id}) has been successfully updated.`);
-        return of(existingCase.id);
+        return this.databaseService.query(UPDATE_EMPLOYEE_MAIN_STATUS_TO_COMPLAINT, [employeeId]).pipe(switchMap(() => of(existingCase.id)));
       }));
     }), catchError((error) => {
       console.error("Error updating existing case:", error);
@@ -31302,6 +31304,8 @@ var ChatComponent = class _ChatComponent {
   // New: Stores active announcement messages
   showAnnouncementBanner = true;
   // New: Controls announcement banner visibility
+  aiEnabledUntil = null;
+  // New property
   constructor(aiService, authService, databaseService, caseService, announcementService) {
     this.aiService = aiService;
     this.authService = authService;
@@ -31327,6 +31331,7 @@ var ChatComponent = class _ChatComponent {
     if (this.userId) {
       this.loadChatHistory();
       this.loadEmployeeMemories();
+      await this.loadAiEnabledUntilStatus();
     } else {
       this.messages = [];
       this.messages.push({ role: "assistant", content: "Welcome! To get started, please provide your last name and passport number so I can assist you." });
@@ -31335,6 +31340,22 @@ var ChatComponent = class _ChatComponent {
       this.announcements = await this.announcementService.getActiveAnnouncements();
     } catch (error) {
       console.error("Error loading announcements:", error);
+    }
+  }
+  async loadAiEnabledUntilStatus() {
+    if (this.userId) {
+      try {
+        const timestamp = await firstValueFrom(this.databaseService.getApplicantAiEnabledUntil(parseInt(this.userId, 10)));
+        if (timestamp) {
+          this.aiEnabledUntil = new Date(timestamp);
+          console.log("AI enabled until:", this.aiEnabledUntil);
+        } else {
+          this.aiEnabledUntil = null;
+        }
+      } catch (error) {
+        console.error("Error loading AI enabled until status:", error);
+        this.aiEnabledUntil = null;
+      }
     }
   }
   dismissAnnouncementBanner() {
@@ -31390,6 +31411,15 @@ var ChatComponent = class _ChatComponent {
       console.log("New message is empty, returning.");
       return;
     }
+    if (this.aiEnabledUntil && this.aiEnabledUntil.getTime() > (/* @__PURE__ */ new Date()).getTime()) {
+      const disabledMessage = { role: "assistant", content: "Our team is currently reviewing your case. AI responses are temporarily paused. Please await a direct response from our support staff." };
+      this.messages.push(disabledMessage);
+      this.saveMessageToDb(disabledMessage);
+      this.newMessage = "";
+      this.adjustTextareaHeight();
+      this.scrollToBottom();
+      return;
+    }
     this.isLoading = true;
     this.currentStatusMessage = "Typing...";
     setTimeout(() => {
@@ -31409,10 +31439,20 @@ User's known characteristics: ${memoriesString}`;
     const systemPromptForAi = { role: "system", content: currentSystemPromptContent };
     const historyForAi = this.messages.slice(-10);
     const aiPayload = [systemPromptForAi, ...historyForAi];
-    console.log("Calling initial AI with payload:", aiPayload);
-    this.aiService.callAi(aiPayload).subscribe({
+    const employeeIdNum = this.userId ? parseInt(this.userId, 10) : null;
+    console.log("Calling initial AI with payload:", aiPayload, "and employeeId:", employeeIdNum);
+    this.aiService.callAi(aiPayload, employeeIdNum).subscribe({
       next: (response) => {
         console.log("Initial AI response received:", response);
+        if (!response) {
+          this.isLoading = false;
+          this.currentStatusMessage = "";
+          const noAiMessage = { role: "assistant", content: "Our team is currently reviewing your case. AI responses are temporarily paused. Please await a direct response from our support staff." };
+          this.messages.push(noAiMessage);
+          this.saveMessageToDb(noAiMessage);
+          this.scrollToBottom();
+          return;
+        }
         const { response: processedResponse, tagProcessed } = this.parseAiResponseForTags(response);
         let assistantMessage = null;
         if (processedResponse) {
@@ -31561,9 +31601,14 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
     const systemPromptForAi = { role: "system", content: currentSystemPromptContent };
     const historyForAi = this.messages.slice(-10);
     const followUpPayload = [systemPromptForAi, ...historyForAi];
-    console.log("Calling follow-up AI with payload:", followUpPayload);
-    this.aiService.callAi(followUpPayload).subscribe({
+    const employeeIdNum = this.userId ? parseInt(this.userId, 10) : null;
+    console.log("Calling follow-up AI with payload:", followUpPayload, "and employeeId:", employeeIdNum);
+    this.aiService.callAi(followUpPayload, employeeIdNum).subscribe({
       next: (response) => {
+        if (!response) {
+          console.log("Follow-up AI: AI responses are paused, received empty response.");
+          return;
+        }
         const doneTagRegex = /\[\[DONE\]\]/;
         const doneMatch = response.match(doneTagRegex);
         if (doneMatch) {
@@ -31722,7 +31767,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
   }] });
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ChatComponent, { className: "ChatComponent", filePath: "src/app/chat/chat.ts", lineNumber: 22 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ChatComponent, { className: "ChatComponent", filePath: "src/app/chat/chat.ts", lineNumber: 23 });
 })();
 
 // src/app/app.routes.ts
@@ -31730,7 +31775,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-6H7PKL7F.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-ZB75HGRV.js").then((m) => m.AdminModule)
   }
 ];
 

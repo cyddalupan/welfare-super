@@ -31,6 +31,7 @@ export interface Applicant {
   agency_id?: number;
   emergency_contact_name?: string;
   emergency_contact_phone?: string;
+  ai_enabled_until?: string;
 }
 
 export interface Case {

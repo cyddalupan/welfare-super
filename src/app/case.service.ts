@@ -4,7 +4,8 @@ import { AiService } from './ai.service';
 import {
   SELECT_OPEN_CASE_BY_APPLICANT_ID,
   INSERT_CASE,
-  UPDATE_CASE_REPORT
+  UPDATE_CASE_REPORT,
+  UPDATE_EMPLOYEE_MAIN_STATUS_TO_COMPLAINT
 } from './queries';
 import { SYSTEM_PROMPT_REPORT_GENERATOR } from './prompts';
 import { ChatMessage } from './schemas'; // Correct import path
@@ -79,9 +80,8 @@ export class CaseService {
     onStatusUpdate: (message: string) => void
   ): Observable<number> {
     onStatusUpdate("Generating a summary of your complaint...");
-    const prompt = this.buildReportGenerationPrompt(chatHistory);
-
-    return this.aiService.callAi([{ role: 'system', content: prompt }]).pipe(
+    const aiPromptContent = this.buildReportGenerationPrompt(chatHistory); // Renamed variable
+    return this.aiService.callAi([{ role: 'system', content: aiPromptContent }], employeeId).pipe(
       switchMap((aiResponseString: string) => {
         const aiResponse: AiReportResponse = JSON.parse(aiResponseString);
         onStatusUpdate("Saving the report to your file...");
@@ -94,7 +94,10 @@ export class CaseService {
           switchMap((insertResult: any) => {
             const caseId = insertResult.insertId; // Assuming insertId is returned
             onStatusUpdate(`Your report has been successfully filed. Your case ID is ${caseId}.`);
-            return of(caseId);
+            // Update employee's main_status to 'WITH_COMPLAINT'
+            return this.databaseService.query(UPDATE_EMPLOYEE_MAIN_STATUS_TO_COMPLAINT, [employeeId]).pipe(
+              switchMap(() => of(caseId))
+            );
           })
         );
       }),
@@ -113,9 +116,9 @@ export class CaseService {
     onStatusUpdate: (message: string) => void
   ): Observable<number> {
     onStatusUpdate("Updating the summary of your complaint...");
-    const prompt = this.buildReportGenerationPrompt(chatHistory, existingCase.report);
+    const aiPromptContent = this.buildReportGenerationPrompt(chatHistory, existingCase.report); // Renamed variable
 
-    return this.aiService.callAi([{ role: 'system', content: prompt }]).pipe(
+    return this.aiService.callAi([{ role: 'system', content: aiPromptContent }], employeeId).pipe(
       switchMap((aiResponseString: string) => {
         const aiResponse: AiReportResponse = JSON.parse(aiResponseString); // AI will return updated report
         onStatusUpdate("Saving the updated report to your file...");
@@ -125,7 +128,10 @@ export class CaseService {
         ]).pipe(
           switchMap(() => {
             onStatusUpdate(`Your report (Case ID: ${existingCase.id}) has been successfully updated.`);
-            return of(existingCase.id!);
+            // Update employee's main_status to 'WITH_COMPLAINT'
+            return this.databaseService.query(UPDATE_EMPLOYEE_MAIN_STATUS_TO_COMPLAINT, [employeeId]).pipe(
+              switchMap(() => of(existingCase.id!))
+            );
           })
         );
       }),

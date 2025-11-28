@@ -59,6 +59,13 @@ try {
         throw new Exception('Messages not provided or in incorrect format in the request.');
     }
 
+    $employee_id = null;
+    if (isset($requestData['employee_id'])) {
+        $employee_id = (int)$requestData['employee_id'];
+    }
+    // Note: The AI disabling logic for the applicant's view is now handled on the Angular frontend (chat.ts).
+    // The ai.php remains a pure proxy to OpenAI API.
+
     // Prepare data for OpenAI API
     $openai_data = [
         'model' => 'gpt-5-mini',

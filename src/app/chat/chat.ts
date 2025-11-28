@@ -9,6 +9,7 @@ import { CaseService } from '../case.service';
 import { AnnouncementService } from '../admin/services/announcement.service'; // Import AnnouncementService
 import { ChatMessage } from '../schemas';
 import { SYSTEM_PROMPT_COMPLAINTS_ASSISTANT, SYSTEM_PROMPT_LOGIN_ASSISTANT, SYSTEM_PROMPT_FOLLOWUP_ASSISTANT } from '../prompts';
+import { firstValueFrom } from 'rxjs'; // New import
 
 const MAX_TEXTAREA_HEIGHT = 150;
 
@@ -35,6 +36,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   public employeeMemories: string[] = [];
   public announcements: string[] = []; // New: Stores active announcement messages
   public showAnnouncementBanner: boolean = true; // New: Controls announcement banner visibility
+  public aiEnabledUntil: Date | null = null; // New property
 
   constructor(
     private aiService: AiService,
@@ -67,6 +69,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     if (this.userId) {
       this.loadChatHistory();
       this.loadEmployeeMemories();
+      await this.loadAiEnabledUntilStatus(); // New: Load AI enabled status
     } else {
       this.messages = [];
       this.messages.push({ role: 'assistant', content: 'Welcome! To get started, please provide your last name and passport number so I can assist you.' });
@@ -77,6 +80,23 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       this.announcements = await this.announcementService.getActiveAnnouncements();
     } catch (error) {
       console.error('Error loading announcements:', error);
+    }
+  }
+
+  private async loadAiEnabledUntilStatus(): Promise<void> {
+    if (this.userId) {
+      try {
+        const timestamp = await firstValueFrom(this.databaseService.getApplicantAiEnabledUntil(parseInt(this.userId, 10)));
+        if (timestamp) {
+          this.aiEnabledUntil = new Date(timestamp);
+          console.log('AI enabled until:', this.aiEnabledUntil);
+        } else {
+          this.aiEnabledUntil = null;
+        }
+      } catch (error) {
+        console.error('Error loading AI enabled until status:', error);
+        this.aiEnabledUntil = null;
+      }
     }
   }
 
@@ -140,6 +160,17 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       return;
     }
 
+    // Check if AI is temporarily disabled
+    if (this.aiEnabledUntil && this.aiEnabledUntil.getTime() > new Date().getTime()) {
+      const disabledMessage: ChatMessage = { role: 'assistant', content: "Our team is currently reviewing your case. AI responses are temporarily paused. Please await a direct response from our support staff." };
+      this.messages.push(disabledMessage);
+      this.saveMessageToDb(disabledMessage);
+      this.newMessage = '';
+      this.adjustTextareaHeight();
+      this.scrollToBottom();
+      return;
+    }
+
     this.isLoading = true;
     this.currentStatusMessage = 'Typing...';
     setTimeout(() => {
@@ -165,10 +196,23 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     const historyForAi = this.messages.slice(-10);
     const aiPayload: ChatMessage[] = [systemPromptForAi, ...historyForAi];
 
-    console.log('Calling initial AI with payload:', aiPayload);
-    this.aiService.callAi(aiPayload).subscribe({
+    // Pass employeeId to aiService.callAi
+    const employeeIdNum = this.userId ? parseInt(this.userId, 10) : null;
+    console.log('Calling initial AI with payload:', aiPayload, 'and employeeId:', employeeIdNum);
+    this.aiService.callAi(aiPayload, employeeIdNum).subscribe({
       next: (response: string) => {
         console.log('Initial AI response received:', response);
+        // If response is empty, it means AI was disabled by backend check (though now frontend handles it primarily)
+        if (!response) {
+            this.isLoading = false;
+            this.currentStatusMessage = '';
+            const noAiMessage: ChatMessage = { role: 'assistant', content: "Our team is currently reviewing your case. AI responses are temporarily paused. Please await a direct response from our support staff." };
+            this.messages.push(noAiMessage);
+            this.saveMessageToDb(noAiMessage);
+            this.scrollToBottom();
+            return;
+        }
+
         const { response: processedResponse, tagProcessed } = this.parseAiResponseForTags(response);
         let assistantMessage: ChatMessage | null = null;
         if (processedResponse) {
@@ -334,9 +378,16 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     const historyForAi = this.messages.slice(-10);
     const followUpPayload: ChatMessage[] = [systemPromptForAi, ...historyForAi];
 
-    console.log('Calling follow-up AI with payload:', followUpPayload);
-    this.aiService.callAi(followUpPayload).subscribe({
+    const employeeIdNum = this.userId ? parseInt(this.userId, 10) : null;
+    console.log('Calling follow-up AI with payload:', followUpPayload, 'and employeeId:', employeeIdNum);
+    this.aiService.callAi(followUpPayload, employeeIdNum).subscribe({
       next: (response: string) => {
+        // If response is empty, it means AI was disabled by backend check (though now frontend handles it primarily)
+        if (!response) {
+            console.log('Follow-up AI: AI responses are paused, received empty response.');
+            return;
+        }
+
         const doneTagRegex = /\[\[DONE\]\]/;
         const doneMatch = response.match(doneTagRegex);
 

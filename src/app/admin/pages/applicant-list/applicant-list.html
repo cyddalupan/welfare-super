@@ -43,6 +43,9 @@
         <ion-button (click)="deleteApplicant(app.id)" fill="clear" color="danger" *ngIf="isAdminUser">
           <ion-icon name="trash-outline"></ion-icon>
         </ion-button>
+        <ion-button *ngIf="app.main_status === 'with_complain'" [routerLink]="['/admin/manual-chat', app.id]" fill="clear" color="primary">
+          <ion-icon name="chatbubbles-outline"></ion-icon>
+        </ion-button>
         <!-- History link might need to open in a browser or a webview, so it's kept as a regular link for now -->
         <a href="https://welfare.reviewcenterphil.com/api/history.php?app_id={{ app.id }}" target="_blank" rel="noopener noreferrer">
           <ion-icon name="document-text-outline"></ion-icon>

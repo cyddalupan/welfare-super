@@ -80,3 +80,10 @@ The admin panel includes the following pages, accessible via the sidebar navigat
     *   Component: [`src/app/admin/pages/announcement-list/announcement-list.component.ts`](src/app/admin/pages/announcement-list/announcement-list.component.ts)
 -   **Admin Users** (`/admin/users`) - *Visible only to admin users*
     *   Component: [`src/app/admin/pages/user-list/user-list.ts`](src/app/admin/pages/user-list/user-list.ts)
+-   **Applicant Statuses**
+    *   **Description:** Applicants have a `main_status` field which categorizes their current state. This status is dynamically managed from the `status` database table.
+    *   **Key Statuses:**
+        *   `active`: Indicates an applicant is actively managed or deployed.
+        *   `with_complain`: Indicates an applicant has an active complaint.
+        *   Statuses containing "arriv" (e.g., "arrived", "on arrival") are also recognized by the system for specific internal logic and charting.
+    *   **Note on Case Sensitivity:** The Angular frontend (`applicant-list.html`) currently performs a case-sensitive check for `'active'` and `'with_complain'`. While the system may internally treat variations (e.g., "ACTIVE_COMPLAIN", "active complain") as equivalent in some contexts, the frontend display logic requires an exact match to `'active'` or `'with_complain'` for specific styling. Ensure consistent casing from the backend for correct display in the UI.

@@ -1,0 +1,167 @@
+/* src/app/admin/pages/manual-chat/manual-chat.css */
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  color: var(--ion-text-color);
+}
+
+ion-header, ion-footer {
+  box-shadow: none !important;
+}
+
+ion-toolbar {
+  --background: var(--ion-background-color);
+  --color: var(--ion-text-color);
+  --border-color: transparent;
+  --min-height: 56px;
+  padding: 0 10px;
+}
+
+ion-content {
+  --background: var(--ion-background-color);
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  overflow-y: auto;
+}
+
+/* Base styles for chat message bubbles */
+ion-content > div {
+  width: 100%;
+  display: flex;
+  margin-bottom: 10px;
+}
+
+ion-content > div.justify-end {
+  justify-content: flex-end;
+}
+
+ion-content > div.justify-start {
+  justify-content: flex-start;
+}
+
+ion-content > div > div {
+  padding: 10px 15px;
+  border-radius: 20px;
+  max-width: 80%;
+  word-wrap: break-word;
+  color: var(--ion-text-color);
+}
+
+/* Admin message bubble (appears as 'assistant' in component logic) */
+.admin-message-bubble {
+  background: var(--ion-color-tertiary); /* Distinct color for admin messages */
+  color: var(--ion-color-tertiary-contrast);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-bottom-right-radius: 5px;
+  margin-right: 10px;
+}
+
+/* Applicant message bubble (appears as 'user' in component logic) */
+.applicant-message-bubble {
+  background: var(--ion-color-medium); /* Use Ionic medium color for applicant messages */
+  color: var(--ion-color-medium-contrast);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--ion-color-step-300);
+  border-bottom-left-radius: 5px;
+  margin-left: 10px;
+}
+
+/* Chat message content styling */
+.chat-message-content {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+.chat-message-content pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+  background-color: var(--ion-color-step-200);
+  padding: 8px;
+  border-radius: 5px;
+  color: var(--ion-text-color);
+}
+
+.chat-message-content table {
+  width: 100% !important;
+  table-layout: fixed;
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.chat-message-content th,
+.chat-message-content td {
+  max-width: none;
+  word-break: break-word;
+  padding: 8px;
+  border: 1px solid var(--ion-color-step-300);
+  color: var(--ion-text-color);
+}
+
+.chat-message-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Input area styling */
+ion-textarea {
+  --padding-start: 10px;
+  --padding-end: 10px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  --background: var(--ion-background-color);
+  border-radius: 20px;
+  color: var(--ion-text-color);
+  min-height: 40px;
+  max-height: 150px;
+  overflow-y: auto;
+  font-size: 1rem;
+  --placeholder-color: rgba(var(--ion-text-color-rgb), 0.5);
+}
+
+ion-textarea.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+ion-textarea.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--ion-color-step-50);
+  border-radius: 10px;
+}
+
+ion-textarea.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--ion-color-step-200);
+  border-radius: 10px;
+}
+
+ion-button {
+  --background: var(--ion-color-primary); /* Use primary for send button */
+  --background-activated: var(--ion-color-primary-tint);
+  --border-radius: 20px;
+  height: 40px;
+  font-size: 1rem;
+  margin-left: 10px;
+  text-transform: none;
+  color: var(--ion-color-primary-contrast);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--ion-color-step-50);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--ion-color-step-200);
+  border-radius: 10px;
+}

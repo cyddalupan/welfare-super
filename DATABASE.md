@@ -136,6 +136,7 @@ Stores information about the employees (applicants/OFWs). This is a central tabl
 | `agency_id` | `ForeignKey` | Links to the `auth_user` table (the employee's recruitment agency). |
 | `emergency_contact_name` | `CharField(100)` | Name of the emergency contact. |
 | `emergency_contact_phone` | `CharField(20)` | Phone number of the emergency contact. |
+| `ai_enabled_until`        | `DateTimeField` | Timestamp until which AI auto-reply is disabled for the employee. |
 
 *Note: `EmployeeWithComplaints`, `EmployeeWithHearings`, etc., are proxy models and do not create separate database tables.*
 

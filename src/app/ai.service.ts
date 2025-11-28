@@ -13,9 +13,9 @@ export class AiService {
   private http = inject(HttpClient);
   private encryptionService = inject(EncryptionService); // Inject the EncryptionService
 
-  public callAi(messages: ChatMessage[]): Observable<string> {
-    const payload = JSON.stringify({ messages });
-    const base64Payload = this.encryptionService.encrypt(payload); // Use the new EncryptionService
+  public callAi(aiPayload: ChatMessage[], employeeId: number | null): Observable<string> {
+    const payload = JSON.stringify({ messages: aiPayload, employee_id: employeeId });
+    const base64Payload = this.encryptionService.encrypt(payload);
 
     return this.http.post(this.apiUrl, base64Payload, {
       headers: { 'Content-Type': 'text/plain' },

@@ -21,6 +21,7 @@ import { UserListComponent } from './pages/user-list/user-list';
 import { UserFormComponent } from './components/user-form/user-form';
 import { AnnouncementListComponent } from './pages/announcement-list/announcement-list.component'; // New import
 import { AnnouncementFormComponent } from './pages/announcement-form/announcement-form.component'; // New import
+import { ManualChatComponent } from './pages/manual-chat/manual-chat'; // Placeholder for new component
 import { AdminUsersService } from './services/admin-users.service';
 
 import { authGuard } from './guards/auth.guard';
@@ -55,6 +56,7 @@ export const ADMIN_ROUTES: Routes = [
       { path: 'announcements', component: AnnouncementListComponent }, // New route
       { path: 'announcements/new', component: AnnouncementFormComponent }, // New route
       { path: 'announcements/edit/:id', component: AnnouncementFormComponent }, // New route
+      { path: 'manual-chat/:id', component: ManualChatComponent }, // New route for manual chat with applicant
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
@@ -81,7 +83,8 @@ export const ADMIN_ROUTES: Routes = [
     UserListComponent,
     UserFormComponent,
     AnnouncementListComponent, // New component import
-    AnnouncementFormComponent // New component import
+    AnnouncementFormComponent, // New component import
+    ManualChatComponent // New component import
   ],
   declarations: [],
   providers: [

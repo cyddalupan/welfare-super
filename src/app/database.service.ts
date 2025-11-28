@@ -4,7 +4,7 @@ import { Observable, map } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 import { environment } from '../environments/environment';
 import { ChatMessage } from './schemas';
-import { GET_APPLICANT_CHAT_HISTORY, INSERT_APPLICANT_CHAT_MESSAGE, INSERT_APPLICANT_MEMORY, GET_APPLICANT_MEMORIES } from './queries';
+import { GET_APPLICANT_CHAT_HISTORY, INSERT_APPLICANT_CHAT_MESSAGE, INSERT_APPLICANT_MEMORY, GET_APPLICANT_MEMORIES, UPDATE_AI_ENABLED_UNTIL, GET_APPLICANT_AI_ENABLED_UNTIL } from './queries';
 
 // Define a type for the raw chat history from the database
 interface RawChatMessage {
@@ -71,6 +71,25 @@ export class DatabaseService {
   public saveChatMessage(message: ChatMessage, employeeId: number, agencyId: number): Observable<any> {
     const sender = message.role === 'user' ? 'Employee' : 'AI';
     return this.query(INSERT_APPLICANT_CHAT_MESSAGE, [employeeId, agencyId, message.content, sender]);
+  }
+
+  public disableAiForApplicant(applicantId: number, durationMinutes: number): Observable<any> {
+    const futureDate = new Date();
+    futureDate.setMinutes(futureDate.getMinutes() + durationMinutes);
+    const futureTimestamp = futureDate.toISOString().slice(0, 19).replace('T', ' '); // Format for MySQL DATETIME
+
+    return this.query(UPDATE_AI_ENABLED_UNTIL, [futureTimestamp, applicantId]);
+  }
+
+  public getApplicantAiEnabledUntil(applicantId: number): Observable<string | null> {
+    return this.query(GET_APPLICANT_AI_ENABLED_UNTIL, [applicantId]).pipe(
+      map((response: any) => {
+        if (response && response.data && response.data.length > 0) {
+          return response.data[0].ai_enabled_until;
+        }
+        return null;
+      })
+    );
   }
 
   public saveEmployeeMemory(employeeId: number, note: string): Observable<any> {

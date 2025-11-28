@@ -110,8 +110,10 @@ export const INSERT_APPLICANT_HISTORY = `
 
 export const GET_APPLICANT_CHAT_HISTORY = 'SELECT message, sender FROM chats_chat WHERE employee_id = ? ORDER BY timestamp DESC LIMIT 20';
 export const INSERT_APPLICANT_CHAT_MESSAGE = 'INSERT INTO chats_chat (employee_id, agency_id, message, sender, timestamp) VALUES (?, ?, ?, ?, NOW())';
+export const UPDATE_AI_ENABLED_UNTIL = 'UPDATE employee_employee SET ai_enabled_until = ? WHERE id = ?';
 export const INSERT_APPLICANT_MEMORY = 'INSERT INTO employee_employeememory (employee_id, note, created_at) VALUES (?, ?, NOW())';
 export const GET_APPLICANT_MEMORIES = 'SELECT note FROM employee_employeememory WHERE employee_id = ? ORDER BY created_at ASC';
+export const GET_APPLICANT_AI_ENABLED_UNTIL = 'SELECT ai_enabled_until FROM employee_employee WHERE id = ?';
 
 export const SELECT_OPEN_CASE_BY_APPLICANT_ID = `
   SELECT id, category, report, report_status
@@ -130,6 +132,12 @@ export const INSERT_CASE = `
 export const UPDATE_CASE_REPORT = `
   UPDATE cases_case
   SET report = ?, updated_date = NOW(), report_status = 'open'
+  WHERE id = ?
+`;
+
+export const UPDATE_EMPLOYEE_MAIN_STATUS_TO_COMPLAINT = `
+  UPDATE employee_employee
+  SET main_status = 'WITH_COMPLAINT'
   WHERE id = ?
 `;
 
