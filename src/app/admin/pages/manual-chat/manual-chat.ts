@@ -1,8 +1,8 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit, inject } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, IonContent } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 import { DatabaseService } from '../../../database.service';
@@ -20,6 +20,7 @@ import { AuthService } from '../../services/auth.service'; // Import AuthService
 export class ManualChatComponent implements AfterViewChecked, OnInit {
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
   @ViewChild('messageInput') private messageInput!: ElementRef;
+  @ViewChild(IonContent) private content!: IonContent;
 
   public messages: ChatMessage[] = [];
   public newMessage: string = '';
@@ -29,8 +30,9 @@ export class ManualChatComponent implements AfterViewChecked, OnInit {
 
   private databaseService = inject(DatabaseService);
   private route = inject(ActivatedRoute);
-  private applicantService = inject(ApplicantService); // Inject ApplicantService
-  private authService = inject(AuthService); // Inject AuthService
+  private applicantService = inject(ApplicantService);
+  private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
 
   MAX_TEXTAREA_HEIGHT = 150;
 
@@ -63,15 +65,19 @@ export class ManualChatComponent implements AfterViewChecked, OnInit {
 
   private loadChatHistory(applicantId: number): void {
     this.isLoading = true;
+    this.cdr.detectChanges();
     this.databaseService.getChatHistory(applicantId).subscribe({
       next: (history) => {
         this.messages = history;
         this.isLoading = false;
+        this.cdr.detectChanges(); // Trigger change detection to render messages
+        setTimeout(() => this.scrollToBottom(), 50); // Scroll to bottom after a short delay
       },
       error: (error) => {
         console.error('Failed to load chat history:', error);
         this.messages.push({ role: 'system', content: 'Error: Could not load chat history for this applicant.' });
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -121,7 +127,7 @@ export class ManualChatComponent implements AfterViewChecked, OnInit {
 
   private scrollToBottom(): void {
     try {
-      this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
-    } catch (err) { /* Error handling */ }
+      this.content.scrollToBottom(300);
+    } catch (err) { }
   }
 }
