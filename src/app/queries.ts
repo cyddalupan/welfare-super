@@ -115,6 +115,8 @@ export const INSERT_APPLICANT_MEMORY = 'INSERT INTO employee_employeememory (emp
 export const GET_APPLICANT_MEMORIES = 'SELECT note FROM employee_employeememory WHERE employee_id = ? ORDER BY created_at ASC';
 export const GET_APPLICANT_AI_ENABLED_UNTIL = 'SELECT ai_enabled_until FROM employee_employee WHERE id = ?';
 
+export const GET_APPLICANT_MAIN_STATUS = 'SELECT main_status FROM employee_employee WHERE id = ?';
+
 export const SELECT_OPEN_CASE_BY_APPLICANT_ID = `
   SELECT id, category, report, report_status
   FROM cases_case

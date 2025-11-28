@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -6,9 +6,9 @@ import { IonicModule, IonContent } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 import { DatabaseService } from '../../../database.service';
-import { ChatMessage, Applicant } from '../../../schemas'; // Import Applicant
-import { ApplicantService } from '../../services/applicant.service'; // Import ApplicantService
-import { AuthService } from '../../services/auth.service'; // Import AuthService
+import { ChatMessage, Applicant } from '../../../schemas';
+import { ApplicantService } from '../../services/applicant.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-manual-chat',
@@ -17,7 +17,7 @@ import { AuthService } from '../../services/auth.service'; // Import AuthService
   templateUrl: './manual-chat.html',
   styleUrls: ['./manual-chat.css']
 })
-export class ManualChatComponent implements AfterViewChecked, OnInit {
+export class ManualChatComponent implements AfterViewChecked, OnInit, OnDestroy {
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
   @ViewChild('messageInput') private messageInput!: ElementRef;
   @ViewChild(IonContent) private content!: IonContent;
@@ -28,6 +28,8 @@ export class ManualChatComponent implements AfterViewChecked, OnInit {
   public applicantId: number | null = null;
   public applicantName: string = 'Applicant';
 
+  private refreshInterval: any;
+
   private databaseService = inject(DatabaseService);
   private route = inject(ActivatedRoute);
   private applicantService = inject(ApplicantService);
@@ -37,14 +39,27 @@ export class ManualChatComponent implements AfterViewChecked, OnInit {
   MAX_TEXTAREA_HEIGHT = 150;
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(async params => { // Made async to await loadApplicantDetails
+    this.route.paramMap.subscribe(async params => {
       const id = params.get('id');
       if (id) {
         this.applicantId = parseInt(id, 10);
-        await this.loadApplicantDetails(this.applicantId); // Load applicant details
-        this.loadChatHistory(this.applicantId);
+        await this.loadApplicantDetails(this.applicantId);
+        this.loadChatHistory(this.applicantId); // Initial load
+
+        // Set up refresh interval
+        this.refreshInterval = setInterval(() => {
+          if (!this.isLoading) { // Only refresh if not already loading to prevent overlapping calls
+            this.loadChatHistory(this.applicantId!);
+          }
+        }, 20000); // Refresh every 20 seconds
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+    }
   }
 
   async loadApplicantDetails(applicantId: number): Promise<void> {
@@ -70,8 +85,8 @@ export class ManualChatComponent implements AfterViewChecked, OnInit {
       next: (history) => {
         this.messages = history;
         this.isLoading = false;
-        this.cdr.detectChanges(); // Trigger change detection to render messages
-        setTimeout(() => this.scrollToBottom(), 50); // Scroll to bottom after a short delay
+        this.cdr.detectChanges();
+        setTimeout(() => this.scrollToBottom(), 50);
       },
       error: (error) => {
         console.error('Failed to load chat history:', error);
@@ -90,7 +105,7 @@ export class ManualChatComponent implements AfterViewChecked, OnInit {
     const adminMessage: ChatMessage = { role: 'assistant', content: this.newMessage.trim() };
     this.messages.push(adminMessage);
 
-    this.isLoading = true; // Indicate loading while saving and disabling AI
+    this.isLoading = true;
 
     this.saveAdminMessageToDb(adminMessage, this.applicantId).subscribe({
       next: () => {
@@ -108,11 +123,10 @@ export class ManualChatComponent implements AfterViewChecked, OnInit {
   }
 
   private saveAdminMessageToDb(message: ChatMessage, applicantId: number): Observable<any> {
-    const adminAgencyId = 0; // Default or retrieve actual admin agency ID if applicable
-                              // This will need to be properly handled if admin's agency matters.
+    const adminAgencyId = 0;
 
     return this.databaseService.saveChatMessage(message, applicantId, adminAgencyId).pipe(
-      concatMap(() => this.databaseService.disableAiForApplicant(applicantId, 10)) // Disable AI for 10 minutes
+      concatMap(() => this.databaseService.disableAiForApplicant(applicantId, 10))
     );
   }
 

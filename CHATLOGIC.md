@@ -79,3 +79,6 @@ To enable the AI to initiate a formal case report for serious complaints, a spec
 *   **AI Service**: `src/app/ai.service.ts`
 *   **Prompts**: `src/app/prompts.ts`
 *   **Authentication Service**: `src/app/auth.service.ts`
+*   **Case Service**: `src/app/case.service.ts`
+*   **Backend Database Endpoint**: `api/database.php`
+*   **Backend AI Endpoint**: `api/ai.php`

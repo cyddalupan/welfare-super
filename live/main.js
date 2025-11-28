@@ -165,7 +165,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-BUW772YV.js";
+} from "./chunk-GKCM6FLD.js";
 import "./chunk-B7UJR2GH.js";
 import "./chunk-W7NNY2EY.js";
 import "./chunk-HTLDGIIN.js";
@@ -31306,6 +31306,8 @@ var ChatComponent = class _ChatComponent {
   // New: Controls announcement banner visibility
   aiEnabledUntil = null;
   // New property
+  complaintCheckInterval;
+  // New property to hold the interval ID
   constructor(aiService, authService, databaseService, caseService, announcementService) {
     this.aiService = aiService;
     this.authService = authService;
@@ -31329,17 +31331,41 @@ var ChatComponent = class _ChatComponent {
     this.agencyId = agencyId;
     this.setInitialSystemPrompt();
     if (this.userId) {
-      this.loadChatHistory();
-      this.loadEmployeeMemories();
+      await this.loadChatAndComplaintStatus();
       await this.loadAiEnabledUntilStatus();
     } else {
       this.messages = [];
       this.messages.push({ role: "assistant", content: "Welcome! To get started, please provide your last name and passport number so I can assist you." });
+      setTimeout(() => this.scrollToBottom(), 0);
     }
     try {
       this.announcements = await this.announcementService.getActiveAnnouncements();
     } catch (error) {
       console.error("Error loading announcements:", error);
+    }
+  }
+  ngOnDestroy() {
+    if (this.complaintCheckInterval) {
+      clearInterval(this.complaintCheckInterval);
+    }
+  }
+  async loadChatAndComplaintStatus() {
+    if (this.userId) {
+      this.loadChatHistory();
+      this.loadEmployeeMemories();
+      try {
+        const mainStatus = await firstValueFrom(this.databaseService.getApplicantMainStatus(parseInt(this.userId, 10)));
+        if (mainStatus && mainStatus.toLowerCase().includes("complain")) {
+          console.log("Applicant has a complaint. Starting chat history refresh interval.");
+          this.complaintCheckInterval = setInterval(() => {
+            console.log("Refreshing chat history due to complaint status.");
+            this.loadChatHistory();
+            this.loadEmployeeMemories();
+          }, 2e4);
+        }
+      } catch (error) {
+        console.error("Error loading applicant main status:", error);
+      }
     }
   }
   async loadAiEnabledUntilStatus() {
@@ -31372,11 +31398,14 @@ var ChatComponent = class _ChatComponent {
     if (this.userId) {
       this.databaseService.getChatHistory(parseInt(this.userId, 10)).subscribe({
         next: (history) => {
+          this.messages = [];
           this.messages = history;
+          setTimeout(() => this.scrollToBottom(), 0);
         },
         error: (error) => {
           console.error("Failed to load chat history:", error);
           this.messages.push({ role: "assistant", content: "Sorry, I was unable to load your previous conversation." });
+          setTimeout(() => this.scrollToBottom(), 0);
         }
       });
     }
@@ -31395,7 +31424,6 @@ var ChatComponent = class _ChatComponent {
     }
   }
   ngAfterViewChecked() {
-    this.scrollToBottom();
   }
   adjustTextareaHeight() {
     if (this.messageInput && this.messageInput.nativeElement) {
@@ -31417,7 +31445,7 @@ var ChatComponent = class _ChatComponent {
       this.saveMessageToDb(disabledMessage);
       this.newMessage = "";
       this.adjustTextareaHeight();
-      this.scrollToBottom();
+      setTimeout(() => this.scrollToBottom(), 0);
       return;
     }
     this.isLoading = true;
@@ -31467,6 +31495,7 @@ User's known characteristics: ${memoriesString}`;
           console.log("Triggering follow-up AI.");
           this.triggerFollowUpAi(userMessage, assistantMessage);
         }
+        setTimeout(() => this.scrollToBottom(), 0);
       },
       error: (error) => {
         console.error("AI call failed:", error);
@@ -31475,6 +31504,7 @@ User's known characteristics: ${memoriesString}`;
         this.saveMessageToDb(errorMessage);
         this.isLoading = false;
         this.currentStatusMessage = "";
+        setTimeout(() => this.scrollToBottom(), 0);
       }
     });
     this.adjustTextareaHeight();
@@ -31514,6 +31544,7 @@ User's known characteristics: ${memoriesString}`;
             const loginFailMessage = { role: "assistant", content: "Account does not exist, please double check if input is correct." };
             this.messages.push(loginFailMessage);
             this.saveMessageToDb(loginFailMessage);
+            setTimeout(() => this.scrollToBottom(), 0);
           }
         },
         error: (error) => {
@@ -31521,6 +31552,7 @@ User's known characteristics: ${memoriesString}`;
           const loginErrorMessage = { role: "assistant", content: "An error occurred during login. Please try again later." };
           this.messages.push(loginErrorMessage);
           this.saveMessageToDb(loginErrorMessage);
+          setTimeout(() => this.scrollToBottom(), 0);
         }
       });
       modifiedResponse = modifiedResponse.replace(loginTagRegex, "").trim();
@@ -31554,6 +31586,7 @@ User's known characteristics: ${memoriesString}`;
         const unauthReportMessage = { role: "assistant", content: "Please log in to file a report." };
         this.messages.push(unauthReportMessage);
         this.saveMessageToDb(unauthReportMessage);
+        setTimeout(() => this.scrollToBottom(), 0);
       }
     }
     return {
@@ -31568,6 +31601,7 @@ User's known characteristics: ${memoriesString}`;
     }
     this.isLoading = true;
     this.currentStatusMessage = "I've noticed you're describing a serious issue. I'm starting the process to file a formal report for you.";
+    setTimeout(() => this.scrollToBottom(), 0);
     const onStatusUpdate = (message) => {
       this.currentStatusMessage = message;
       this.scrollToBottom();
@@ -31578,11 +31612,13 @@ User's known characteristics: ${memoriesString}`;
         console.log(`Report process completed. Case ID: ${caseId}`);
         this.isLoading = false;
         this.currentStatusMessage = "";
+        setTimeout(() => this.scrollToBottom(), 0);
       },
       error: (error) => {
         console.error("Error during report processing:", error);
         this.currentStatusMessage = "An unexpected error occurred during report processing. Please try again.";
         this.isLoading = false;
+        setTimeout(() => this.scrollToBottom(), 0);
       }
     });
   }
@@ -31618,10 +31654,12 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
           const followUpMessage = { role: "assistant", content: response.trim() };
           this.messages.push(followUpMessage);
           this.saveMessageToDb(followUpMessage);
+          setTimeout(() => this.scrollToBottom(), 0);
         }
       },
       error: (error) => {
         console.error("Follow-up AI call failed:", error);
+        setTimeout(() => this.scrollToBottom(), 0);
       }
     });
   }
@@ -31775,7 +31813,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-DHDKKQT2.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-NUYP2LEA.js").then((m) => m.AdminModule)
   }
 ];
 

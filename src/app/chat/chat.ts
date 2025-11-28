@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -20,7 +20,7 @@ const MAX_TEXTAREA_HEIGHT = 150;
   templateUrl: './chat.html',
   styleUrls: ['./chat.css']
 })
-export class ChatComponent implements AfterViewChecked, OnInit {
+export class ChatComponent implements AfterViewChecked, OnInit, OnDestroy {
   title = 'analytics-agent';
 
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
@@ -37,6 +37,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   public announcements: string[] = []; // New: Stores active announcement messages
   public showAnnouncementBanner: boolean = true; // New: Controls announcement banner visibility
   public aiEnabledUntil: Date | null = null; // New property
+  private complaintCheckInterval: any; // New property to hold the interval ID
 
   constructor(
     private aiService: AiService,
@@ -67,12 +68,12 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     this.setInitialSystemPrompt();
 
     if (this.userId) {
-      this.loadChatHistory();
-      this.loadEmployeeMemories();
+      await this.loadChatAndComplaintStatus(); // New: Load chat history, memories, and check complaint status
       await this.loadAiEnabledUntilStatus(); // New: Load AI enabled status
     } else {
       this.messages = [];
       this.messages.push({ role: 'assistant', content: 'Welcome! To get started, please provide your last name and passport number so I can assist you.' });
+      setTimeout(() => this.scrollToBottom(), 0);
     }
 
     // Load active announcements
@@ -80,6 +81,33 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       this.announcements = await this.announcementService.getActiveAnnouncements();
     } catch (error) {
       console.error('Error loading announcements:', error);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.complaintCheckInterval) {
+      clearInterval(this.complaintCheckInterval);
+    }
+  }
+
+  private async loadChatAndComplaintStatus(): Promise<void> {
+    if (this.userId) {
+      this.loadChatHistory();
+      this.loadEmployeeMemories();
+
+      try {
+        const mainStatus = await firstValueFrom(this.databaseService.getApplicantMainStatus(parseInt(this.userId, 10)));
+        if (mainStatus && mainStatus.toLowerCase().includes('complain')) {
+          console.log('Applicant has a complaint. Starting chat history refresh interval.');
+          this.complaintCheckInterval = setInterval(() => {
+            console.log('Refreshing chat history due to complaint status.');
+            this.loadChatHistory();
+            this.loadEmployeeMemories();
+          }, 20000); // 20 seconds
+        }
+      } catch (error) {
+        console.error('Error loading applicant main status:', error);
+      }
     }
   }
 
@@ -116,11 +144,14 @@ export class ChatComponent implements AfterViewChecked, OnInit {
     if (this.userId) {
       this.databaseService.getChatHistory(parseInt(this.userId, 10)).subscribe({
         next: (history) => {
+          this.messages = []; // Clear existing messages before loading new ones
           this.messages = history;
+          setTimeout(() => this.scrollToBottom(), 0);
         },
         error: (error) => {
           console.error('Failed to load chat history:', error);
           this.messages.push({ role: 'assistant', content: 'Sorry, I was unable to load your previous conversation.' });
+          setTimeout(() => this.scrollToBottom(), 0);
         }
       });
     }
@@ -141,7 +172,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
   }
 
   ngAfterViewChecked(): void {
-    this.scrollToBottom();
+    // this.scrollToBottom(); // Removed for more controlled scrolling
   }
 
   public adjustTextareaHeight(): void {
@@ -167,7 +198,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
       this.saveMessageToDb(disabledMessage);
       this.newMessage = '';
       this.adjustTextareaHeight();
-      this.scrollToBottom();
+      setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after message
       return;
     }
 
@@ -229,6 +260,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
           console.log('Triggering follow-up AI.');
           this.triggerFollowUpAi(userMessage, assistantMessage);
         }
+        setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after AI response
       },
       error: (error) => {
         console.error('AI call failed:', error);
@@ -237,6 +269,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
         this.saveMessageToDb(errorMessage);
         this.isLoading = false;
         this.currentStatusMessage = '';
+        setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after error message
       }
     });
     this.adjustTextareaHeight();
@@ -281,6 +314,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
               const loginFailMessage: ChatMessage = { role: 'assistant', content: 'Account does not exist, please double check if input is correct.' };
               this.messages.push(loginFailMessage);
               this.saveMessageToDb(loginFailMessage);
+              setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after login fail message
             }
           },
           error: (error) => {
@@ -288,6 +322,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
             const loginErrorMessage: ChatMessage = { role: 'assistant', content: 'An error occurred during login. Please try again later.' };
             this.messages.push(loginErrorMessage);
             this.saveMessageToDb(loginErrorMessage);
+            setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after login error message
           }
         });
         modifiedResponse = modifiedResponse.replace(loginTagRegex, '').trim();
@@ -326,6 +361,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
           const unauthReportMessage: ChatMessage = { role: 'assistant', content: 'Please log in to file a report.' };
           this.messages.push(unauthReportMessage);
           this.saveMessageToDb(unauthReportMessage);
+          setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after unauth report message
         }
       }
   
@@ -342,6 +378,7 @@ export class ChatComponent implements AfterViewChecked, OnInit {
 
     this.isLoading = true;
     this.currentStatusMessage = "I've noticed you're describing a serious issue. I'm starting the process to file a formal report for you.";
+    setTimeout(() => this.scrollToBottom(), 0); // Scroll when status message changes
 
     const onStatusUpdate = (message: string) => {
       this.currentStatusMessage = message;
@@ -355,11 +392,13 @@ export class ChatComponent implements AfterViewChecked, OnInit {
         console.log(`Report process completed. Case ID: ${caseId}`);
         this.isLoading = false;
         this.currentStatusMessage = '';
+        setTimeout(() => this.scrollToBottom(), 0); // Scroll after report process completed
       },
       error: (error) => {
         console.error('Error during report processing:', error);
         this.currentStatusMessage = "An unexpected error occurred during report processing. Please try again.";
         this.isLoading = false;
+        setTimeout(() => this.scrollToBottom(), 0); // Scroll after report error
       }
     });
   }
@@ -398,10 +437,12 @@ export class ChatComponent implements AfterViewChecked, OnInit {
           const followUpMessage: ChatMessage = { role: 'assistant', content: response.trim() };
           this.messages.push(followUpMessage);
           this.saveMessageToDb(followUpMessage);
+          setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after follow-up message
         }
       },
       error: (error) => {
         console.error('Follow-up AI call failed:', error);
+        setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after follow-up error
       }
     });
   }

@@ -4,7 +4,7 @@ import { Observable, map } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 import { environment } from '../environments/environment';
 import { ChatMessage } from './schemas';
-import { GET_APPLICANT_CHAT_HISTORY, INSERT_APPLICANT_CHAT_MESSAGE, INSERT_APPLICANT_MEMORY, GET_APPLICANT_MEMORIES, UPDATE_AI_ENABLED_UNTIL, GET_APPLICANT_AI_ENABLED_UNTIL } from './queries';
+import { GET_APPLICANT_CHAT_HISTORY, INSERT_APPLICANT_CHAT_MESSAGE, INSERT_APPLICANT_MEMORY, GET_APPLICANT_MEMORIES, UPDATE_AI_ENABLED_UNTIL, GET_APPLICANT_AI_ENABLED_UNTIL, GET_APPLICANT_MAIN_STATUS } from './queries';
 
 // Define a type for the raw chat history from the database
 interface RawChatMessage {
@@ -86,6 +86,17 @@ export class DatabaseService {
       map((response: any) => {
         if (response && response.data && response.data.length > 0) {
           return response.data[0].ai_enabled_until;
+        }
+        return null;
+      })
+    );
+  }
+
+  public getApplicantMainStatus(applicantId: number): Observable<string | null> {
+    return this.query(GET_APPLICANT_MAIN_STATUS, [applicantId]).pipe(
+      map((response: any) => {
+        if (response && response.data && response.data.length > 0) {
+          return response.data[0].main_status;
         }
         return null;
       })
