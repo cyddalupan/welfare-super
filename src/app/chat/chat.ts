@@ -12,6 +12,7 @@ import { SYSTEM_PROMPT_COMPLAINTS_ASSISTANT, SYSTEM_PROMPT_LOGIN_ASSISTANT, SYST
 import { firstValueFrom } from 'rxjs'; // New import
 
 const MAX_TEXTAREA_HEIGHT = 150;
+const ADMIN_AI_DISABLE_DURATION_MINUTES = 10;
 
 @Component({
   selector: 'app-chat',
@@ -144,8 +145,8 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (this.userId) {
       this.databaseService.getChatHistory(parseInt(this.userId, 10)).subscribe({
         next: (history) => {
-          this.messages = []; // Clear existing messages before loading new ones
-          this.messages = history;
+          // Process each message for tags and cleaning, then assign to messages
+          this.messages = history.map(msg => this.processMessageContent(msg));
           setTimeout(() => this.scrollToBottom(), 0);
         },
         error: (error) => {
@@ -248,7 +249,8 @@ export class ChatComponent implements OnInit, OnDestroy {
         let assistantMessage: ChatMessage | null = null;
         if (processedResponse) {
           assistantMessage = { role: 'assistant', content: processedResponse };
-          this.messages.push(assistantMessage);
+          // Process the message to strip any tags before displaying
+          this.messages.push(this.processMessageContent(assistantMessage));
           this.saveMessageToDb(assistantMessage);
           console.log('Assistant message added:', assistantMessage);
         }
@@ -286,6 +288,39 @@ export class ChatComponent implements OnInit, OnDestroy {
     } else {
       console.log('Save skipped: UserID or AgencyID is missing or invalid.');
     }
+  }
+
+  private processMessageContent(message: ChatMessage): ChatMessage {
+    const adminTagRegex = /\[\[ADMIN\]\]/g;
+    let cleanedContent = message.content;
+
+    // Check for ADMIN tag and disable AI if recent
+    if (message.content.includes('[[ADMIN]]') && message.timestamp) {
+      // Timestamps from DB are usually in UTC. Append 'Z' if it's not there to ensure correct parsing.
+      const messageDate = new Date(message.timestamp.replace(' ', 'T') + 'Z');
+      const now = new Date();
+      const timeDiffMinutes = (now.getTime() - messageDate.getTime()) / (1000 * 60);
+
+      if (timeDiffMinutes < ADMIN_AI_DISABLE_DURATION_MINUTES) {
+        const newAiEnabledUntil = new Date(messageDate.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1000);
+        // Only update if the new time is later than an existing one
+        if (!this.aiEnabledUntil || newAiEnabledUntil > this.aiEnabledUntil) {
+          this.aiEnabledUntil = newAiEnabledUntil;
+          console.log(`AI disabled until ${this.aiEnabledUntil} due to recent admin message.`);
+        }
+      }
+    }
+
+    // Strip all known tags for UI display
+    cleanedContent = cleanedContent.replace(adminTagRegex, '').trim();
+    cleanedContent = cleanedContent.replace(/\[\[MEMORY:"([^"]+)"\]\]/g, '').trim();
+    cleanedContent = cleanedContent.replace(/\[\[REPORT\]\]/g, '').trim();
+
+    // Return a new message object with the cleaned content
+    return {
+      ...message,
+      content: cleanedContent
+    };
   }
 
     private parseAiResponseForTags(response: string): { response: string, tagProcessed: boolean } {

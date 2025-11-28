@@ -21,7 +21,7 @@ The manual chat interface is accessible from the "Applicants" list in the admin 
     ```
 *   **Route**: Clicking the button navigates to the manual chat page for that specific applicant.
     *   **Route Definition**: `/admin/manual-chat/:id`
-    *   **Code Reference**: [`src/app/admin/admin.module.ts`](src/app/admin/admin.module.ts)
+    *   **Code Reference**: [`src/app/admin/admin.module.ts`](src/app/admin/admin.module.ts#L59)
 
 ## Admin Chat Interface (`ManualChatComponent`)
 
@@ -33,7 +33,7 @@ This component provides the interface for administrators to view an applicant's 
     *   [`src/app/admin/pages/manual-chat/manual-chat.css`](src/app/admin/pages/manual-chat/manual-chat.css)
 *   **Functionality**:
     *   **Applicant Details**: Fetches and displays the applicant's name in the header.
-        *   **Code Reference**: [`src/app/admin/pages/manual-chat/manual-chat.ts`](src/app/admin/pages/manual-chat/manual-chat.ts#L36-L53) (methods `ngOnInit` and `loadApplicantDetails`)
+        *   **Code Reference**: [`src/app/admin/pages/manual-chat/manual-chat.ts`](src/app/admin/pages/manual-chat/manual-chat.ts#L41-L46,L65-L67) (methods `ngOnInit` and `loadApplicantDetails`)
     *   **Chat History Display**: Presents the conversation history. For the administrator's view, messages sent by the applicant appear on the left, and messages sent by the admin (or previous AI responses) appear on the right.
         *   **Code Reference**: [`src/app/admin/pages/manual-chat/manual-chat.html`](src/app/admin/pages/manual-chat/manual-chat.html#L14-L19)
         ```html
@@ -55,21 +55,22 @@ A key feature of the admin chat is the ability to temporarily disable the AI's a
 *   **Trigger**: When an administrator sends a message from the `ManualChatComponent`. **There is no separate button for disabling the AI; this action occurs automatically upon sending a message.**
 *   **Mechanism**:
     1.  **Save Admin Message**: The message sent by the admin is saved to the chat history.
-        *   **Code Reference**: [`src/app/admin/pages/manual-chat/manual-chat.ts`](src/app/admin/pages/manual-chat/manual-chat.ts#L71-L91) (method `sendMessage` calls `saveAdminMessageToDb`)
-        *   **Database Service**: [`src/app/database.service.ts`](src/app/database.service.ts#L79-L82) (method `saveChatMessage`)
+        *   **Note**: Admin messages are internally tagged with `[[ADMIN]]` for identification, but this tag is not displayed in the chat UI.
+        *   **Code Reference**: [`src/app/admin/pages/manual-chat/manual-chat.ts`](src/app/admin/pages/manual-chat/manual-chat.ts#L100-L110) (method `sendMessage` calls `saveAdminMessageToDb`)
+        *   **Database Service**: [`src/app/database.service.ts`](src/app/database.service.ts#L72-L75) (method `saveChatMessage`)
     2.  **Update AI Status**: Immediately after saving the message, the `ai_enabled_until` timestamp for the applicant is updated in the database to a point 10 minutes in the future.
-        *   **Code Reference**: [`src/app/admin/pages/manual-chat/manual-chat.ts`](src/app/admin/pages/manual-chat/manual-chat.ts#L86-L90) (within `saveAdminMessageToDb` using `concatMap`)
-        *   **Database Service**: [`src/app/database.service.ts`](src/app/database.service.ts#L84-L92) (method `disableAiForApplicant`)
-        *   **SQL Query**: [`src/app/queries.ts`](src/app/queries.ts#L61) (`UPDATE_AI_ENABLED_UNTIL`)
-        *   **Schema**: [`src/app/schemas.ts`](src/app/schemas.ts#L33) (`Applicant` interface `ai_enabled_until`)
+        *   **Code Reference**: [`src/app/admin/pages/manual-chat/manual-chat.ts`](src/app/admin/pages/manual-chat/manual-chat.ts#L110, L129-L135) (within `saveAdminMessageToDb` using `concatMap`)
+        *   **Database Service**: [`src/app/database.service.ts`](src/app/database.service.ts#L77-L80) (method `disableAiForApplicant`)
+        *   **SQL Query**: [`src/app/queries.ts`](src/app/queries.ts#L113) (`UPDATE_AI_ENABLED_UNTIL`)
+        *   **Schema**: [`src/app/schemas.ts`](src/app/schemas.ts#L34) (`Applicant` interface `ai_enabled_until`)
         *   **Database Schema**: [`DATABASE.md`](DATABASE.md) (`employee_employee` table `ai_enabled_until`)
 *   **Applicant-Side Behavior**:
     *   The applicant's `ChatComponent` checks their `ai_enabled_until` status upon initialization and before sending each message.
     *   If `ai_enabled_until` is in the future, the `ChatComponent` will:
         *   Prevent calling the AI service.
         *   Display a message to the applicant indicating that the AI is temporarily paused and that a human team member is assisting.
-    *   **Code Reference**: [`src/app/chat/chat.ts`](src/app/chat/chat.ts#L96-L127) (methods `ngOnInit` and `sendMessage`)
-    *   **Fetching Status**: [`src/app/database.service.ts`](src/app/database.service.ts#L94-L102) (method `getApplicantAiEnabledUntil`)
-    *   **SQL Query**: [`src/app/queries.ts`](src/app/queries.ts#L62) (`GET_APPLICANT_AI_ENABLED_UNTIL`)
+    *   **Code Reference**: [`src/app/chat/chat.ts`](src/app/chat/chat.ts#L47-L61,L180-L200) (methods `ngOnInit` and `sendMessage`)
+    *   **Fetching Status**: [`src/app/database.service.ts`](src/app/database.service.ts#L82-L85) (method `getApplicantAiEnabledUntil`)
+    *   **SQL Query**: [`src/app/queries.ts`](src/app/queries.ts#L116) (`GET_APPLICANT_AI_ENABLED_UNTIL`)
 
 This ensures that once an admin steps in, the AI politely steps aside for a defined period, allowing the human agent to take over the conversation seamlessly.

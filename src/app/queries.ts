@@ -108,7 +108,7 @@ export const INSERT_APPLICANT_HISTORY = `
 `;
 
 
-export const GET_APPLICANT_CHAT_HISTORY = 'SELECT message, sender FROM chats_chat WHERE employee_id = ? ORDER BY timestamp DESC LIMIT 20';
+export const GET_APPLICANT_CHAT_HISTORY = 'SELECT message, sender, timestamp FROM chats_chat WHERE employee_id = ? ORDER BY timestamp DESC LIMIT 20';
 export const INSERT_APPLICANT_CHAT_MESSAGE = 'INSERT INTO chats_chat (employee_id, agency_id, message, sender, timestamp) VALUES (?, ?, ?, ?, NOW())';
 export const UPDATE_AI_ENABLED_UNTIL = 'UPDATE employee_employee SET ai_enabled_until = ? WHERE id = ?';
 export const INSERT_APPLICANT_MEMORY = 'INSERT INTO employee_employeememory (employee_id, note, created_at) VALUES (?, ?, NOW())';

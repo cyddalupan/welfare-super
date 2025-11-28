@@ -165,7 +165,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-GKCM6FLD.js";
+} from "./chunk-AJOWW2CE.js";
 import "./chunk-B7UJR2GH.js";
 import "./chunk-W7NNY2EY.js";
 import "./chunk-HTLDGIIN.js";
@@ -31283,6 +31283,7 @@ function ChatComponent_div_9_Template(rf, ctx) {
   }
 }
 var MAX_TEXTAREA_HEIGHT = 150;
+var ADMIN_AI_DISABLE_DURATION_MINUTES = 10;
 var ChatComponent = class _ChatComponent {
   aiService;
   authService;
@@ -31398,8 +31399,7 @@ var ChatComponent = class _ChatComponent {
     if (this.userId) {
       this.databaseService.getChatHistory(parseInt(this.userId, 10)).subscribe({
         next: (history) => {
-          this.messages = [];
-          this.messages = history;
+          this.messages = history.map((msg) => this.processMessageContent(msg));
           setTimeout(() => this.scrollToBottom(), 0);
         },
         error: (error) => {
@@ -31486,7 +31486,7 @@ User's known characteristics: ${memoriesString}`;
         let assistantMessage = null;
         if (processedResponse) {
           assistantMessage = { role: "assistant", content: processedResponse };
-          this.messages.push(assistantMessage);
+          this.messages.push(this.processMessageContent(assistantMessage));
           this.saveMessageToDb(assistantMessage);
           console.log("Assistant message added:", assistantMessage);
         }
@@ -31521,6 +31521,28 @@ User's known characteristics: ${memoriesString}`;
     } else {
       console.log("Save skipped: UserID or AgencyID is missing or invalid.");
     }
+  }
+  processMessageContent(message) {
+    const adminTagRegex = /\[\[ADMIN\]\]/g;
+    let cleanedContent = message.content;
+    if (message.content.includes("[[ADMIN]]") && message.timestamp) {
+      const messageDate = /* @__PURE__ */ new Date(message.timestamp.replace(" ", "T") + "Z");
+      const now = /* @__PURE__ */ new Date();
+      const timeDiffMinutes = (now.getTime() - messageDate.getTime()) / (1e3 * 60);
+      if (timeDiffMinutes < ADMIN_AI_DISABLE_DURATION_MINUTES) {
+        const newAiEnabledUntil = new Date(messageDate.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1e3);
+        if (!this.aiEnabledUntil || newAiEnabledUntil > this.aiEnabledUntil) {
+          this.aiEnabledUntil = newAiEnabledUntil;
+          console.log(`AI disabled until ${this.aiEnabledUntil} due to recent admin message.`);
+        }
+      }
+    }
+    cleanedContent = cleanedContent.replace(adminTagRegex, "").trim();
+    cleanedContent = cleanedContent.replace(/\[\[MEMORY:"([^"]+)"\]\]/g, "").trim();
+    cleanedContent = cleanedContent.replace(/\[\[REPORT\]\]/g, "").trim();
+    return __spreadProps(__spreadValues({}, message), {
+      content: cleanedContent
+    });
   }
   parseAiResponseForTags(response) {
     const loginTagRegex = /\[\[LOGIN, LASTNAME:"([^"]+)",PASSPORT:"([^"]+)"\]\]/;
@@ -31808,7 +31830,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
   }] });
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ChatComponent, { className: "ChatComponent", filePath: "src/app/chat/chat.ts", lineNumber: 23 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ChatComponent, { className: "ChatComponent", filePath: "src/app/chat/chat.ts", lineNumber: 24 });
 })();
 
 // src/app/app.routes.ts
@@ -31816,7 +31838,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-M5DGX4XJ.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-WTSYJHPP.js").then((m) => m.AdminModule)
   }
 ];
 

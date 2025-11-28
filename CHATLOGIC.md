@@ -40,13 +40,14 @@ The application employs a conversational authentication method to identify and l
 
 *   **Storage**: All chat messages for authenticated users are stored in the `chats_chat` database table. Messages sent during an unauthenticated session are not saved.
 *   **Saving Messages**: Once a user is authenticated, every message sent by the user or the assistant is saved to the `chats_chat` table. The `sender` column is populated with 'Employee' for user messages and 'AI' for assistant messages.
-*   **Loading History**: When an authenticated user opens the chat, the **20 most recent messages** from their conversation history are fetched from the database and displayed.
+*   **Loading History**: When an authenticated user opens the chat, the **20 most recent messages**, including their `timestamp`, are fetched from the database and displayed. The `timestamp` is crucial for features that rely on the age of a message, such as the `[[ADMIN]]` tag cooldown.
+*   **Automatic Refresh for Complaints**: If an applicant has a `main_status` that includes the word "complain", the chat history and employee memories will automatically reload every 20 seconds. This allows the chat to reflect updates from administrators in near real-time. This is handled in the `loadChatAndComplaintStatus` method within `src/app/chat/chat.ts`.
 
 ## 3. AI Action Tags
 
 The system utilizes special "AI Action Tags" within AI responses to trigger specific frontend actions or convey structured information. These tags are designed to be parsed and processed by the frontend and are generally not displayed directly to the user.
 
-The system is designed to accommodate additional action-triggering tags in the future, such as `[[REPORT]]`, which will follow a similar parsing and action execution pattern.
+The system is designed to accommodate additional action-triggering tags in the future, which will follow a similar parsing and action execution pattern.
 
 ### 3.1 AI Memory Tag
 
@@ -73,9 +74,24 @@ To enable the AI to initiate a formal case report for serious complaints, a spec
     *   During this process, the `CaseService` sends step-by-step status updates back to the `ChatComponent`, which are displayed to the user in the chat interface.
 *   **UI Display**: The `[[REPORT]]` tag itself is not displayed in the chat UI. The frontend is responsible for parsing and removing this tag before rendering the AI's message, and instead displays the status messages from the reporting workflow.
 
+### 3.3 AI Admin Tag
+
+To allow manual intervention by administrators to pause the AI, the `[[ADMIN]]` tag is introduced.
+
+*   **Tag Format**: `[[ADMIN]]`
+*   **Purpose**: When a message containing this tag is loaded from the chat history, it signals that an administrator has manually responded. This triggers a temporary cooldown of the AI to prevent it from interfering.
+*   **Workflow**:
+    *   The `[[ADMIN]]` tag is added to a message by an administrator through their interface.
+    *   When `ChatComponent` loads the chat history (via `loadChatHistory`), it scans each message for the `[[ADMIN]]` tag.
+    *   If the tag is found in a message and the message's `timestamp` is less than 10 minutes old, the component's `aiEnabledUntil` property is set to 10 minutes from the time of that admin message.
+    *   The `sendMessage` method checks `aiEnabledUntil` before making an AI call, effectively pausing the AI.
+*   **UI Display**: The `[[ADMIN]]` tag is stripped from the message content by the `processMessageContent` method in `src/app/chat/chat.ts` and is **not** displayed in the chat UI.
+
 ## 4. Relevant Chat Code Locations
 
 *   **Chat Component**: `src/app/chat/chat.ts`
+*   **Chat Schemas**: `src/app/schemas.ts`
+*   **Database Service**: `src/app/database.service.ts`
 *   **AI Service**: `src/app/ai.service.ts`
 *   **Prompts**: `src/app/prompts.ts`
 *   **Authentication Service**: `src/app/auth.service.ts`

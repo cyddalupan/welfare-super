@@ -102,7 +102,7 @@ export class ManualChatComponent implements AfterViewChecked, OnInit, OnDestroy 
       return;
     }
 
-    const adminMessage: ChatMessage = { role: 'assistant', content: this.newMessage.trim() };
+    const adminMessage: ChatMessage = { role: 'assistant', content: this.newMessage.trim() + ' [[ADMIN]]' };
     this.messages.push(adminMessage);
 
     this.isLoading = true;
@@ -111,6 +111,9 @@ export class ManualChatComponent implements AfterViewChecked, OnInit, OnDestroy 
       next: () => {
         console.log('Admin message saved and AI disabled for applicant:', this.applicantId);
         this.newMessage = '';
+        if (this.messageInput && this.messageInput.nativeElement) {
+          this.messageInput.nativeElement.value = ''; // Explicitly clear native element
+        }
         this.isLoading = false;
         this.adjustTextareaHeight();
         this.cdr.detectChanges();

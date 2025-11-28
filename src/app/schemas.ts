@@ -58,6 +58,7 @@ export interface ApplicantHistory {
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
+  timestamp?: string;
 }
 
 export interface Fra {

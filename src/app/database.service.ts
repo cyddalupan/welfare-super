@@ -10,6 +10,7 @@ import { GET_APPLICANT_CHAT_HISTORY, INSERT_APPLICANT_CHAT_MESSAGE, INSERT_APPLI
 interface RawChatMessage {
   message: string;
   sender: 'Employee' | 'AI';
+  timestamp: string; // Added timestamp
 }
 
 // Define a type for the raw memory from the database
@@ -59,7 +60,8 @@ export class DatabaseService {
 
         const messages: ChatMessage[] = responseData.map((rawMsg: RawChatMessage) => ({
           role: rawMsg.sender === 'Employee' ? 'user' : 'assistant',
-          content: rawMsg.message
+          content: rawMsg.message,
+          timestamp: rawMsg.timestamp
         }));
         
         // The query returns the latest 20, so we need to reverse them to show in chronological order
