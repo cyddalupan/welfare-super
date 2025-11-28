@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content #chatContainer class="ion-padding custom-scrollbar">
+<ion-content #chatContainer class="ion-padding custom-scrollbar" fullscreen>
   <!-- Chat messages will be rendered here dynamically -->
   <div *ngFor="let message of messages" class="flex mb-4" [class.justify-end]="message.role === 'assistant'" [class.justify-start]="message.role === 'user'">
     <div class="p-3 rounded-lg max-w-[70%]"
