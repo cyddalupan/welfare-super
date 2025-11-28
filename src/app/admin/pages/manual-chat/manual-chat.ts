@@ -113,6 +113,7 @@ export class ManualChatComponent implements AfterViewChecked, OnInit, OnDestroy 
         this.newMessage = '';
         this.isLoading = false;
         this.adjustTextareaHeight();
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error saving admin message or disabling AI:', error);

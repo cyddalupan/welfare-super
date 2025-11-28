@@ -31423,8 +31423,9 @@ var ChatComponent = class _ChatComponent {
       });
     }
   }
-  ngAfterViewChecked() {
-  }
+  // ngAfterViewChecked(): void {
+  //   // this.scrollToBottom(); // Removed for more controlled scrolling
+  // }
   adjustTextareaHeight() {
     if (this.messageInput && this.messageInput.nativeElement) {
       const element = this.messageInput.nativeElement;
@@ -31664,9 +31665,11 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
     });
   }
   scrollToBottom() {
-    try {
-      this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
-    } catch (err2) {
+    if (this.chatContainer && this.chatContainer.nativeElement) {
+      this.chatContainer.nativeElement.scrollTo({
+        top: this.chatContainer.nativeElement.scrollHeight,
+        behavior: "smooth"
+      });
     }
   }
   static \u0275fac = function ChatComponent_Factory(__ngFactoryType__) {
@@ -31813,7 +31816,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-NUYP2LEA.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-M5DGX4XJ.js").then((m) => m.AdminModule)
   }
 ];
 

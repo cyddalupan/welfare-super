@@ -20,7 +20,7 @@ const MAX_TEXTAREA_HEIGHT = 150;
   templateUrl: './chat.html',
   styleUrls: ['./chat.css']
 })
-export class ChatComponent implements AfterViewChecked, OnInit, OnDestroy {
+export class ChatComponent implements OnInit, OnDestroy {
   title = 'analytics-agent';
 
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
@@ -171,9 +171,9 @@ export class ChatComponent implements AfterViewChecked, OnInit, OnDestroy {
     }
   }
 
-  ngAfterViewChecked(): void {
-    // this.scrollToBottom(); // Removed for more controlled scrolling
-  }
+  // ngAfterViewChecked(): void {
+  //   // this.scrollToBottom(); // Removed for more controlled scrolling
+  // }
 
   public adjustTextareaHeight(): void {
     if (this.messageInput && this.messageInput.nativeElement) {
@@ -448,8 +448,11 @@ export class ChatComponent implements AfterViewChecked, OnInit, OnDestroy {
   }
 
   private scrollToBottom(): void {
-    try {
-      this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
-    } catch (err) { /* Error handling for when element is not yet available */ }
+    if (this.chatContainer && this.chatContainer.nativeElement) {
+      this.chatContainer.nativeElement.scrollTo({
+        top: this.chatContainer.nativeElement.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   }
 }
