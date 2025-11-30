@@ -72,6 +72,8 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     if (this.userId) {
       await this.loadAiEnabledUntilStatus(); // New: Load AI enabled status
+      this.loadChatHistory(); // Initial load of chat history
+      this.loadEmployeeMemories(); // Initial load of employee memories
       this.startMainStatusMonitoring(); // Start monitoring main status
     } else {
       this.messages = [];
@@ -92,19 +94,23 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.stopChatRefreshInterval();
   }
 
-  private async startMainStatusMonitoring(): Promise<void> {
-    if (this.userId && !this.mainStatusMonitorInterval) {
-      // Initial check
-      await this.checkAndSetComplaintStatus();
-      // Then, set up periodic checks (e.g., every 5 seconds)
-      this.mainStatusMonitorInterval = setInterval(async () => {
-        await this.checkAndSetComplaintStatus();
+  private startMainStatusMonitoring(): void {
+    if (this.userId && !this.mainStatusMonitorInterval && !this.complaintStatusActive) {
+      console.log('Starting main status monitoring interval.');
+      // Initial check (non-async to avoid blocking ngOnInit or subsequent calls if the interval starts immediately)
+      this.checkAndSetComplaintStatus();
+      this.mainStatusMonitorInterval = setInterval(() => {
+        // Only fetch main status if not currently in a complaint active state
+        if (!this.complaintStatusActive) {
+          this.checkAndSetComplaintStatus();
+        }
       }, 5000); // Check main status every 5 seconds
     }
   }
 
   private stopMainStatusMonitoring(): void {
     if (this.mainStatusMonitorInterval) {
+      console.log('Stopping main status monitoring interval.');
       clearInterval(this.mainStatusMonitorInterval);
       this.mainStatusMonitorInterval = null;
     }
@@ -117,14 +123,18 @@ export class ChatComponent implements OnInit, OnDestroy {
         const hasComplaint = mainStatus && mainStatus.toLowerCase().includes('complain');
 
         if (hasComplaint && !this.complaintStatusActive) {
-          console.log('Applicant now has a complaint. Starting chat history refresh interval.');
+          console.log('Applicant now has a complaint. Activating chat history refresh.');
           this.complaintStatusActive = true;
           this.startChatRefreshInterval();
+          this.stopMainStatusMonitoring(); // Stop frequent main status checks if complaint is active
         } else if (!hasComplaint && this.complaintStatusActive) {
-          console.log('Applicant no longer has a complaint. Stopping chat history refresh interval.');
+          console.log('Applicant no longer has a complaint. Deactivating chat history refresh.');
           this.complaintStatusActive = false;
           this.stopChatRefreshInterval();
+          this.startMainStatusMonitoring(); // Restart frequent main status checks if complaint is resolved
         }
+        // If hasComplaint and complaintStatusActive are both true, do nothing, the 10s interval handles it
+        // If !hasComplaint and !complaintStatusActive, do nothing, mainStatusMonitorInterval will continue
       } catch (error) {
         console.error('Error checking applicant main status:', error);
       }
@@ -134,20 +144,17 @@ export class ChatComponent implements OnInit, OnDestroy {
   private startChatRefreshInterval(): void {
     this.stopChatRefreshInterval(); // Ensure any existing interval is cleared
     if (this.userId) {
-      console.log('Immediately refreshing chat history and memories.');
-      this.loadChatHistory();
-      this.loadEmployeeMemories();
-
       this.complaintCheckInterval = setInterval(() => {
         console.log('Refreshing chat history due to complaint status.');
-        this.loadChatHistory();
-        this.loadEmployeeMemories();
+        this.loadChatHistory(); // DB Call 2 (getChatHistory)
+        this.loadEmployeeMemories(); // DB Call 3 (getEmployeeMemories)
       }, 10000); // 10 seconds
     }
   }
 
   private stopChatRefreshInterval(): void {
     if (this.complaintCheckInterval) {
+      console.log('Stopping chat history refresh interval.');
       clearInterval(this.complaintCheckInterval);
       this.complaintCheckInterval = null;
     }
@@ -368,6 +375,13 @@ export class ChatComponent implements OnInit, OnDestroy {
         if (!this.aiEnabledUntil || newAiEnabledUntil > this.aiEnabledUntil) {
           this.aiEnabledUntil = newAiEnabledUntil;
           console.log(`AI disabled until ${this.aiEnabledUntil} due to recent admin message.`);
+          // Persist the updated aiEnabledUntil status
+          if (this.userId) {
+            this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
+              next: () => console.log('AI enabled until status saved to DB.'),
+              error: (err) => console.error('Failed to save AI enabled until status:', err)
+            });
+          }
         }
       }
     }

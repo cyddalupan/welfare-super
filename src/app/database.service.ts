@@ -83,6 +83,11 @@ export class DatabaseService {
     return this.query(UPDATE_AI_ENABLED_UNTIL, [futureTimestamp, applicantId]);
   }
 
+  public saveApplicantAiEnabledUntil(applicantId: number, timestamp: Date | null): Observable<any> {
+    const formattedTimestamp = timestamp ? timestamp.toISOString().slice(0, 19).replace('T', ' ') : null;
+    return this.query(UPDATE_AI_ENABLED_UNTIL, [formattedTimestamp, applicantId]);
+  }
+
   public getApplicantAiEnabledUntil(applicantId: number): Observable<string | null> {
     return this.query(GET_APPLICANT_AI_ENABLED_UNTIL, [applicantId]).pipe(
       map((response: any) => {

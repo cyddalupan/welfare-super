@@ -165,7 +165,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-AJOWW2CE.js";
+} from "./chunk-SWFPS7SN.js";
 import "./chunk-B7UJR2GH.js";
 import "./chunk-W7NNY2EY.js";
 import "./chunk-HTLDGIIN.js";
@@ -31337,6 +31337,8 @@ var ChatComponent = class _ChatComponent {
     this.setInitialSystemPrompt();
     if (this.userId) {
       await this.loadAiEnabledUntilStatus();
+      this.loadChatHistory();
+      this.loadEmployeeMemories();
       this.startMainStatusMonitoring();
     } else {
       this.messages = [];
@@ -31353,16 +31355,20 @@ var ChatComponent = class _ChatComponent {
     this.stopMainStatusMonitoring();
     this.stopChatRefreshInterval();
   }
-  async startMainStatusMonitoring() {
-    if (this.userId && !this.mainStatusMonitorInterval) {
-      await this.checkAndSetComplaintStatus();
-      this.mainStatusMonitorInterval = setInterval(async () => {
-        await this.checkAndSetComplaintStatus();
+  startMainStatusMonitoring() {
+    if (this.userId && !this.mainStatusMonitorInterval && !this.complaintStatusActive) {
+      console.log("Starting main status monitoring interval.");
+      this.checkAndSetComplaintStatus();
+      this.mainStatusMonitorInterval = setInterval(() => {
+        if (!this.complaintStatusActive) {
+          this.checkAndSetComplaintStatus();
+        }
       }, 5e3);
     }
   }
   stopMainStatusMonitoring() {
     if (this.mainStatusMonitorInterval) {
+      console.log("Stopping main status monitoring interval.");
       clearInterval(this.mainStatusMonitorInterval);
       this.mainStatusMonitorInterval = null;
     }
@@ -31373,13 +31379,15 @@ var ChatComponent = class _ChatComponent {
         const mainStatus = await firstValueFrom(this.databaseService.getApplicantMainStatus(parseInt(this.userId, 10)));
         const hasComplaint = mainStatus && mainStatus.toLowerCase().includes("complain");
         if (hasComplaint && !this.complaintStatusActive) {
-          console.log("Applicant now has a complaint. Starting chat history refresh interval.");
+          console.log("Applicant now has a complaint. Activating chat history refresh.");
           this.complaintStatusActive = true;
           this.startChatRefreshInterval();
+          this.stopMainStatusMonitoring();
         } else if (!hasComplaint && this.complaintStatusActive) {
-          console.log("Applicant no longer has a complaint. Stopping chat history refresh interval.");
+          console.log("Applicant no longer has a complaint. Deactivating chat history refresh.");
           this.complaintStatusActive = false;
           this.stopChatRefreshInterval();
+          this.startMainStatusMonitoring();
         }
       } catch (error) {
         console.error("Error checking applicant main status:", error);
@@ -31389,9 +31397,6 @@ var ChatComponent = class _ChatComponent {
   startChatRefreshInterval() {
     this.stopChatRefreshInterval();
     if (this.userId) {
-      console.log("Immediately refreshing chat history and memories.");
-      this.loadChatHistory();
-      this.loadEmployeeMemories();
       this.complaintCheckInterval = setInterval(() => {
         console.log("Refreshing chat history due to complaint status.");
         this.loadChatHistory();
@@ -31401,6 +31406,7 @@ var ChatComponent = class _ChatComponent {
   }
   stopChatRefreshInterval() {
     if (this.complaintCheckInterval) {
+      console.log("Stopping chat history refresh interval.");
       clearInterval(this.complaintCheckInterval);
       this.complaintCheckInterval = null;
     }
@@ -31583,6 +31589,12 @@ User's known characteristics: ${memoriesString}`;
         if (!this.aiEnabledUntil || newAiEnabledUntil > this.aiEnabledUntil) {
           this.aiEnabledUntil = newAiEnabledUntil;
           console.log(`AI disabled until ${this.aiEnabledUntil} due to recent admin message.`);
+          if (this.userId) {
+            this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
+              next: () => console.log("AI enabled until status saved to DB."),
+              error: (err2) => console.error("Failed to save AI enabled until status:", err2)
+            });
+          }
         }
       }
     }
@@ -31887,7 +31899,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-WTSYJHPP.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-TFS3TYGV.js").then((m) => m.AdminModule)
   }
 ];
 
