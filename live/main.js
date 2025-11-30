@@ -31290,6 +31290,7 @@ var ChatComponent = class _ChatComponent {
   databaseService;
   caseService;
   announcementService;
+  cdRef;
   title = "analytics-agent";
   chatContainer;
   messageInput;
@@ -31313,12 +31314,15 @@ var ChatComponent = class _ChatComponent {
   // New property to hold the main status monitor interval ID
   complaintStatusActive = false;
   // New property to track complaint status
-  constructor(aiService, authService, databaseService, caseService, announcementService) {
+  initialScrollDone = false;
+  // New property to track initial scroll
+  constructor(aiService, authService, databaseService, caseService, announcementService, cdRef) {
     this.aiService = aiService;
     this.authService = authService;
     this.databaseService = databaseService;
     this.caseService = caseService;
     this.announcementService = announcementService;
+    this.cdRef = cdRef;
     this.systemPrompt = {
       role: "system",
       content: ""
@@ -31342,13 +31346,21 @@ var ChatComponent = class _ChatComponent {
       this.startMainStatusMonitoring();
     } else {
       this.messages = [];
+      console.log("ChatComponent: User unauthenticated. Pushing welcome message. Initial scroll will be handled by ngAfterViewInit.");
       this.messages.push({ role: "assistant", content: "Welcome! To get started, please provide your last name and passport number so I can assist you." });
-      setTimeout(() => this.scrollToBottom(), 0);
     }
     try {
       this.announcements = await this.announcementService.getActiveAnnouncements();
     } catch (error) {
       console.error("Error loading announcements:", error);
+    }
+  }
+  ngAfterViewInit() {
+    if (this.chatContainer && !this.initialScrollDone) {
+      console.log("ngAfterViewInit: Performing initial scroll to bottom.");
+      this.scrollToBottom();
+      this.initialScrollDone = true;
+      this.cdRef.detectChanges();
     }
   }
   ngOnDestroy() {
@@ -31415,11 +31427,13 @@ var ChatComponent = class _ChatComponent {
     if (this.userId) {
       try {
         const timestamp = await firstValueFrom(this.databaseService.getApplicantAiEnabledUntil(parseInt(this.userId, 10)));
+        console.log("loadAiEnabledUntilStatus - Fetched timestamp from DB:", timestamp);
         if (timestamp) {
           this.aiEnabledUntil = new Date(timestamp);
-          console.log("AI enabled until:", this.aiEnabledUntil);
+          console.log("loadAiEnabledUntilStatus - AI enabled until:", this.aiEnabledUntil);
         } else {
           this.aiEnabledUntil = null;
+          console.log("loadAiEnabledUntilStatus - AI enabled until: null (no timestamp in DB)");
         }
       } catch (error) {
         console.error("Error loading AI enabled until status:", error);
@@ -31442,12 +31456,15 @@ var ChatComponent = class _ChatComponent {
       this.databaseService.getChatHistory(parseInt(this.userId, 10)).subscribe({
         next: (history) => {
           this.messages = history.map((msg) => this.processMessageContent(msg));
-          setTimeout(() => this.scrollToBottom(), 0);
+          console.log("ChatComponent: Chat history loaded. Explicitly detecting changes and scrolling to bottom.");
+          this.cdRef.detectChanges();
+          this.scrollToBottom();
         },
         error: (error) => {
           console.error("Failed to load chat history:", error);
           this.messages.push({ role: "assistant", content: "Sorry, I was unable to load your previous conversation." });
-          setTimeout(() => this.scrollToBottom(), 0);
+          this.cdRef.detectChanges();
+          this.scrollToBottom();
         }
       });
     }
@@ -31477,12 +31494,13 @@ var ChatComponent = class _ChatComponent {
     }
   }
   sendMessage() {
-    console.log("sendMessage called.");
+    console.log("sendMessage called. Current aiEnabledUntil:", this.aiEnabledUntil);
     if (this.newMessage.trim() === "") {
       console.log("New message is empty, returning.");
       return;
     }
     if (this.aiEnabledUntil && this.aiEnabledUntil.getTime() > (/* @__PURE__ */ new Date()).getTime()) {
+      console.log("sendMessage - AI is currently disabled until:", this.aiEnabledUntil);
       const disabledMessage = { role: "assistant", content: "Our team is currently reviewing your case. AI responses are temporarily paused. Please await a direct response from our support staff." };
       this.messages.push(disabledMessage);
       this.saveMessageToDb(disabledMessage);
@@ -31505,7 +31523,13 @@ var ChatComponent = class _ChatComponent {
       const newAiEnabledUntil = new Date((/* @__PURE__ */ new Date()).getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1e3);
       if (!this.aiEnabledUntil || newAiEnabledUntil > this.aiEnabledUntil) {
         this.aiEnabledUntil = newAiEnabledUntil;
-        console.log(`AI disabled until ${this.aiEnabledUntil} due to direct admin message.`);
+        console.log(`sendMessage - AI disabled until ${this.aiEnabledUntil} due to direct admin message.`);
+        if (this.userId) {
+          this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
+            next: () => console.log("sendMessage - AI enabled until status saved to DB."),
+            error: (err2) => console.error("sendMessage - Failed to save AI enabled until status:", err2)
+          });
+        }
       }
       this.isLoading = false;
       this.currentStatusMessage = "";
@@ -31586,13 +31610,14 @@ User's known characteristics: ${memoriesString}`;
       const timeDiffMinutes = (now.getTime() - messageDate.getTime()) / (1e3 * 60);
       if (timeDiffMinutes < ADMIN_AI_DISABLE_DURATION_MINUTES) {
         const newAiEnabledUntil = new Date(messageDate.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1e3);
+        console.log(`processMessageContent - Message timestamp: ${message.timestamp}, messageDate: ${messageDate}, now: ${now}, timeDiffMinutes: ${timeDiffMinutes}, newAiEnabledUntil: ${newAiEnabledUntil}`);
         if (!this.aiEnabledUntil || newAiEnabledUntil > this.aiEnabledUntil) {
           this.aiEnabledUntil = newAiEnabledUntil;
-          console.log(`AI disabled until ${this.aiEnabledUntil} due to recent admin message.`);
+          console.log(`processMessageContent - AI disabled until ${this.aiEnabledUntil} due to recent admin message.`);
           if (this.userId) {
             this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
-              next: () => console.log("AI enabled until status saved to DB."),
-              error: (err2) => console.error("Failed to save AI enabled until status:", err2)
+              next: () => console.log("processMessageContent - AI enabled until status saved to DB."),
+              error: (err2) => console.error("processMessageContent - Failed to save AI enabled until status:", err2)
             });
           }
         }
@@ -31756,7 +31781,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
     }
   }
   static \u0275fac = function ChatComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _ChatComponent)(\u0275\u0275directiveInject(AiService), \u0275\u0275directiveInject(AuthService), \u0275\u0275directiveInject(DatabaseService), \u0275\u0275directiveInject(CaseService), \u0275\u0275directiveInject(AnnouncementService));
+    return new (__ngFactoryType__ || _ChatComponent)(\u0275\u0275directiveInject(AiService), \u0275\u0275directiveInject(AuthService), \u0275\u0275directiveInject(DatabaseService), \u0275\u0275directiveInject(CaseService), \u0275\u0275directiveInject(AnnouncementService), \u0275\u0275directiveInject(ChangeDetectorRef));
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ChatComponent, selectors: [["app-chat"]], viewQuery: function ChatComponent_Query(rf, ctx) {
     if (rf & 1) {
@@ -31882,7 +31907,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
     </div>
   </ion-toolbar>
 </ion-footer>`, styles: ['/* src/app/chat/chat.css */\n:host {\n  display: flex;\n  flex-direction: column;\n  min-height: 100vh;\n  font-family: "Inter", sans-serif;\n  color: var(--ion-text-color);\n}\nion-header,\nion-footer {\n  box-shadow: none !important;\n}\nion-toolbar {\n  --background: var(--ion-background-color);\n  --color: var(--ion-text-color);\n  --border-color: transparent;\n  --min-height: 56px;\n  padding: 0 10px;\n}\nion-content {\n  --background: var(--ion-background-color);\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  overflow-y: auto;\n}\nion-content > div {\n  width: 100%;\n  display: flex;\n  margin-bottom: 10px;\n}\nion-content > div.justify-end {\n  justify-content: flex-end;\n}\nion-content > div.justify-start {\n  justify-content: flex-start;\n}\nion-content > div > div {\n  padding: 10px 15px;\n  border-radius: 20px;\n  max-width: 80%;\n  word-wrap: break-word;\n  color: var(--ion-text-color);\n}\n.user-message-bubble {\n  background: var(--ion-color-primary);\n  color: var(--ion-color-primary-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border-bottom-right-radius: 5px;\n  margin-right: 10px;\n}\n.assistant-message-bubble {\n  background: var(--ion-color-success);\n  color: var(--ion-color-success-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border: 1px solid var(--ion-color-step-300);\n  border-bottom-left-radius: 5px;\n  margin-left: 10px;\n}\n.chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n.chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n  background-color: var(--ion-color-step-200);\n  padding: 8px;\n  border-radius: 5px;\n  color: var(--ion-text-color);\n}\n.chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n.chat-message-content th,\n.chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid var(--ion-color-step-300);\n  color: var(--ion-text-color);\n}\n.chat-message-content img {\n  max-width: 100%;\n  height: auto;\n  border-radius: 8px;\n}\n.ion-content > .flex.justify-center {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\nion-textarea {\n  --padding-start: 10px;\n  --padding-end: 10px;\n  --padding-top: 10px;\n  --padding-bottom: 10px;\n  --background: var(--ion-background-color);\n  border-radius: 20px;\n  color: var(--ion-text-color);\n  min-height: 40px;\n  max-height: 150px;\n  overflow-y: auto;\n  font-size: 1rem;\n  --placeholder-color: rgba(var(--ion-text-color-rgb), 0.5);\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar {\n  width: 8px;\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\nion-button {\n  --background: var(--ion-color-tertiary);\n  --background-activated: var(--ion-color-tertiary-tint);\n  --border-radius: 20px;\n  height: 40px;\n  font-size: 1rem;\n  margin-left: 10px;\n  text-transform: none;\n  color: var(--ion-color-tertiary-contrast);\n}\n.custom-scrollbar::-webkit-scrollbar {\n  width: 8px;\n}\n.custom-scrollbar::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\n.custom-scrollbar::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\n/*# sourceMappingURL=chat.css.map */\n'] }]
-  }], () => [{ type: AiService }, { type: AuthService }, { type: DatabaseService }, { type: CaseService }, { type: AnnouncementService }], { chatContainer: [{
+  }], () => [{ type: AiService }, { type: AuthService }, { type: DatabaseService }, { type: CaseService }, { type: AnnouncementService }, { type: ChangeDetectorRef }], { chatContainer: [{
     type: ViewChild,
     args: ["chatContainer"]
   }], messageInput: [{
@@ -31899,7 +31924,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-TFS3TYGV.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-SZH3RLDP.js").then((m) => m.AdminModule)
   }
 ];
 

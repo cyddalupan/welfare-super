@@ -51,7 +51,7 @@ export class ManualChatComponent implements AfterViewChecked, OnInit, OnDestroy 
           if (!this.isLoading) { // Only refresh if not already loading to prevent overlapping calls
             this.loadChatHistory(this.applicantId!);
           }
-        }, 20000); // Refresh every 20 seconds
+        }, 10000); // Refresh every 10 seconds
       }
     });
   }

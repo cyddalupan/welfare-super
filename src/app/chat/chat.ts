@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -21,7 +21,7 @@ const ADMIN_AI_DISABLE_DURATION_MINUTES = 10;
   templateUrl: './chat.html',
   styleUrls: ['./chat.css']
 })
-export class ChatComponent implements OnInit, OnDestroy {
+export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   title = 'analytics-agent';
 
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
@@ -41,13 +41,15 @@ export class ChatComponent implements OnInit, OnDestroy {
   private complaintCheckInterval: any; // Property to hold the interval ID for chat history refresh
   private mainStatusMonitorInterval: any; // New property to hold the main status monitor interval ID
   private complaintStatusActive: boolean = false; // New property to track complaint status
+  private initialScrollDone: boolean = false; // New property to track initial scroll
 
   constructor(
     private aiService: AiService,
     private authService: AuthService,
     private databaseService: DatabaseService,
     private caseService: CaseService,
-    private announcementService: AnnouncementService // Inject AnnouncementService
+    private announcementService: AnnouncementService, // Inject AnnouncementService
+    private cdRef: ChangeDetectorRef // Inject ChangeDetectorRef
   ) {
     this.systemPrompt = {
       role: 'system',
@@ -77,8 +79,8 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.startMainStatusMonitoring(); // Start monitoring main status
     } else {
       this.messages = [];
+      console.log('ChatComponent: User unauthenticated. Pushing welcome message. Initial scroll will be handled by ngAfterViewInit.');
       this.messages.push({ role: 'assistant', content: 'Welcome! To get started, please provide your last name and passport number so I can assist you.' });
-      setTimeout(() => this.scrollToBottom(), 0);
     }
 
     // Load active announcements
@@ -86,6 +88,18 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.announcements = await this.announcementService.getActiveAnnouncements();
     } catch (error) {
       console.error('Error loading announcements:', error);
+    }
+  }
+
+  ngAfterViewInit(): void {
+    // Ensure the chatContainer is available before attempting to scroll
+    if (this.chatContainer && !this.initialScrollDone) {
+      console.log('ngAfterViewInit: Performing initial scroll to bottom.');
+      this.scrollToBottom();
+      this.initialScrollDone = true;
+      // Manually trigger change detection if the content was loaded asynchronously
+      // and the scroll might not immediately reflect in the view.
+      this.cdRef.detectChanges();
     }
   }
 
@@ -164,11 +178,13 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (this.userId) {
       try {
         const timestamp = await firstValueFrom(this.databaseService.getApplicantAiEnabledUntil(parseInt(this.userId, 10)));
+        console.log('loadAiEnabledUntilStatus - Fetched timestamp from DB:', timestamp);
         if (timestamp) {
           this.aiEnabledUntil = new Date(timestamp);
-          console.log('AI enabled until:', this.aiEnabledUntil);
+          console.log('loadAiEnabledUntilStatus - AI enabled until:', this.aiEnabledUntil);
         } else {
           this.aiEnabledUntil = null;
+          console.log('loadAiEnabledUntilStatus - AI enabled until: null (no timestamp in DB)');
         }
       } catch (error) {
         console.error('Error loading AI enabled until status:', error);
@@ -195,12 +211,15 @@ export class ChatComponent implements OnInit, OnDestroy {
         next: (history) => {
           // Process each message for tags and cleaning, then assign to messages
           this.messages = history.map(msg => this.processMessageContent(msg));
-          setTimeout(() => this.scrollToBottom(), 0);
+          console.log('ChatComponent: Chat history loaded. Explicitly detecting changes and scrolling to bottom.');
+          this.cdRef.detectChanges(); // Force change detection to ensure content is rendered before scroll
+          this.scrollToBottom(); // Always scroll to bottom after loading history, especially for refreshes
         },
         error: (error) => {
           console.error('Failed to load chat history:', error);
           this.messages.push({ role: 'assistant', content: 'Sorry, I was unable to load your previous conversation.' });
-          setTimeout(() => this.scrollToBottom(), 0);
+          this.cdRef.detectChanges(); // Force change detection to ensure error message is rendered
+          this.scrollToBottom(); // Scroll to show the error message
         }
       });
     }
@@ -234,7 +253,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   sendMessage(): void {
-    console.log('sendMessage called.');
+    console.log('sendMessage called. Current aiEnabledUntil:', this.aiEnabledUntil);
     if (this.newMessage.trim() === '') {
       console.log('New message is empty, returning.');
       return;
@@ -242,6 +261,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     // Check if AI is temporarily disabled
     if (this.aiEnabledUntil && this.aiEnabledUntil.getTime() > new Date().getTime()) {
+      console.log('sendMessage - AI is currently disabled until:', this.aiEnabledUntil);
       const disabledMessage: ChatMessage = { role: 'assistant', content: "Our team is currently reviewing your case. AI responses are temporarily paused. Please await a direct response from our support staff." };
       this.messages.push(disabledMessage);
       this.saveMessageToDb(disabledMessage);
@@ -271,11 +291,14 @@ export class ChatComponent implements OnInit, OnDestroy {
         const newAiEnabledUntil = new Date(new Date().getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1000);
         if (!this.aiEnabledUntil || newAiEnabledUntil > this.aiEnabledUntil) {
             this.aiEnabledUntil = newAiEnabledUntil;
-            console.log(`AI disabled until ${this.aiEnabledUntil} due to direct admin message.`);
-            // Optionally, save this state to the database if `aiEnabledUntil` needs to persist across sessions
-            // For now, based on loadAiEnabledUntilStatus, it seems it's loaded from DB, so saving might be needed.
-            // But the current implementation seems to set it in-memory only.
-            // Let's assume for now it's okay for it to be in-memory for this session.
+            console.log(`sendMessage - AI disabled until ${this.aiEnabledUntil} due to direct admin message.`);
+            // Persist the updated aiEnabledUntil status
+            if (this.userId) {
+                this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
+                    next: () => console.log('sendMessage - AI enabled until status saved to DB.'),
+                    error: (err) => console.error('sendMessage - Failed to save AI enabled until status:', err)
+                });
+            }
         }
         this.isLoading = false;
         this.currentStatusMessage = '';
@@ -371,15 +394,16 @@ export class ChatComponent implements OnInit, OnDestroy {
 
       if (timeDiffMinutes < ADMIN_AI_DISABLE_DURATION_MINUTES) {
         const newAiEnabledUntil = new Date(messageDate.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1000);
+        console.log(`processMessageContent - Message timestamp: ${message.timestamp}, messageDate: ${messageDate}, now: ${now}, timeDiffMinutes: ${timeDiffMinutes}, newAiEnabledUntil: ${newAiEnabledUntil}`);
         // Only update if the new time is later than an existing one
         if (!this.aiEnabledUntil || newAiEnabledUntil > this.aiEnabledUntil) {
           this.aiEnabledUntil = newAiEnabledUntil;
-          console.log(`AI disabled until ${this.aiEnabledUntil} due to recent admin message.`);
+          console.log(`processMessageContent - AI disabled until ${this.aiEnabledUntil} due to recent admin message.`);
           // Persist the updated aiEnabledUntil status
           if (this.userId) {
             this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
-              next: () => console.log('AI enabled until status saved to DB.'),
-              error: (err) => console.error('Failed to save AI enabled until status:', err)
+              next: () => console.log('processMessageContent - AI enabled until status saved to DB.'),
+              error: (err) => console.error('processMessageContent - Failed to save AI enabled until status:', err)
             });
           }
         }
