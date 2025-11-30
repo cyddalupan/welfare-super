@@ -31308,7 +31308,11 @@ var ChatComponent = class _ChatComponent {
   aiEnabledUntil = null;
   // New property
   complaintCheckInterval;
-  // New property to hold the interval ID
+  // Property to hold the interval ID for chat history refresh
+  mainStatusMonitorInterval;
+  // New property to hold the main status monitor interval ID
+  complaintStatusActive = false;
+  // New property to track complaint status
   constructor(aiService, authService, databaseService, caseService, announcementService) {
     this.aiService = aiService;
     this.authService = authService;
@@ -31332,8 +31336,8 @@ var ChatComponent = class _ChatComponent {
     this.agencyId = agencyId;
     this.setInitialSystemPrompt();
     if (this.userId) {
-      await this.loadChatAndComplaintStatus();
       await this.loadAiEnabledUntilStatus();
+      this.startMainStatusMonitoring();
     } else {
       this.messages = [];
       this.messages.push({ role: "assistant", content: "Welcome! To get started, please provide your last name and passport number so I can assist you." });
@@ -31346,27 +31350,59 @@ var ChatComponent = class _ChatComponent {
     }
   }
   ngOnDestroy() {
-    if (this.complaintCheckInterval) {
-      clearInterval(this.complaintCheckInterval);
+    this.stopMainStatusMonitoring();
+    this.stopChatRefreshInterval();
+  }
+  async startMainStatusMonitoring() {
+    if (this.userId && !this.mainStatusMonitorInterval) {
+      await this.checkAndSetComplaintStatus();
+      this.mainStatusMonitorInterval = setInterval(async () => {
+        await this.checkAndSetComplaintStatus();
+      }, 5e3);
     }
   }
-  async loadChatAndComplaintStatus() {
+  stopMainStatusMonitoring() {
+    if (this.mainStatusMonitorInterval) {
+      clearInterval(this.mainStatusMonitorInterval);
+      this.mainStatusMonitorInterval = null;
+    }
+  }
+  async checkAndSetComplaintStatus() {
     if (this.userId) {
-      this.loadChatHistory();
-      this.loadEmployeeMemories();
       try {
         const mainStatus = await firstValueFrom(this.databaseService.getApplicantMainStatus(parseInt(this.userId, 10)));
-        if (mainStatus && mainStatus.toLowerCase().includes("complain")) {
-          console.log("Applicant has a complaint. Starting chat history refresh interval.");
-          this.complaintCheckInterval = setInterval(() => {
-            console.log("Refreshing chat history due to complaint status.");
-            this.loadChatHistory();
-            this.loadEmployeeMemories();
-          }, 2e4);
+        const hasComplaint = mainStatus && mainStatus.toLowerCase().includes("complain");
+        if (hasComplaint && !this.complaintStatusActive) {
+          console.log("Applicant now has a complaint. Starting chat history refresh interval.");
+          this.complaintStatusActive = true;
+          this.startChatRefreshInterval();
+        } else if (!hasComplaint && this.complaintStatusActive) {
+          console.log("Applicant no longer has a complaint. Stopping chat history refresh interval.");
+          this.complaintStatusActive = false;
+          this.stopChatRefreshInterval();
         }
       } catch (error) {
-        console.error("Error loading applicant main status:", error);
+        console.error("Error checking applicant main status:", error);
       }
+    }
+  }
+  startChatRefreshInterval() {
+    this.stopChatRefreshInterval();
+    if (this.userId) {
+      console.log("Immediately refreshing chat history and memories.");
+      this.loadChatHistory();
+      this.loadEmployeeMemories();
+      this.complaintCheckInterval = setInterval(() => {
+        console.log("Refreshing chat history due to complaint status.");
+        this.loadChatHistory();
+        this.loadEmployeeMemories();
+      }, 1e4);
+    }
+  }
+  stopChatRefreshInterval() {
+    if (this.complaintCheckInterval) {
+      clearInterval(this.complaintCheckInterval);
+      this.complaintCheckInterval = null;
     }
   }
   async loadAiEnabledUntilStatus() {

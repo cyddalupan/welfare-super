@@ -38,7 +38,9 @@ export class ChatComponent implements OnInit, OnDestroy {
   public announcements: string[] = []; // New: Stores active announcement messages
   public showAnnouncementBanner: boolean = true; // New: Controls announcement banner visibility
   public aiEnabledUntil: Date | null = null; // New property
-  private complaintCheckInterval: any; // New property to hold the interval ID
+  private complaintCheckInterval: any; // Property to hold the interval ID for chat history refresh
+  private mainStatusMonitorInterval: any; // New property to hold the main status monitor interval ID
+  private complaintStatusActive: boolean = false; // New property to track complaint status
 
   constructor(
     private aiService: AiService,
@@ -69,8 +71,8 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.setInitialSystemPrompt();
 
     if (this.userId) {
-      await this.loadChatAndComplaintStatus(); // New: Load chat history, memories, and check complaint status
       await this.loadAiEnabledUntilStatus(); // New: Load AI enabled status
+      this.startMainStatusMonitoring(); // Start monitoring main status
     } else {
       this.messages = [];
       this.messages.push({ role: 'assistant', content: 'Welcome! To get started, please provide your last name and passport number so I can assist you.' });
@@ -86,29 +88,68 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.complaintCheckInterval) {
-      clearInterval(this.complaintCheckInterval);
+    this.stopMainStatusMonitoring();
+    this.stopChatRefreshInterval();
+  }
+
+  private async startMainStatusMonitoring(): Promise<void> {
+    if (this.userId && !this.mainStatusMonitorInterval) {
+      // Initial check
+      await this.checkAndSetComplaintStatus();
+      // Then, set up periodic checks (e.g., every 5 seconds)
+      this.mainStatusMonitorInterval = setInterval(async () => {
+        await this.checkAndSetComplaintStatus();
+      }, 5000); // Check main status every 5 seconds
     }
   }
 
-  private async loadChatAndComplaintStatus(): Promise<void> {
+  private stopMainStatusMonitoring(): void {
+    if (this.mainStatusMonitorInterval) {
+      clearInterval(this.mainStatusMonitorInterval);
+      this.mainStatusMonitorInterval = null;
+    }
+  }
+
+  private async checkAndSetComplaintStatus(): Promise<void> {
     if (this.userId) {
+      try {
+        const mainStatus = await firstValueFrom(this.databaseService.getApplicantMainStatus(parseInt(this.userId, 10)));
+        const hasComplaint = mainStatus && mainStatus.toLowerCase().includes('complain');
+
+        if (hasComplaint && !this.complaintStatusActive) {
+          console.log('Applicant now has a complaint. Starting chat history refresh interval.');
+          this.complaintStatusActive = true;
+          this.startChatRefreshInterval();
+        } else if (!hasComplaint && this.complaintStatusActive) {
+          console.log('Applicant no longer has a complaint. Stopping chat history refresh interval.');
+          this.complaintStatusActive = false;
+          this.stopChatRefreshInterval();
+        }
+      } catch (error) {
+        console.error('Error checking applicant main status:', error);
+      }
+    }
+  }
+
+  private startChatRefreshInterval(): void {
+    this.stopChatRefreshInterval(); // Ensure any existing interval is cleared
+    if (this.userId) {
+      console.log('Immediately refreshing chat history and memories.');
       this.loadChatHistory();
       this.loadEmployeeMemories();
 
-      try {
-        const mainStatus = await firstValueFrom(this.databaseService.getApplicantMainStatus(parseInt(this.userId, 10)));
-        if (mainStatus && mainStatus.toLowerCase().includes('complain')) {
-          console.log('Applicant has a complaint. Starting chat history refresh interval.');
-          this.complaintCheckInterval = setInterval(() => {
-            console.log('Refreshing chat history due to complaint status.');
-            this.loadChatHistory();
-            this.loadEmployeeMemories();
-          }, 10000); // 10 seconds
-        }
-      } catch (error) {
-        console.error('Error loading applicant main status:', error);
-      }
+      this.complaintCheckInterval = setInterval(() => {
+        console.log('Refreshing chat history due to complaint status.');
+        this.loadChatHistory();
+        this.loadEmployeeMemories();
+      }, 10000); // 10 seconds
+    }
+  }
+
+  private stopChatRefreshInterval(): void {
+    if (this.complaintCheckInterval) {
+      clearInterval(this.complaintCheckInterval);
+      this.complaintCheckInterval = null;
     }
   }
 
