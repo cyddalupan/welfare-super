@@ -31458,6 +31458,19 @@ var ChatComponent = class _ChatComponent {
     this.messages.push(userMessage);
     this.saveMessageToDb(userMessage);
     this.newMessage = "";
+    if (userMessage.content.includes("[[ADMIN]]")) {
+      console.log("Admin message with [[ADMIN]] tag detected. Skipping AI response.");
+      const newAiEnabledUntil = new Date((/* @__PURE__ */ new Date()).getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1e3);
+      if (!this.aiEnabledUntil || newAiEnabledUntil > this.aiEnabledUntil) {
+        this.aiEnabledUntil = newAiEnabledUntil;
+        console.log(`AI disabled until ${this.aiEnabledUntil} due to direct admin message.`);
+      }
+      this.isLoading = false;
+      this.currentStatusMessage = "";
+      this.adjustTextareaHeight();
+      setTimeout(() => this.scrollToBottom(), 0);
+      return;
+    }
     let currentSystemPromptContent = this.systemPrompt.content;
     if (this.userId && this.employeeMemories && this.employeeMemories.length > 0) {
       const memoriesString = this.employeeMemories.map((memory) => `"${memory}"`).join(", ");

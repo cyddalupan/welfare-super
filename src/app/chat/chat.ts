@@ -104,7 +104,7 @@ export class ChatComponent implements OnInit, OnDestroy {
             console.log('Refreshing chat history due to complaint status.');
             this.loadChatHistory();
             this.loadEmployeeMemories();
-          }, 20000); // 20 seconds
+          }, 10000); // 10 seconds
         }
       } catch (error) {
         console.error('Error loading applicant main status:', error);
@@ -215,6 +215,26 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.saveMessageToDb(userMessage);
 
     this.newMessage = '';
+
+    // Check for ADMIN tag in the current message being sent by the user (admin)
+    if (userMessage.content.includes('[[ADMIN]]')) {
+        console.log('Admin message with [[ADMIN]] tag detected. Skipping AI response.');
+        // Set AI to be disabled for a period, similar to how it's done for historical messages
+        const newAiEnabledUntil = new Date(new Date().getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1000);
+        if (!this.aiEnabledUntil || newAiEnabledUntil > this.aiEnabledUntil) {
+            this.aiEnabledUntil = newAiEnabledUntil;
+            console.log(`AI disabled until ${this.aiEnabledUntil} due to direct admin message.`);
+            // Optionally, save this state to the database if `aiEnabledUntil` needs to persist across sessions
+            // For now, based on loadAiEnabledUntilStatus, it seems it's loaded from DB, so saving might be needed.
+            // But the current implementation seems to set it in-memory only.
+            // Let's assume for now it's okay for it to be in-memory for this session.
+        }
+        this.isLoading = false;
+        this.currentStatusMessage = '';
+        this.adjustTextareaHeight();
+        setTimeout(() => this.scrollToBottom(), 0);
+        return; // Skip AI call entirely
+    }
 
     let currentSystemPromptContent = this.systemPrompt.content;
 
