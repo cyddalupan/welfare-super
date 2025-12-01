@@ -31599,42 +31599,43 @@ User's known characteristics: ${memoriesString}`;
   updateAiEnabledUntilFromHistory(history) {
     if (!this.userId)
       return;
+    console.log(`updateAiEnabledUntilFromHistory called at ${(/* @__PURE__ */ new Date()).toLocaleTimeString()}, current aiEnabledUntil: ${this.aiEnabledUntil?.toLocaleTimeString() || "null"}`);
+    const currentCheckTime = /* @__PURE__ */ new Date();
     let latestDisablementFromHistory = null;
     for (const message of history) {
       if (message.content.includes("[[ADMIN]]") && message.timestamp) {
+        console.log(`ADMIN tag found! Message: "${message.content}", Timestamp: "${message.timestamp}"`);
         const messageDate = new Date(message.timestamp.replace(" ", "T"));
-        const now = /* @__PURE__ */ new Date();
-        const timeDiffMinutes = (now.getTime() - messageDate.getTime()) / (1e3 * 60);
+        const timeDiffMinutes = (currentCheckTime.getTime() - messageDate.getTime()) / (1e3 * 60);
         if (timeDiffMinutes >= 0 && timeDiffMinutes <= ADMIN_AI_DISABLE_DURATION_MINUTES) {
-          const newAiEnabledUntil = new Date(now.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1e3);
-          if (!latestDisablementFromHistory || newAiEnabledUntil.getTime() > latestDisablementFromHistory.getTime()) {
-            latestDisablementFromHistory = newAiEnabledUntil;
+          const newAiEnabledUntilCandidate = new Date(currentCheckTime.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1e3);
+          console.log(`ADMIN message is recent! timeDiffMinutes: ${timeDiffMinutes}, newAiEnabledUntilCandidate: ${newAiEnabledUntilCandidate.toLocaleTimeString()}`);
+          if (!latestDisablementFromHistory || newAiEnabledUntilCandidate.getTime() > latestDisablementFromHistory.getTime()) {
+            latestDisablementFromHistory = newAiEnabledUntilCandidate;
           }
         }
       }
     }
-    let finalAiEnabledUntil = this.aiEnabledUntil;
-    if (latestDisablementFromHistory && (!finalAiEnabledUntil || latestDisablementFromHistory.getTime() > finalAiEnabledUntil.getTime())) {
-      finalAiEnabledUntil = latestDisablementFromHistory;
+    let newEffectiveAiEnabledUntil = this.aiEnabledUntil;
+    if (latestDisablementFromHistory && (!newEffectiveAiEnabledUntil || latestDisablementFromHistory.getTime() > newEffectiveAiEnabledUntil.getTime())) {
+      newEffectiveAiEnabledUntil = latestDisablementFromHistory;
     }
-    if (finalAiEnabledUntil && finalAiEnabledUntil.getTime() < (/* @__PURE__ */ new Date()).getTime()) {
-      finalAiEnabledUntil = null;
+    if (newEffectiveAiEnabledUntil && newEffectiveAiEnabledUntil.getTime() < currentCheckTime.getTime()) {
+      newEffectiveAiEnabledUntil = null;
     }
-    const needsDbUpdate = !this.aiEnabledUntil && finalAiEnabledUntil || // Was null, now has a value
-    this.aiEnabledUntil && !finalAiEnabledUntil || // Had a value, now is null
-    this.aiEnabledUntil && finalAiEnabledUntil && this.aiEnabledUntil.getTime() !== finalAiEnabledUntil.getTime();
-    this.aiEnabledUntil = finalAiEnabledUntil;
-    if (needsDbUpdate) {
-      console.log(`updateAiEnabledUntilFromHistory - State changed. Updating AI disabled until ${this.aiEnabledUntil}`);
-      if (this.aiEnabledUntil) {
-        this.messages.push({ role: "assistant", content: `DEBUG: AI disablement detected from history refresh. Paused until ${this.aiEnabledUntil.toLocaleTimeString()}` });
-        this.cdRef.detectChanges();
-        this.scrollToBottom();
-      }
+    const hasChanged = !this.aiEnabledUntil && newEffectiveAiEnabledUntil || // Was null, now has a value
+    this.aiEnabledUntil && !newEffectiveAiEnabledUntil || // Had a value, now is null
+    this.aiEnabledUntil && newEffectiveAiEnabledUntil && this.aiEnabledUntil.getTime() !== newEffectiveAiEnabledUntil.getTime();
+    this.aiEnabledUntil = newEffectiveAiEnabledUntil;
+    console.log(`updateAiEnabledUntilFromHistory - After loop, bestAiEnabledUntil: ${this.aiEnabledUntil?.toLocaleTimeString() || "null"}`);
+    if (hasChanged) {
+      console.log(`updateAiEnabledUntilFromHistory - State changed. New aiEnabledUntil: ${this.aiEnabledUntil?.toLocaleTimeString() || "null"}`);
       this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
         next: () => console.log("updateAiEnabledUntilFromHistory - AI enabled until status saved to DB."),
         error: (err2) => console.error("updateAiEnabledUntilFromHistory - Failed to save AI enabled until status:", err2)
       });
+    } else {
+      console.log(`updateAiEnabledUntilFromHistory - State unchanged. aiEnabledUntil: ${this.aiEnabledUntil?.toLocaleTimeString() || "null"}`);
     }
   }
   processMessageContent(message) {
