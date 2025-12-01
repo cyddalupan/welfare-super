@@ -31329,6 +31329,7 @@ var ChatComponent = class _ChatComponent {
     };
   }
   async ngOnInit() {
+    console.log("!!!!!!! ChatComponent ngOnInit: New Code Deployed Successfully !!!!!!!");
     let userId = localStorage.getItem("user_id");
     let agencyId = localStorage.getItem("agency_id");
     if (userId && (!agencyId || agencyId === "null" || agencyId === "undefined") || !userId && agencyId) {
@@ -31502,9 +31503,7 @@ var ChatComponent = class _ChatComponent {
     }
     this.isLoading = true;
     this.currentStatusMessage = "Typing...";
-    setTimeout(() => {
-      this.scrollToBottom();
-    }, 0);
+    this.scrollToBottom();
     const userMessage = { role: "user", content: this.newMessage.trim() };
     this.messages.push(userMessage);
     this.saveMessageToDb(userMessage);
@@ -31565,7 +31564,7 @@ User's known characteristics: ${memoriesString}`;
             console.log("Triggering follow-up AI.");
             this.triggerFollowUpAi(userMessage, assistantMessage);
           }
-          setTimeout(() => this.scrollToBottom(), 0);
+          this.scrollToBottom();
         },
         error: (error) => {
           console.error("AI call failed:", error);
@@ -31574,14 +31573,14 @@ User's known characteristics: ${memoriesString}`;
           this.saveMessageToDb(errorMessage);
           this.isLoading = false;
           this.currentStatusMessage = "";
-          setTimeout(() => this.scrollToBottom(), 0);
+          this.scrollToBottom();
         }
       });
     } else {
       console.log("sendMessage - AI service call skipped because AI is disabled.");
       this.isLoading = false;
       this.currentStatusMessage = "";
-      setTimeout(() => this.scrollToBottom(), 100);
+      this.scrollToBottom();
     }
     this.adjustTextareaHeight();
   }
@@ -31674,7 +31673,7 @@ User's known characteristics: ${memoriesString}`;
             const loginFailMessage = { role: "assistant", content: "Account does not exist, please double check if input is correct." };
             this.messages.push(loginFailMessage);
             this.saveMessageToDb(loginFailMessage);
-            setTimeout(() => this.scrollToBottom(), 100);
+            this.scrollToBottom();
           }
         },
         error: (error) => {
@@ -31682,7 +31681,7 @@ User's known characteristics: ${memoriesString}`;
           const loginErrorMessage = { role: "assistant", content: "An error occurred during login. Please try again later." };
           this.messages.push(loginErrorMessage);
           this.saveMessageToDb(loginErrorMessage);
-          setTimeout(() => this.scrollToBottom(), 100);
+          this.scrollToBottom();
         }
       });
       modifiedResponse = modifiedResponse.replace(loginTagRegex, "").trim();
@@ -31716,7 +31715,7 @@ User's known characteristics: ${memoriesString}`;
         const unauthReportMessage = { role: "assistant", content: "Please log in to file a report." };
         this.messages.push(unauthReportMessage);
         this.saveMessageToDb(unauthReportMessage);
-        setTimeout(() => this.scrollToBottom(), 100);
+        this.scrollToBottom();
       }
     }
     return {
@@ -31731,7 +31730,7 @@ User's known characteristics: ${memoriesString}`;
     }
     this.isLoading = true;
     this.currentStatusMessage = "I've noticed you're describing a serious issue. I'm starting the process to file a formal report for you.";
-    setTimeout(() => this.scrollToBottom(), 100);
+    this.scrollToBottom();
     const onStatusUpdate = (message) => {
       this.currentStatusMessage = message;
       this.scrollToBottom();
@@ -31742,13 +31741,13 @@ User's known characteristics: ${memoriesString}`;
         console.log(`Report process completed. Case ID: ${caseId}`);
         this.isLoading = false;
         this.currentStatusMessage = "";
-        setTimeout(() => this.scrollToBottom(), 100);
+        this.scrollToBottom();
       },
       error: (error) => {
         console.error("Error during report processing:", error);
         this.currentStatusMessage = "An unexpected error occurred during report processing. Please try again.";
         this.isLoading = false;
-        setTimeout(() => this.scrollToBottom(), 100);
+        this.scrollToBottom();
       }
     });
   }
@@ -31784,24 +31783,18 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
           const followUpMessage = { role: "assistant", content: response.trim() };
           this.messages.push(followUpMessage);
           this.saveMessageToDb(followUpMessage);
-          setTimeout(() => this.scrollToBottom(), 100);
+          this.scrollToBottom();
         }
       },
       error: (error) => {
         console.error("Follow-up AI call failed:", error);
-        setTimeout(() => this.scrollToBottom(), 100);
+        this.scrollToBottom();
       }
     });
   }
   scrollToBottom() {
-    if (this.chatContainer && this.chatContainer.nativeElement) {
-      const scrollElement = this.chatContainer.nativeElement.querySelector(".inner-scroll");
-      if (scrollElement) {
-        scrollElement.scrollTo({
-          top: scrollElement.scrollHeight,
-          behavior: "smooth"
-        });
-      }
+    if (this.chatContainer) {
+      this.chatContainer.scrollToBottom(50);
     }
   }
   static \u0275fac = function ChatComponent_Factory(__ngFactoryType__) {
@@ -31933,7 +31926,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
 </ion-footer>`, styles: ['/* src/app/chat/chat.css */\n:host {\n  display: flex;\n  flex-direction: column;\n  min-height: 100vh;\n  font-family: "Inter", sans-serif;\n  color: var(--ion-text-color);\n}\nion-header,\nion-footer {\n  box-shadow: none !important;\n}\nion-toolbar {\n  --background: var(--ion-background-color);\n  --color: var(--ion-text-color);\n  --border-color: transparent;\n  --min-height: 56px;\n  padding: 0 10px;\n}\nion-content {\n  --background: var(--ion-background-color);\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  overflow-y: auto;\n}\nion-content > div {\n  width: 100%;\n  display: flex;\n  margin-bottom: 10px;\n}\nion-content > div.justify-end {\n  justify-content: flex-end;\n}\nion-content > div.justify-start {\n  justify-content: flex-start;\n}\nion-content > div > div {\n  padding: 10px 15px;\n  border-radius: 20px;\n  max-width: 80%;\n  word-wrap: break-word;\n  color: var(--ion-text-color);\n}\n.user-message-bubble {\n  background: var(--ion-color-primary);\n  color: var(--ion-color-primary-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border-bottom-right-radius: 5px;\n  margin-right: 10px;\n}\n.assistant-message-bubble {\n  background: var(--ion-color-success);\n  color: var(--ion-color-success-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border: 1px solid var(--ion-color-step-300);\n  border-bottom-left-radius: 5px;\n  margin-left: 10px;\n}\n.chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n.chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n  background-color: var(--ion-color-step-200);\n  padding: 8px;\n  border-radius: 5px;\n  color: var(--ion-text-color);\n}\n.chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n.chat-message-content th,\n.chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid var(--ion-color-step-300);\n  color: var(--ion-text-color);\n}\n.chat-message-content img {\n  max-width: 100%;\n  height: auto;\n  border-radius: 8px;\n}\n.ion-content > .flex.justify-center {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\nion-textarea {\n  --padding-start: 10px;\n  --padding-end: 10px;\n  --padding-top: 10px;\n  --padding-bottom: 10px;\n  --background: var(--ion-background-color);\n  border-radius: 20px;\n  color: var(--ion-text-color);\n  min-height: 40px;\n  max-height: 150px;\n  overflow-y: auto;\n  font-size: 1rem;\n  --placeholder-color: rgba(var(--ion-text-color-rgb), 0.5);\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar {\n  width: 8px;\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\nion-button {\n  --background: var(--ion-color-tertiary);\n  --background-activated: var(--ion-color-tertiary-tint);\n  --border-radius: 20px;\n  height: 40px;\n  font-size: 1rem;\n  margin-left: 10px;\n  text-transform: none;\n  color: var(--ion-color-tertiary-contrast);\n}\n.custom-scrollbar::-webkit-scrollbar {\n  width: 8px;\n}\n.custom-scrollbar::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\n.custom-scrollbar::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\n/*# sourceMappingURL=chat.css.map */\n'] }]
   }], () => [{ type: AiService }, { type: AuthService }, { type: DatabaseService }, { type: CaseService }, { type: AnnouncementService }, { type: ChangeDetectorRef }], { chatContainer: [{
     type: ViewChild,
-    args: ["chatContainer"]
+    args: ["chatContainer", { static: false }]
   }], messageInput: [{
     type: ViewChild,
     args: ["messageInput"]

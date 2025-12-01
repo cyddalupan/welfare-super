@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, IonContent } from '@ionic/angular';
 import { AiService } from '../ai.service';
 import { AuthService } from '../auth.service';
 import { DatabaseService } from '../database.service';
@@ -24,7 +24,7 @@ const ADMIN_AI_DISABLE_DURATION_MINUTES = 10;
 export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   title = 'analytics-agent';
 
-  @ViewChild('chatContainer') private chatContainer!: ElementRef;
+  @ViewChild('chatContainer', { static: false }) private chatContainer!: IonContent;
   @ViewChild('messageInput') private messageInput!: ElementRef;
 
   public messages: ChatMessage[] = [];
@@ -58,6 +58,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit(): Promise<void> { // Made ngOnInit async
+    console.log('!!!!!!! ChatComponent ngOnInit: New Code Deployed Successfully !!!!!!!'); // OBVIOUS LOG
     let userId = localStorage.getItem('user_id');
     let agencyId = localStorage.getItem('agency_id');
 
@@ -267,9 +268,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.isLoading = true;
     this.currentStatusMessage = 'Typing...';
-    setTimeout(() => {
-      this.scrollToBottom();
-    }, 0);
+    this.scrollToBottom();
 
     const userMessage: ChatMessage = { role: 'user', content: this.newMessage.trim() };
 
@@ -349,7 +348,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
             console.log('Triggering follow-up AI.');
             this.triggerFollowUpAi(userMessage, assistantMessage);
           }
-          setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after AI response
+          this.scrollToBottom(); // Explicit scroll after AI response
         },
         error: (error) => {
           console.error('AI call failed:', error);
@@ -358,14 +357,14 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
           this.saveMessageToDb(errorMessage);
           this.isLoading = false;
           this.currentStatusMessage = '';
-          setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after error message
+          this.scrollToBottom(); // Explicit scroll after error message
         }
       });
     } else {
       console.log('sendMessage - AI service call skipped because AI is disabled.');
       this.isLoading = false;
       this.currentStatusMessage = '';
-      setTimeout(() => this.scrollToBottom(), 100); // Just scroll to bottom after user's message
+      this.scrollToBottom(); // Just scroll to bottom after user's message
     }
     this.adjustTextareaHeight();
   }
@@ -489,7 +488,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
               const loginFailMessage: ChatMessage = { role: 'assistant', content: 'Account does not exist, please double check if input is correct.' };
               this.messages.push(loginFailMessage);
               this.saveMessageToDb(loginFailMessage);
-              setTimeout(() => this.scrollToBottom(), 100); // Explicit scroll after login fail message
+              this.scrollToBottom(); // Explicit scroll after login fail message
             }
           },
           error: (error) => {
@@ -497,7 +496,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
             const loginErrorMessage: ChatMessage = { role: 'assistant', content: 'An error occurred during login. Please try again later.' };
             this.messages.push(loginErrorMessage);
             this.saveMessageToDb(loginErrorMessage);
-            setTimeout(() => this.scrollToBottom(), 100); // Explicit scroll after login error message
+            this.scrollToBottom(); // Explicit scroll after login error message
           }
         });
         modifiedResponse = modifiedResponse.replace(loginTagRegex, '').trim();
@@ -536,7 +535,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
           const unauthReportMessage: ChatMessage = { role: 'assistant', content: 'Please log in to file a report.' };
           this.messages.push(unauthReportMessage);
           this.saveMessageToDb(unauthReportMessage);
-          setTimeout(() => this.scrollToBottom(), 100); // Explicit scroll after unauth report message
+          this.scrollToBottom(); // Explicit scroll after unauth report message
         }
       }
   
@@ -553,7 +552,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.isLoading = true;
     this.currentStatusMessage = "I've noticed you're describing a serious issue. I'm starting the process to file a formal report for you.";
-    setTimeout(() => this.scrollToBottom(), 100); // Scroll when status message changes
+    this.scrollToBottom(); // Scroll when status message changes
 
     const onStatusUpdate = (message: string) => {
       this.currentStatusMessage = message;
@@ -567,13 +566,13 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
         console.log(`Report process completed. Case ID: ${caseId}`);
         this.isLoading = false;
         this.currentStatusMessage = '';
-        setTimeout(() => this.scrollToBottom(), 100); // Scroll after report process completed
+        this.scrollToBottom(); // Scroll after report process completed
       },
       error: (error) => {
         console.error('Error during report processing:', error);
         this.currentStatusMessage = "An unexpected error occurred during report processing. Please try again.";
         this.isLoading = false;
-        setTimeout(() => this.scrollToBottom(), 100); // Scroll after report error
+        this.scrollToBottom(); // Scroll after report error
       }
     });
   }
@@ -612,25 +611,19 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
           const followUpMessage: ChatMessage = { role: 'assistant', content: response.trim() };
           this.messages.push(followUpMessage);
           this.saveMessageToDb(followUpMessage);
-          setTimeout(() => this.scrollToBottom(), 100); // Explicit scroll after follow-up message
+          this.scrollToBottom(); // Explicit scroll after follow-up message
         }
       },
       error: (error) => {
         console.error('Follow-up AI call failed:', error);
-        setTimeout(() => this.scrollToBottom(), 100); // Explicit scroll after follow-up error
+        this.scrollToBottom(); // Explicit scroll after follow-up error
       }
     });
   }
 
   private scrollToBottom(): void {
-    if (this.chatContainer && this.chatContainer.nativeElement) {
-      const scrollElement = this.chatContainer.nativeElement.querySelector('.inner-scroll');
-      if (scrollElement) {
-        scrollElement.scrollTo({
-          top: scrollElement.scrollHeight,
-          behavior: 'smooth'
-        });
-      }
+    if (this.chatContainer) {
+      this.chatContainer.scrollToBottom(50);
     }
   }
 }
