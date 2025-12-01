@@ -58,7 +58,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async ngOnInit(): Promise<void> { // Made ngOnInit async
-    console.log('!!!!!!! ChatComponent ngOnInit: New Code Deployed Successfully !!!!!!!'); // OBVIOUS LOG
     let userId = localStorage.getItem('user_id');
     let agencyId = localStorage.getItem('agency_id');
 
@@ -81,7 +80,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       this.startMainStatusMonitoring();
     } else {
       this.messages = [];
-      console.log('ChatComponent: User unauthenticated. Pushing welcome message. Initial scroll will be handled by ngAfterViewInit.');
       this.messages.push({ role: 'assistant', content: 'Welcome! To get started, please provide your last name and passport number so I can assist you.' });
     }
 
@@ -96,7 +94,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     // Ensure the chatContainer is available before attempting to scroll
     if (this.chatContainer && !this.initialScrollDone) {
-      console.log('ngAfterViewInit: Performing initial scroll to bottom.');
       this.scrollToBottom();
       this.initialScrollDone = true;
       // Manually trigger change detection if the content was loaded asynchronously
@@ -112,7 +109,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private startMainStatusMonitoring(): void {
     if (this.userId && !this.mainStatusMonitorInterval && !this.complaintStatusActive) {
-      console.log('Starting main status monitoring interval.');
       // Initial check (non-async to avoid blocking ngOnInit or subsequent calls if the interval starts immediately)
       this.checkAndSetComplaintStatus();
       this.mainStatusMonitorInterval = setInterval(() => {
@@ -126,7 +122,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private stopMainStatusMonitoring(): void {
     if (this.mainStatusMonitorInterval) {
-      console.log('Stopping main status monitoring interval.');
       clearInterval(this.mainStatusMonitorInterval);
       this.mainStatusMonitorInterval = null;
     }
@@ -139,12 +134,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
         const hasComplaint = mainStatus && mainStatus.toLowerCase().includes('complain');
 
         if (hasComplaint && !this.complaintStatusActive) {
-          console.log('Applicant now has a complaint. Activating chat history refresh.');
           this.complaintStatusActive = true;
           this.startChatRefreshInterval();
           this.stopMainStatusMonitoring(); // Stop frequent main status checks if complaint is active
         } else if (!hasComplaint && this.complaintStatusActive) {
-          console.log('Applicant no longer has a complaint. Deactivating chat history refresh.');
           this.complaintStatusActive = false;
           this.stopChatRefreshInterval();
           this.startMainStatusMonitoring(); // Restart frequent main status checks if complaint is resolved
@@ -161,7 +154,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     this.stopChatRefreshInterval(); // Ensure any existing interval is cleared
     if (this.userId) {
       this.complaintCheckInterval = setInterval(() => {
-        console.log('Refreshing chat history due to complaint status.');
         this.loadChatHistory(); // DB Call 2 (getChatHistory)
         this.loadEmployeeMemories(); // DB Call 3 (getEmployeeMemories)
       }, 10000); // 10 seconds
@@ -170,7 +162,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private stopChatRefreshInterval(): void {
     if (this.complaintCheckInterval) {
-      console.log('Stopping chat history refresh interval.');
       clearInterval(this.complaintCheckInterval);
       this.complaintCheckInterval = null;
     }
@@ -180,13 +171,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.userId) {
       try {
         const timestamp = await firstValueFrom(this.databaseService.getApplicantAiEnabledUntil(parseInt(this.userId, 10)));
-        console.log('loadAiEnabledUntilStatus - Fetched timestamp from DB:', timestamp);
         if (timestamp) {
           this.aiEnabledUntil = new Date(timestamp);
-          console.log('loadAiEnabledUntilStatus - AI enabled until:', this.aiEnabledUntil);
         } else {
           this.aiEnabledUntil = null;
-          console.log('loadAiEnabledUntilStatus - AI enabled until: null (no timestamp in DB)');
         }
       } catch (error) {
         console.error('Error loading AI enabled until status:', error);
@@ -213,15 +201,14 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     try {
       const history = await firstValueFrom(this.databaseService.getChatHistory(parseInt(this.userId, 10)));
-      console.log('ChatComponent.loadChatHistory: Received history from DB service:', history); // DEBUG LOG
       
       // Manually process history for [[ADMIN]] tags to set aiEnabledUntil
       this.updateAiEnabledUntilFromHistory(history);
       
-      // Then, map the messages for display, which will now only strip tags
-      this.messages = history.map(msg => this.processMessageContent(msg));
+      // Assign history directly. The `content` property of each message will remain raw (with tags).
+      // The `processMessageContent` function will be called in the template for display.
+      this.messages = history;
       
-      console.log('ChatComponent: Chat history loaded. Explicitly detecting changes and scrolling to bottom.');
       this.cdRef.detectChanges(); // Force change detection to ensure content is rendered before scroll
       this.scrollToBottom(); // Always scroll to bottom after loading history
     } catch (error) {
@@ -237,7 +224,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       this.databaseService.getEmployeeMemories(parseInt(this.userId, 10)).subscribe({
         next: (memories) => {
           this.employeeMemories = memories;
-          console.log('Loaded employee memories:', this.employeeMemories);
         },
         error: (error) => {
           console.error('Failed to load employee memories:', error);
@@ -260,9 +246,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   sendMessage(): void {
-    console.log('sendMessage called. Current aiEnabledUntil:', this.aiEnabledUntil);
     if (this.newMessage.trim() === '') {
-      console.log('New message is empty, returning.');
       return;
     }
 
@@ -281,21 +265,18 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // Check if AI is temporarily disabled (from historical messages or direct admin message)
     if (this.aiEnabledUntil && this.aiEnabledUntil.getTime() > new Date().getTime()) {
-      console.log('sendMessage - AI is currently disabled until:', this.aiEnabledUntil);
       callAiService = false; // Do not call AI service
     }
 
     // Check for ADMIN tag in the current message being sent by the user (admin)
     // This part still needs to prevent AI response and set disablement.
     if (userMessage.content.includes('[[ADMIN]]')) {
-        console.log('sendMessage - Admin message with [[ADMIN]] tag detected. Skipping AI response and setting disablement.');
         const newAiEnabledUntil = new Date(new Date().getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1000);
         if (!this.aiEnabledUntil || newAiEnabledUntil.getTime() > this.aiEnabledUntil.getTime()) {
             this.aiEnabledUntil = newAiEnabledUntil;
-            console.log(`sendMessage - AI disabled until ${this.aiEnabledUntil} due to direct admin message.`);
             if (this.userId) {
                 this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
-                    next: () => console.log('sendMessage - AI enabled until status saved to DB.'),
+                    next: () => {},
                     error: (err) => console.error('sendMessage - Failed to save AI enabled until status:', err)
                 });
             }
@@ -318,10 +299,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // Pass employeeId to aiService.callAi
       const employeeIdNum = this.userId ? parseInt(this.userId, 10) : null;
-      console.log('Calling initial AI with payload:', aiPayload, 'and employeeId:', employeeIdNum);
       this.aiService.callAi(aiPayload, employeeIdNum).subscribe({
         next: (response: string) => {
-          console.log('Initial AI response received:', response);
           // If response is empty, it means AI was disabled by backend check (though now frontend handles it primarily)
           if (!response) {
               this.isLoading = false;
@@ -336,16 +315,14 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
           if (processedResponse) {
             assistantMessage = { role: 'assistant', content: processedResponse };
             // Process the message to strip any tags before displaying
-            this.messages.push(this.processMessageContent(assistantMessage));
+            this.messages.push(assistantMessage);
             this.saveMessageToDb(assistantMessage);
-            console.log('Assistant message added:', assistantMessage);
           }
 
           this.isLoading = false;
           this.currentStatusMessage = '';
 
           if (assistantMessage) {
-            console.log('Triggering follow-up AI.');
             this.triggerFollowUpAi(userMessage, assistantMessage);
           }
           this.scrollToBottom(); // Explicit scroll after AI response
@@ -361,7 +338,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
     } else {
-      console.log('sendMessage - AI service call skipped because AI is disabled.');
       this.isLoading = false;
       this.currentStatusMessage = '';
       this.scrollToBottom(); // Just scroll to bottom after user's message
@@ -369,38 +345,29 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     this.adjustTextareaHeight();
   }
   private saveMessageToDb(message: ChatMessage): void {
-    console.log('Attempting to save message. UserID:', this.userId, 'AgencyID:', this.agencyId);
     if (this.userId && this.agencyId && this.agencyId !== 'null' && this.agencyId !== 'undefined') {
-      console.log('UserID and AgencyID are present. Calling database service.');
       this.databaseService.saveChatMessage(message, parseInt(this.userId, 10), parseInt(this.agencyId, 10)).subscribe({
-        next: () => console.log('Message saved successfully.'),
+        next: () => {},
         error: (err) => console.error('Failed to save message:', err)
       });
-    } else {
-      console.log('Save skipped: UserID or AgencyID is missing or invalid.');
     }
   }
 
   private updateAiEnabledUntilFromHistory(history: ChatMessage[]): void {
     if (!this.userId) return;
 
-    console.log(`updateAiEnabledUntilFromHistory called at ${new Date().toLocaleTimeString()}, current aiEnabledUntil: ${this.aiEnabledUntil?.toLocaleTimeString() || 'null'}`);
-    console.log('History array content:', history); // DEBUG LOG: Check if history is empty or has messages
     const currentCheckTime = new Date(); // Get 'now' once for consistency
 
     let latestDisablementFromHistory: Date | null = null;
     
     for (const message of history) {
-      console.log('Processing message:', message); // DEBUG LOG: Check message structure
       if (message.content.includes('[[ADMIN]]') && message.timestamp) {
-        console.log(`ADMIN tag found! Message: "${message.content}", Timestamp: "${message.timestamp}"`);
         const messageDate = new Date(message.timestamp.replace(' ', 'T'));
         const timeDiffMinutes = (currentCheckTime.getTime() - messageDate.getTime()) / (1000 * 60);
 
         // A message is "less than 10 minutes old" if it's not in the future and not more than 10 minutes in the past.
         if (timeDiffMinutes >= 0 && timeDiffMinutes <= ADMIN_AI_DISABLE_DURATION_MINUTES) {
           const newAiEnabledUntilCandidate = new Date(currentCheckTime.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1000); // Calculate from 'currentCheckTime'
-          console.log(`ADMIN message is recent! timeDiffMinutes: ${timeDiffMinutes}, newAiEnabledUntilCandidate: ${newAiEnabledUntilCandidate.toLocaleTimeString()}`);
           if (!latestDisablementFromHistory || newAiEnabledUntilCandidate.getTime() > latestDisablementFromHistory.getTime()) {
             latestDisablementFromHistory = newAiEnabledUntilCandidate;
           }
@@ -431,35 +398,30 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     // Update the component's state
     this.aiEnabledUntil = newEffectiveAiEnabledUntil;
 
-    console.log(`updateAiEnabledUntilFromHistory - After loop, bestAiEnabledUntil: ${this.aiEnabledUntil?.toLocaleTimeString() || 'null'}`);
+    // Update the component's state
+    this.aiEnabledUntil = newEffectiveAiEnabledUntil;
 
     if (hasChanged) { // Only update DB if the in-memory state actually changed
-      console.log(`updateAiEnabledUntilFromHistory - State changed. New aiEnabledUntil: ${this.aiEnabledUntil?.toLocaleTimeString() || 'null'}`);
       this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
-        next: () => console.log('updateAiEnabledUntilFromHistory - AI enabled until status saved to DB.'),
+        next: () => {},
         error: (err) => console.error('updateAiEnabledUntilFromHistory - Failed to save AI enabled until status:', err)
       });
-    } else {
-        console.log(`updateAiEnabledUntilFromHistory - State unchanged. aiEnabledUntil: ${this.aiEnabledUntil?.toLocaleTimeString() || 'null'}`);
     }
   }
 
-  private processMessageContent(message: ChatMessage): ChatMessage {
-    const adminTagRegex = /\[\[ADMIN\]\]/g;
-    let cleanedContent = message.content;
+  // This function now takes the raw message content string and returns a cleaned string
+  // with action tags completely removed, suitable for display.
+  public processMessageContent(content: string): string { // Changed from private to public
+    let cleanedContent = content;
 
-    // This logic is now handled by updateAiEnabledUntilFromHistory
-    // All that's left is to strip the tags for display.
+    // Remove ADMIN tag
+    cleanedContent = cleanedContent.replace(/\[\[ADMIN\]\]/g, '');
+    // Remove MEMORY tag
+    cleanedContent = cleanedContent.replace(/\[\[MEMORY:"([^"]+)"\]\]/g, '');
+    // Remove REPORT tag
+    cleanedContent = cleanedContent.replace(/\[\[REPORT\]\]/g, '');
 
-    cleanedContent = cleanedContent.replace(adminTagRegex, '').trim();
-    cleanedContent = cleanedContent.replace(/\[\[MEMORY:"([^"]+)"\]\]/g, '').trim();
-    cleanedContent = cleanedContent.replace(/\[\[REPORT\]\]/g, '').trim();
-
-    // Return a new message object with the cleaned content
-    return {
-      ...message,
-      content: cleanedContent
-    };
+    return cleanedContent.trim();
   }
 
     private parseAiResponseForTags(response: string): { response: string, tagProcessed: boolean } {
@@ -511,13 +473,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
           this.databaseService.saveEmployeeMemory(parseInt(this.userId, 10), memoryContent)
             .subscribe({
               next: () => {
-                console.log('Memory saved successfully: ', memoryContent);
                 this.employeeMemories.push(memoryContent);
               },
               error: (err) => console.error('Failed to save memory:', err)
             });
-        } else {
-          console.warn('Attempted to save memory for unauthenticated user:', memoryContent);
         }
         tagProcessed = true;
       }
@@ -531,7 +490,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.userId) {
           this.handleReportTag();
         } else {
-          console.warn('[[REPORT]] tag detected for unauthenticated user. Ignoring.');
           const unauthReportMessage: ChatMessage = { role: 'assistant', content: 'Please log in to file a report.' };
           this.messages.push(unauthReportMessage);
           this.saveMessageToDb(unauthReportMessage);
@@ -546,7 +504,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   private handleReportTag(): void {
     if (!this.userId || !this.agencyId) {
-      console.error('handleReportTag called without a valid userId or agencyId.');
       return;
     }
 
@@ -563,7 +520,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.caseService.handleReportCreation(parseInt(this.userId, 10), parseInt(this.agencyId, 10), historyForReport, onStatusUpdate).subscribe({
       next: (caseId) => {
-        console.log(`Report process completed. Case ID: ${caseId}`);
         this.isLoading = false;
         this.currentStatusMessage = '';
         this.scrollToBottom(); // Scroll after report process completed
@@ -578,8 +534,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private triggerFollowUpAi(userMessage: ChatMessage, assistantMessage: ChatMessage): void {
-    console.log('triggerFollowUpAi called with userMessage:', userMessage, 'and assistantMessage:', assistantMessage);
-
     let currentSystemPromptContent = this.systemPrompt.content;
     if (this.userId && this.employeeMemories && this.employeeMemories.length > 0) {
       const memoriesString = this.employeeMemories.map(memory => `"${memory}"`).join(', ');
@@ -592,22 +546,17 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     const followUpPayload: ChatMessage[] = [systemPromptForAi, ...historyForAi];
 
     const employeeIdNum = this.userId ? parseInt(this.userId, 10) : null;
-    console.log('Calling follow-up AI with payload:', followUpPayload, 'and employeeId:', employeeIdNum);
     this.aiService.callAi(followUpPayload, employeeIdNum).subscribe({
       next: (response: string) => {
         // If response is empty, it means AI was disabled by backend check (though now frontend handles it primarily)
         if (!response) {
-            console.log('Follow-up AI: AI responses are paused, received empty response.');
             return;
         }
 
         const doneTagRegex = /\[\[DONE\]\]/;
         const doneMatch = response.match(doneTagRegex);
 
-        if (doneMatch) {
-          console.log('Follow-up AI: Previous response was satisfactory. [[DONE]] tag detected.');
-        } else {
-          console.log('Follow-up AI: Corrective message received.');
+        if (!doneMatch) { // If doneMatch is NOT found, then it's a corrective message
           const followUpMessage: ChatMessage = { role: 'assistant', content: response.trim() };
           this.messages.push(followUpMessage);
           this.saveMessageToDb(followUpMessage);

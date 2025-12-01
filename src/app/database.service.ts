@@ -53,18 +53,18 @@ export class DatabaseService {
         // The API might return {success: true, data: [...]}, so we need to handle that structure.
         const responseData = (response && response.data) ? response.data : response;
 
-        console.log('Raw response data from getChatHistory:', responseData); // DEBUG LOG
-
         if (!Array.isArray(responseData)) {
           console.error('Chat history response is not a valid array:', responseData);
           return []; // Return empty array to prevent breaking the UI
         }
 
-        const messages: ChatMessage[] = responseData.map((rawMsg: RawChatMessage) => ({
-          role: rawMsg.sender === 'Employee' ? 'user' : 'assistant',
-          content: rawMsg.message,
-          timestamp: rawMsg.timestamp
-        }));
+        const messages: ChatMessage[] = responseData.map((rawMsg: RawChatMessage) => {
+          return {
+            role: rawMsg.sender === 'Employee' ? 'user' : 'assistant',
+            content: rawMsg.message,
+            timestamp: rawMsg.timestamp
+          };
+        });
         
         // The query returns the latest 20, so we need to reverse them to show in chronological order
         return messages.reverse();

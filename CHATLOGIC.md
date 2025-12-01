@@ -98,3 +98,13 @@ To allow manual intervention by administrators to pause the AI, the `[[ADMIN]]` 
 *   **Case Service**: `src/app/case.service.ts`
 *   **Backend Database Endpoint**: `api/database.php`
 *   **Backend AI Endpoint**: `api/ai.php`
+
+### 4.1 Auto-Scrolling Implementation
+
+The chat interface includes an auto-scrolling mechanism to ensure that the latest messages are always visible. This is handled within the `ChatComponent` (`src/app/chat/chat.ts`) using Ionic's `IonContent` component.
+
+*   **ViewChild Reference**: The `ion-content` element is referenced in `ChatComponent` using `@ViewChild('chatContainer', { static: false }) private chatContainer!: IonContent;`. This ensures a direct reference to the `IonContent` component instance, imported from `@ionic/angular`.
+*   **`scrollToBottom()` Method**: The `ChatComponent`'s `scrollToBottom()` method leverages the `IonContent` component's built-in `scrollToBottom()` function. This method is called whenever new messages or status updates occur.
+    *   Example: `this.chatContainer.scrollToBottom(50);`
+    *   The `50` parameter provides a smooth scrolling animation over 50 milliseconds.
+*   **Timing**: Unlike manual DOM scrolling which often requires `setTimeout` wrappers to account for rendering delays, `IonContent.scrollToBottom()` is designed to handle its timing and animation internally. Therefore, direct calls to `this.scrollToBottom()` are sufficient after UI updates (e.g., sending a message, receiving an AI response, status changes).

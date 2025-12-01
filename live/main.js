@@ -126,6 +126,7 @@ import {
   setIonicClasses,
   setOverlayId,
   switchMap,
+  tap,
   throwError,
   toastController,
   ɵsetClassDebugInfo,
@@ -165,7 +166,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-WXUT4GZ2.js";
+} from "./chunk-NXFPU3AB.js";
 import "./chunk-B7UJR2GH.js";
 import "./chunk-W7NNY2EY.js";
 import "./chunk-HTLDGIIN.js";
@@ -31023,12 +31024,21 @@ var AiService = class _AiService {
   encryptionService = inject(EncryptionService);
   // Inject the EncryptionService
   callAi(aiPayload, employeeId) {
+    console.log("AiService.callAi: AI service called.");
     const payload = JSON.stringify({ messages: aiPayload, employee_id: employeeId });
+    console.log("AiService.callAi: Payload before encryption:", payload);
     const base64Payload = this.encryptionService.encrypt(payload);
     return this.http.post(this.apiUrl, base64Payload, {
       headers: { "Content-Type": "text/plain" },
       responseType: "text"
-    });
+    }).pipe(
+      tap((response) => console.log("AiService.callAi: Raw response from backend:", response)),
+      // Log response
+      catchError((error) => {
+        console.error("AiService.callAi: Error during AI call:", error);
+        return throwError(() => error);
+      })
+    );
   }
   static \u0275fac = function AiService_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _AiService)();
@@ -31254,11 +31264,12 @@ function ChatComponent_div_8_Template(rf, ctx) {
   }
   if (rf & 2) {
     const message_r5 = ctx.$implicit;
+    const ctx_r3 = \u0275\u0275nextContext();
     \u0275\u0275classProp("justify-end", message_r5.role === "user")("justify-start", message_r5.role === "assistant");
     \u0275\u0275advance();
     \u0275\u0275classProp("user-message-bubble", message_r5.role === "user")("assistant-message-bubble", message_r5.role === "assistant");
     \u0275\u0275advance();
-    \u0275\u0275property("innerHTML", message_r5.content, \u0275\u0275sanitizeHtml);
+    \u0275\u0275property("innerHTML", ctx_r3.processMessageContent(message_r5.content), \u0275\u0275sanitizeHtml);
   }
 }
 function ChatComponent_div_9_span_4_Template(rf, ctx) {
@@ -31329,7 +31340,6 @@ var ChatComponent = class _ChatComponent {
     };
   }
   async ngOnInit() {
-    console.log("!!!!!!! ChatComponent ngOnInit: New Code Deployed Successfully !!!!!!!");
     let userId = localStorage.getItem("user_id");
     let agencyId = localStorage.getItem("agency_id");
     if (userId && (!agencyId || agencyId === "null" || agencyId === "undefined") || !userId && agencyId) {
@@ -31347,7 +31357,6 @@ var ChatComponent = class _ChatComponent {
       this.startMainStatusMonitoring();
     } else {
       this.messages = [];
-      console.log("ChatComponent: User unauthenticated. Pushing welcome message. Initial scroll will be handled by ngAfterViewInit.");
       this.messages.push({ role: "assistant", content: "Welcome! To get started, please provide your last name and passport number so I can assist you." });
     }
     try {
@@ -31358,7 +31367,6 @@ var ChatComponent = class _ChatComponent {
   }
   ngAfterViewInit() {
     if (this.chatContainer && !this.initialScrollDone) {
-      console.log("ngAfterViewInit: Performing initial scroll to bottom.");
       this.scrollToBottom();
       this.initialScrollDone = true;
       this.cdRef.detectChanges();
@@ -31370,7 +31378,6 @@ var ChatComponent = class _ChatComponent {
   }
   startMainStatusMonitoring() {
     if (this.userId && !this.mainStatusMonitorInterval && !this.complaintStatusActive) {
-      console.log("Starting main status monitoring interval.");
       this.checkAndSetComplaintStatus();
       this.mainStatusMonitorInterval = setInterval(() => {
         if (!this.complaintStatusActive) {
@@ -31381,7 +31388,6 @@ var ChatComponent = class _ChatComponent {
   }
   stopMainStatusMonitoring() {
     if (this.mainStatusMonitorInterval) {
-      console.log("Stopping main status monitoring interval.");
       clearInterval(this.mainStatusMonitorInterval);
       this.mainStatusMonitorInterval = null;
     }
@@ -31392,12 +31398,10 @@ var ChatComponent = class _ChatComponent {
         const mainStatus = await firstValueFrom(this.databaseService.getApplicantMainStatus(parseInt(this.userId, 10)));
         const hasComplaint = mainStatus && mainStatus.toLowerCase().includes("complain");
         if (hasComplaint && !this.complaintStatusActive) {
-          console.log("Applicant now has a complaint. Activating chat history refresh.");
           this.complaintStatusActive = true;
           this.startChatRefreshInterval();
           this.stopMainStatusMonitoring();
         } else if (!hasComplaint && this.complaintStatusActive) {
-          console.log("Applicant no longer has a complaint. Deactivating chat history refresh.");
           this.complaintStatusActive = false;
           this.stopChatRefreshInterval();
           this.startMainStatusMonitoring();
@@ -31411,7 +31415,6 @@ var ChatComponent = class _ChatComponent {
     this.stopChatRefreshInterval();
     if (this.userId) {
       this.complaintCheckInterval = setInterval(() => {
-        console.log("Refreshing chat history due to complaint status.");
         this.loadChatHistory();
         this.loadEmployeeMemories();
       }, 1e4);
@@ -31419,7 +31422,6 @@ var ChatComponent = class _ChatComponent {
   }
   stopChatRefreshInterval() {
     if (this.complaintCheckInterval) {
-      console.log("Stopping chat history refresh interval.");
       clearInterval(this.complaintCheckInterval);
       this.complaintCheckInterval = null;
     }
@@ -31428,13 +31430,10 @@ var ChatComponent = class _ChatComponent {
     if (this.userId) {
       try {
         const timestamp = await firstValueFrom(this.databaseService.getApplicantAiEnabledUntil(parseInt(this.userId, 10)));
-        console.log("loadAiEnabledUntilStatus - Fetched timestamp from DB:", timestamp);
         if (timestamp) {
           this.aiEnabledUntil = new Date(timestamp);
-          console.log("loadAiEnabledUntilStatus - AI enabled until:", this.aiEnabledUntil);
         } else {
           this.aiEnabledUntil = null;
-          console.log("loadAiEnabledUntilStatus - AI enabled until: null (no timestamp in DB)");
         }
       } catch (error) {
         console.error("Error loading AI enabled until status:", error);
@@ -31458,10 +31457,8 @@ var ChatComponent = class _ChatComponent {
     }
     try {
       const history = await firstValueFrom(this.databaseService.getChatHistory(parseInt(this.userId, 10)));
-      console.log("ChatComponent.loadChatHistory: Received history from DB service:", history);
       this.updateAiEnabledUntilFromHistory(history);
-      this.messages = history.map((msg) => this.processMessageContent(msg));
-      console.log("ChatComponent: Chat history loaded. Explicitly detecting changes and scrolling to bottom.");
+      this.messages = history;
       this.cdRef.detectChanges();
       this.scrollToBottom();
     } catch (error) {
@@ -31476,7 +31473,6 @@ var ChatComponent = class _ChatComponent {
       this.databaseService.getEmployeeMemories(parseInt(this.userId, 10)).subscribe({
         next: (memories) => {
           this.employeeMemories = memories;
-          console.log("Loaded employee memories:", this.employeeMemories);
         },
         error: (error) => {
           console.error("Failed to load employee memories:", error);
@@ -31496,9 +31492,7 @@ var ChatComponent = class _ChatComponent {
     }
   }
   sendMessage() {
-    console.log("sendMessage called. Current aiEnabledUntil:", this.aiEnabledUntil);
     if (this.newMessage.trim() === "") {
-      console.log("New message is empty, returning.");
       return;
     }
     this.isLoading = true;
@@ -31510,18 +31504,16 @@ var ChatComponent = class _ChatComponent {
     this.newMessage = "";
     let callAiService = true;
     if (this.aiEnabledUntil && this.aiEnabledUntil.getTime() > (/* @__PURE__ */ new Date()).getTime()) {
-      console.log("sendMessage - AI is currently disabled until:", this.aiEnabledUntil);
       callAiService = false;
     }
     if (userMessage.content.includes("[[ADMIN]]")) {
-      console.log("sendMessage - Admin message with [[ADMIN]] tag detected. Skipping AI response and setting disablement.");
       const newAiEnabledUntil = new Date((/* @__PURE__ */ new Date()).getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1e3);
       if (!this.aiEnabledUntil || newAiEnabledUntil.getTime() > this.aiEnabledUntil.getTime()) {
         this.aiEnabledUntil = newAiEnabledUntil;
-        console.log(`sendMessage - AI disabled until ${this.aiEnabledUntil} due to direct admin message.`);
         if (this.userId) {
           this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
-            next: () => console.log("sendMessage - AI enabled until status saved to DB."),
+            next: () => {
+            },
             error: (err2) => console.error("sendMessage - Failed to save AI enabled until status:", err2)
           });
         }
@@ -31540,10 +31532,8 @@ User's known characteristics: ${memoriesString}`;
       const historyForAi = this.messages.slice(-10);
       const aiPayload = [systemPromptForAi, ...historyForAi];
       const employeeIdNum = this.userId ? parseInt(this.userId, 10) : null;
-      console.log("Calling initial AI with payload:", aiPayload, "and employeeId:", employeeIdNum);
       this.aiService.callAi(aiPayload, employeeIdNum).subscribe({
         next: (response) => {
-          console.log("Initial AI response received:", response);
           if (!response) {
             this.isLoading = false;
             this.currentStatusMessage = "";
@@ -31554,14 +31544,12 @@ User's known characteristics: ${memoriesString}`;
           let assistantMessage = null;
           if (processedResponse) {
             assistantMessage = { role: "assistant", content: processedResponse };
-            this.messages.push(this.processMessageContent(assistantMessage));
+            this.messages.push(assistantMessage);
             this.saveMessageToDb(assistantMessage);
-            console.log("Assistant message added:", assistantMessage);
           }
           this.isLoading = false;
           this.currentStatusMessage = "";
           if (assistantMessage) {
-            console.log("Triggering follow-up AI.");
             this.triggerFollowUpAi(userMessage, assistantMessage);
           }
           this.scrollToBottom();
@@ -31577,7 +31565,6 @@ User's known characteristics: ${memoriesString}`;
         }
       });
     } else {
-      console.log("sendMessage - AI service call skipped because AI is disabled.");
       this.isLoading = false;
       this.currentStatusMessage = "";
       this.scrollToBottom();
@@ -31585,33 +31572,25 @@ User's known characteristics: ${memoriesString}`;
     this.adjustTextareaHeight();
   }
   saveMessageToDb(message) {
-    console.log("Attempting to save message. UserID:", this.userId, "AgencyID:", this.agencyId);
     if (this.userId && this.agencyId && this.agencyId !== "null" && this.agencyId !== "undefined") {
-      console.log("UserID and AgencyID are present. Calling database service.");
       this.databaseService.saveChatMessage(message, parseInt(this.userId, 10), parseInt(this.agencyId, 10)).subscribe({
-        next: () => console.log("Message saved successfully."),
+        next: () => {
+        },
         error: (err2) => console.error("Failed to save message:", err2)
       });
-    } else {
-      console.log("Save skipped: UserID or AgencyID is missing or invalid.");
     }
   }
   updateAiEnabledUntilFromHistory(history) {
     if (!this.userId)
       return;
-    console.log(`updateAiEnabledUntilFromHistory called at ${(/* @__PURE__ */ new Date()).toLocaleTimeString()}, current aiEnabledUntil: ${this.aiEnabledUntil?.toLocaleTimeString() || "null"}`);
-    console.log("History array content:", history);
     const currentCheckTime = /* @__PURE__ */ new Date();
     let latestDisablementFromHistory = null;
     for (const message of history) {
-      console.log("Processing message:", message);
       if (message.content.includes("[[ADMIN]]") && message.timestamp) {
-        console.log(`ADMIN tag found! Message: "${message.content}", Timestamp: "${message.timestamp}"`);
         const messageDate = new Date(message.timestamp.replace(" ", "T"));
         const timeDiffMinutes = (currentCheckTime.getTime() - messageDate.getTime()) / (1e3 * 60);
         if (timeDiffMinutes >= 0 && timeDiffMinutes <= ADMIN_AI_DISABLE_DURATION_MINUTES) {
           const newAiEnabledUntilCandidate = new Date(currentCheckTime.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1e3);
-          console.log(`ADMIN message is recent! timeDiffMinutes: ${timeDiffMinutes}, newAiEnabledUntilCandidate: ${newAiEnabledUntilCandidate.toLocaleTimeString()}`);
           if (!latestDisablementFromHistory || newAiEnabledUntilCandidate.getTime() > latestDisablementFromHistory.getTime()) {
             latestDisablementFromHistory = newAiEnabledUntilCandidate;
           }
@@ -31629,26 +31608,23 @@ User's known characteristics: ${memoriesString}`;
     this.aiEnabledUntil && !newEffectiveAiEnabledUntil || // Had a value, now is null
     this.aiEnabledUntil && newEffectiveAiEnabledUntil && this.aiEnabledUntil.getTime() !== newEffectiveAiEnabledUntil.getTime();
     this.aiEnabledUntil = newEffectiveAiEnabledUntil;
-    console.log(`updateAiEnabledUntilFromHistory - After loop, bestAiEnabledUntil: ${this.aiEnabledUntil?.toLocaleTimeString() || "null"}`);
+    this.aiEnabledUntil = newEffectiveAiEnabledUntil;
     if (hasChanged) {
-      console.log(`updateAiEnabledUntilFromHistory - State changed. New aiEnabledUntil: ${this.aiEnabledUntil?.toLocaleTimeString() || "null"}`);
       this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
-        next: () => console.log("updateAiEnabledUntilFromHistory - AI enabled until status saved to DB."),
+        next: () => {
+        },
         error: (err2) => console.error("updateAiEnabledUntilFromHistory - Failed to save AI enabled until status:", err2)
       });
-    } else {
-      console.log(`updateAiEnabledUntilFromHistory - State unchanged. aiEnabledUntil: ${this.aiEnabledUntil?.toLocaleTimeString() || "null"}`);
     }
   }
-  processMessageContent(message) {
-    const adminTagRegex = /\[\[ADMIN\]\]/g;
-    let cleanedContent = message.content;
-    cleanedContent = cleanedContent.replace(adminTagRegex, "").trim();
-    cleanedContent = cleanedContent.replace(/\[\[MEMORY:"([^"]+)"\]\]/g, "").trim();
-    cleanedContent = cleanedContent.replace(/\[\[REPORT\]\]/g, "").trim();
-    return __spreadProps(__spreadValues({}, message), {
-      content: cleanedContent
-    });
+  // This function now takes the raw message content string and returns a cleaned string
+  // with action tags completely removed, suitable for display.
+  processMessageContent(content) {
+    let cleanedContent = content;
+    cleanedContent = cleanedContent.replace(/\[\[ADMIN\]\]/g, "");
+    cleanedContent = cleanedContent.replace(/\[\[MEMORY:"([^"]+)"\]\]/g, "");
+    cleanedContent = cleanedContent.replace(/\[\[REPORT\]\]/g, "");
+    return cleanedContent.trim();
   }
   parseAiResponseForTags(response) {
     const loginTagRegex = /\[\[LOGIN, LASTNAME:"([^"]+)",PASSPORT:"([^"]+)"\]\]/;
@@ -31693,13 +31669,10 @@ User's known characteristics: ${memoriesString}`;
       if (this.userId) {
         this.databaseService.saveEmployeeMemory(parseInt(this.userId, 10), memoryContent).subscribe({
           next: () => {
-            console.log("Memory saved successfully: ", memoryContent);
             this.employeeMemories.push(memoryContent);
           },
           error: (err2) => console.error("Failed to save memory:", err2)
         });
-      } else {
-        console.warn("Attempted to save memory for unauthenticated user:", memoryContent);
       }
       tagProcessed = true;
     }
@@ -31711,7 +31684,6 @@ User's known characteristics: ${memoriesString}`;
       if (this.userId) {
         this.handleReportTag();
       } else {
-        console.warn("[[REPORT]] tag detected for unauthenticated user. Ignoring.");
         const unauthReportMessage = { role: "assistant", content: "Please log in to file a report." };
         this.messages.push(unauthReportMessage);
         this.saveMessageToDb(unauthReportMessage);
@@ -31725,7 +31697,6 @@ User's known characteristics: ${memoriesString}`;
   }
   handleReportTag() {
     if (!this.userId || !this.agencyId) {
-      console.error("handleReportTag called without a valid userId or agencyId.");
       return;
     }
     this.isLoading = true;
@@ -31738,7 +31709,6 @@ User's known characteristics: ${memoriesString}`;
     const historyForReport = this.messages.slice(-10);
     this.caseService.handleReportCreation(parseInt(this.userId, 10), parseInt(this.agencyId, 10), historyForReport, onStatusUpdate).subscribe({
       next: (caseId) => {
-        console.log(`Report process completed. Case ID: ${caseId}`);
         this.isLoading = false;
         this.currentStatusMessage = "";
         this.scrollToBottom();
@@ -31752,7 +31722,6 @@ User's known characteristics: ${memoriesString}`;
     });
   }
   triggerFollowUpAi(userMessage, assistantMessage) {
-    console.log("triggerFollowUpAi called with userMessage:", userMessage, "and assistantMessage:", assistantMessage);
     let currentSystemPromptContent = this.systemPrompt.content;
     if (this.userId && this.employeeMemories && this.employeeMemories.length > 0) {
       const memoriesString = this.employeeMemories.map((memory) => `"${memory}"`).join(", ");
@@ -31767,19 +31736,14 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
     const historyForAi = this.messages.slice(-10);
     const followUpPayload = [systemPromptForAi, ...historyForAi];
     const employeeIdNum = this.userId ? parseInt(this.userId, 10) : null;
-    console.log("Calling follow-up AI with payload:", followUpPayload, "and employeeId:", employeeIdNum);
     this.aiService.callAi(followUpPayload, employeeIdNum).subscribe({
       next: (response) => {
         if (!response) {
-          console.log("Follow-up AI: AI responses are paused, received empty response.");
           return;
         }
         const doneTagRegex = /\[\[DONE\]\]/;
         const doneMatch = response.match(doneTagRegex);
-        if (doneMatch) {
-          console.log("Follow-up AI: Previous response was satisfactory. [[DONE]] tag detected.");
-        } else {
-          console.log("Follow-up AI: Corrective message received.");
+        if (!doneMatch) {
           const followUpMessage = { role: "assistant", content: response.trim() };
           this.messages.push(followUpMessage);
           this.saveMessageToDb(followUpMessage);
@@ -31891,7 +31855,8 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
     <div class="p-3 rounded-lg max-w-[70%]"
          [class.user-message-bubble]="message.role === 'user'"
          [class.assistant-message-bubble]="message.role === 'assistant'">
-      <div class="chat-message-content" [innerHTML]="message.content"></div>
+      <!-- Call processMessageContent to hide tags visually -->
+      <div class="chat-message-content" [innerHTML]="processMessageContent(message.content)"></div>
     </div>
   </div>
 
@@ -31941,7 +31906,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-T2PXHNMX.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-XTZG7UMZ.js").then((m) => m.AdminModule)
   }
 ];
 
