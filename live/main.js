@@ -91,7 +91,6 @@ import {
   dismiss,
   environment,
   eventMethod,
-  firstValueFrom,
   focusFirstDescendant,
   focusLastDescendant,
   forwardRef,
@@ -31401,7 +31400,12 @@ var ChatComponent = class _ChatComponent {
   async checkAndSetComplaintStatus() {
     if (this.userId) {
       try {
-        const mainStatus = await firstValueFrom(this.databaseService.getApplicantMainStatus(parseInt(this.userId, 10)));
+        const mainStatus = await new Promise((resolve, reject) => {
+          this.databaseService.getApplicantMainStatus(parseInt(this.userId, 10)).subscribe({
+            next: (data) => resolve(data),
+            error: (err2) => reject(err2)
+          });
+        });
         const hasComplaint = mainStatus && mainStatus.toLowerCase().includes("complain");
         if (hasComplaint && !this.complaintStatusActive) {
           this.complaintStatusActive = true;
@@ -31435,7 +31439,12 @@ var ChatComponent = class _ChatComponent {
   async loadAiEnabledUntilStatus() {
     if (this.userId) {
       try {
-        const timestamp = await firstValueFrom(this.databaseService.getApplicantAiEnabledUntil(parseInt(this.userId, 10)));
+        const timestamp = await new Promise((resolve, reject) => {
+          this.databaseService.getApplicantAiEnabledUntil(parseInt(this.userId, 10)).subscribe({
+            next: (data) => resolve(data),
+            error: (err2) => reject(err2)
+          });
+        });
         if (timestamp) {
           this.aiEnabledUntil = new Date(timestamp);
         } else {
@@ -31462,7 +31471,12 @@ var ChatComponent = class _ChatComponent {
       return;
     }
     try {
-      const history = await firstValueFrom(this.databaseService.getChatHistory(parseInt(this.userId, 10)));
+      const history = await new Promise((resolve, reject) => {
+        this.databaseService.getChatHistory(parseInt(this.userId, 10)).subscribe({
+          next: (data) => resolve(data),
+          error: (err2) => reject(err2)
+        });
+      });
       this.updateAiEnabledUntilFromHistory(history);
       this.messages = history;
       this.cdRef.detectChanges();
