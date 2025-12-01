@@ -165,7 +165,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-FGNICEFK.js";
+} from "./chunk-WXUT4GZ2.js";
 import "./chunk-B7UJR2GH.js";
 import "./chunk-W7NNY2EY.js";
 import "./chunk-HTLDGIIN.js";
@@ -31503,7 +31503,7 @@ var ChatComponent = class _ChatComponent {
     this.currentStatusMessage = "Typing...";
     setTimeout(() => {
       this.scrollToBottom();
-    }, 0);
+    }, 100);
     const userMessage = { role: "user", content: this.newMessage.trim() };
     this.messages.push(userMessage);
     this.saveMessageToDb(userMessage);
@@ -31564,7 +31564,7 @@ User's known characteristics: ${memoriesString}`;
             console.log("Triggering follow-up AI.");
             this.triggerFollowUpAi(userMessage, assistantMessage);
           }
-          setTimeout(() => this.scrollToBottom(), 0);
+          setTimeout(() => this.scrollToBottom(), 100);
         },
         error: (error) => {
           console.error("AI call failed:", error);
@@ -31573,14 +31573,14 @@ User's known characteristics: ${memoriesString}`;
           this.saveMessageToDb(errorMessage);
           this.isLoading = false;
           this.currentStatusMessage = "";
-          setTimeout(() => this.scrollToBottom(), 0);
+          setTimeout(() => this.scrollToBottom(), 100);
         }
       });
     } else {
       console.log("sendMessage - AI service call skipped because AI is disabled.");
       this.isLoading = false;
       this.currentStatusMessage = "";
-      setTimeout(() => this.scrollToBottom(), 0);
+      setTimeout(() => this.scrollToBottom(), 100);
     }
     this.adjustTextareaHeight();
   }
@@ -31603,6 +31603,7 @@ User's known characteristics: ${memoriesString}`;
     const currentCheckTime = /* @__PURE__ */ new Date();
     let latestDisablementFromHistory = null;
     for (const message of history) {
+      console.log("Processing message:", message);
       if (message.content.includes("[[ADMIN]]") && message.timestamp) {
         console.log(`ADMIN tag found! Message: "${message.content}", Timestamp: "${message.timestamp}"`);
         const messageDate = new Date(message.timestamp.replace(" ", "T"));
@@ -31671,7 +31672,7 @@ User's known characteristics: ${memoriesString}`;
             const loginFailMessage = { role: "assistant", content: "Account does not exist, please double check if input is correct." };
             this.messages.push(loginFailMessage);
             this.saveMessageToDb(loginFailMessage);
-            setTimeout(() => this.scrollToBottom(), 0);
+            setTimeout(() => this.scrollToBottom(), 100);
           }
         },
         error: (error) => {
@@ -31679,7 +31680,7 @@ User's known characteristics: ${memoriesString}`;
           const loginErrorMessage = { role: "assistant", content: "An error occurred during login. Please try again later." };
           this.messages.push(loginErrorMessage);
           this.saveMessageToDb(loginErrorMessage);
-          setTimeout(() => this.scrollToBottom(), 0);
+          setTimeout(() => this.scrollToBottom(), 100);
         }
       });
       modifiedResponse = modifiedResponse.replace(loginTagRegex, "").trim();
@@ -31942,7 +31943,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-KGUBEAIA.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-T2PXHNMX.js").then((m) => m.AdminModule)
   }
 ];
 

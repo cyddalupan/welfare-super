@@ -268,7 +268,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     this.currentStatusMessage = 'Typing...';
     setTimeout(() => {
       this.scrollToBottom();
-    }, 0);
+    }, 100);
 
     const userMessage: ChatMessage = { role: 'user', content: this.newMessage.trim() };
 
@@ -348,7 +348,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
             console.log('Triggering follow-up AI.');
             this.triggerFollowUpAi(userMessage, assistantMessage);
           }
-          setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after AI response
+          setTimeout(() => this.scrollToBottom(), 100); // Explicit scroll after AI response
         },
         error: (error) => {
           console.error('AI call failed:', error);
@@ -357,14 +357,14 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
           this.saveMessageToDb(errorMessage);
           this.isLoading = false;
           this.currentStatusMessage = '';
-          setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after error message
+          setTimeout(() => this.scrollToBottom(), 100); // Explicit scroll after error message
         }
       });
     } else {
       console.log('sendMessage - AI service call skipped because AI is disabled.');
       this.isLoading = false;
       this.currentStatusMessage = '';
-      setTimeout(() => this.scrollToBottom(), 0); // Just scroll to bottom after user's message
+      setTimeout(() => this.scrollToBottom(), 100); // Just scroll to bottom after user's message
     }
     this.adjustTextareaHeight();
   }
@@ -390,6 +390,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     let latestDisablementFromHistory: Date | null = null;
     
     for (const message of history) {
+      console.log('Processing message:', message); // DEBUG LOG: Check message structure
       if (message.content.includes('[[ADMIN]]') && message.timestamp) {
         console.log(`ADMIN tag found! Message: "${message.content}", Timestamp: "${message.timestamp}"`);
         const messageDate = new Date(message.timestamp.replace(' ', 'T'));
@@ -486,7 +487,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
               const loginFailMessage: ChatMessage = { role: 'assistant', content: 'Account does not exist, please double check if input is correct.' };
               this.messages.push(loginFailMessage);
               this.saveMessageToDb(loginFailMessage);
-              setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after login fail message
+              setTimeout(() => this.scrollToBottom(), 100); // Explicit scroll after login fail message
             }
           },
           error: (error) => {
@@ -494,7 +495,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
             const loginErrorMessage: ChatMessage = { role: 'assistant', content: 'An error occurred during login. Please try again later.' };
             this.messages.push(loginErrorMessage);
             this.saveMessageToDb(loginErrorMessage);
-            setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after login error message
+            setTimeout(() => this.scrollToBottom(), 100); // Explicit scroll after login error message
           }
         });
         modifiedResponse = modifiedResponse.replace(loginTagRegex, '').trim();
@@ -533,7 +534,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
           const unauthReportMessage: ChatMessage = { role: 'assistant', content: 'Please log in to file a report.' };
           this.messages.push(unauthReportMessage);
           this.saveMessageToDb(unauthReportMessage);
-          setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after unauth report message
+          setTimeout(() => this.scrollToBottom(), 100); // Explicit scroll after unauth report message
         }
       }
   

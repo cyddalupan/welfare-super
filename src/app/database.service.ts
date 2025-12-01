@@ -53,6 +53,8 @@ export class DatabaseService {
         // The API might return {success: true, data: [...]}, so we need to handle that structure.
         const responseData = (response && response.data) ? response.data : response;
 
+        console.log('Raw response data from getChatHistory:', responseData); // DEBUG LOG
+
         if (!Array.isArray(responseData)) {
           console.error('Chat history response is not a valid array:', responseData);
           return []; // Return empty array to prevent breaking the UI
