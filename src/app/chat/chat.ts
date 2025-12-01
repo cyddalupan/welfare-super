@@ -384,7 +384,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   private updateAiEnabledUntilFromHistory(history: ChatMessage[]): void {
     if (!this.userId) return;
 
-    let latestDisablementTime: Date | null = this.aiEnabledUntil;
+    let latestDisablementFromHistory: Date | null = null;
     
     for (const message of history) {
       if (message.content.includes('[[ADMIN]]') && message.timestamp) {
@@ -393,23 +393,36 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
         const timeDiffMinutes = (now.getTime() - messageDate.getTime()) / (1000 * 60);
 
         // A message is "less than 10 minutes old" if it's not in the future and not more than 10 minutes in the past.
-        // timeDiffMinutes is (now - messageDate) in minutes.
         if (timeDiffMinutes >= 0 && timeDiffMinutes <= ADMIN_AI_DISABLE_DURATION_MINUTES) {
           const newAiEnabledUntil = new Date(now.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1000); // Always calculate from 'now' to ensure it's future
-          if (!latestDisablementTime || newAiEnabledUntil.getTime() > latestDisablementTime.getTime()) {
-            latestDisablementTime = newAiEnabledUntil;
+          if (!latestDisablementFromHistory || newAiEnabledUntil.getTime() > latestDisablementFromHistory.getTime()) {
+            latestDisablementFromHistory = newAiEnabledUntil;
           }
         }
       }
     }
 
-    const needsDbUpdate = (latestDisablementTime && !this.aiEnabledUntil) || 
-                          (latestDisablementTime && this.aiEnabledUntil && latestDisablementTime.getTime() !== this.aiEnabledUntil.getTime());
+    // Now, we decide what the final state should be.
+    // We take the latest of what's currently active and what we just calculated from history.
+    let finalAiEnabledUntil: Date | null = this.aiEnabledUntil;
 
-    this.aiEnabledUntil = latestDisablementTime;
+    if (latestDisablementFromHistory && (!finalAiEnabledUntil || latestDisablementFromHistory.getTime() > finalAiEnabledUntil.getTime())) {
+      finalAiEnabledUntil = latestDisablementFromHistory;
+    }
+
+    // If the final calculated time is in the past, nullify it.
+    if (finalAiEnabledUntil && finalAiEnabledUntil.getTime() < new Date().getTime()) {
+      finalAiEnabledUntil = null;
+    }
+    
+    const needsDbUpdate = (!this.aiEnabledUntil && finalAiEnabledUntil) || // Was null, now has a value
+                          (this.aiEnabledUntil && !finalAiEnabledUntil) || // Had a value, now is null
+                          (this.aiEnabledUntil && finalAiEnabledUntil && this.aiEnabledUntil.getTime() !== finalAiEnabledUntil.getTime());
+
+    this.aiEnabledUntil = finalAiEnabledUntil;
 
     if (needsDbUpdate) {
-      console.log(`updateAiEnabledUntilFromHistory - A new disablement time was found. Updating AI disabled until ${this.aiEnabledUntil}`);
+      console.log(`updateAiEnabledUntilFromHistory - State changed. Updating AI disabled until ${this.aiEnabledUntil}`);
       this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
         next: () => console.log('updateAiEnabledUntilFromHistory - AI enabled until status saved to DB.'),
         error: (err) => console.error('updateAiEnabledUntilFromHistory - Failed to save AI enabled until status:', err)

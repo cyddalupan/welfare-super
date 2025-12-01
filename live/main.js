@@ -31599,7 +31599,7 @@ User's known characteristics: ${memoriesString}`;
   updateAiEnabledUntilFromHistory(history) {
     if (!this.userId)
       return;
-    let latestDisablementTime = this.aiEnabledUntil;
+    let latestDisablementFromHistory = null;
     for (const message of history) {
       if (message.content.includes("[[ADMIN]]") && message.timestamp) {
         const messageDate = new Date(message.timestamp.replace(" ", "T"));
@@ -31607,16 +31607,25 @@ User's known characteristics: ${memoriesString}`;
         const timeDiffMinutes = (now.getTime() - messageDate.getTime()) / (1e3 * 60);
         if (timeDiffMinutes >= 0 && timeDiffMinutes <= ADMIN_AI_DISABLE_DURATION_MINUTES) {
           const newAiEnabledUntil = new Date(now.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1e3);
-          if (!latestDisablementTime || newAiEnabledUntil.getTime() > latestDisablementTime.getTime()) {
-            latestDisablementTime = newAiEnabledUntil;
+          if (!latestDisablementFromHistory || newAiEnabledUntil.getTime() > latestDisablementFromHistory.getTime()) {
+            latestDisablementFromHistory = newAiEnabledUntil;
           }
         }
       }
     }
-    const needsDbUpdate = latestDisablementTime && !this.aiEnabledUntil || latestDisablementTime && this.aiEnabledUntil && latestDisablementTime.getTime() !== this.aiEnabledUntil.getTime();
-    this.aiEnabledUntil = latestDisablementTime;
+    let finalAiEnabledUntil = this.aiEnabledUntil;
+    if (latestDisablementFromHistory && (!finalAiEnabledUntil || latestDisablementFromHistory.getTime() > finalAiEnabledUntil.getTime())) {
+      finalAiEnabledUntil = latestDisablementFromHistory;
+    }
+    if (finalAiEnabledUntil && finalAiEnabledUntil.getTime() < (/* @__PURE__ */ new Date()).getTime()) {
+      finalAiEnabledUntil = null;
+    }
+    const needsDbUpdate = !this.aiEnabledUntil && finalAiEnabledUntil || // Was null, now has a value
+    this.aiEnabledUntil && !finalAiEnabledUntil || // Had a value, now is null
+    this.aiEnabledUntil && finalAiEnabledUntil && this.aiEnabledUntil.getTime() !== finalAiEnabledUntil.getTime();
+    this.aiEnabledUntil = finalAiEnabledUntil;
     if (needsDbUpdate) {
-      console.log(`updateAiEnabledUntilFromHistory - A new disablement time was found. Updating AI disabled until ${this.aiEnabledUntil}`);
+      console.log(`updateAiEnabledUntilFromHistory - State changed. Updating AI disabled until ${this.aiEnabledUntil}`);
       this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
         next: () => console.log("updateAiEnabledUntilFromHistory - AI enabled until status saved to DB."),
         error: (err2) => console.error("updateAiEnabledUntilFromHistory - Failed to save AI enabled until status:", err2)
