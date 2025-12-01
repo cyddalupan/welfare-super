@@ -264,18 +264,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    // Check if AI is temporarily disabled
-    if (this.aiEnabledUntil && this.aiEnabledUntil.getTime() > new Date().getTime()) {
-      console.log('sendMessage - AI is currently disabled until:', this.aiEnabledUntil);
-      const disabledMessage: ChatMessage = { role: 'assistant', content: "Our team is currently reviewing your case. AI responses are temporarily paused. Please await a direct response from our support staff." };
-      this.messages.push(disabledMessage);
-      this.saveMessageToDb(disabledMessage);
-      this.newMessage = '';
-      this.adjustTextareaHeight();
-      setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after message
-      return;
-    }
-
     this.isLoading = true;
     this.currentStatusMessage = 'Typing...';
     setTimeout(() => {
@@ -289,15 +277,22 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.newMessage = '';
 
+    let callAiService = true; // Flag to determine if AI should be called
+
+    // Check if AI is temporarily disabled (from historical messages or direct admin message)
+    if (this.aiEnabledUntil && this.aiEnabledUntil.getTime() > new Date().getTime()) {
+      console.log('sendMessage - AI is currently disabled until:', this.aiEnabledUntil);
+      callAiService = false; // Do not call AI service
+    }
+
     // Check for ADMIN tag in the current message being sent by the user (admin)
+    // This part still needs to prevent AI response and set disablement.
     if (userMessage.content.includes('[[ADMIN]]')) {
-        console.log('Admin message with [[ADMIN]] tag detected. Skipping AI response.');
-        // Set AI to be disabled for a period, similar to how it's done for historical messages
+        console.log('sendMessage - Admin message with [[ADMIN]] tag detected. Skipping AI response and setting disablement.');
         const newAiEnabledUntil = new Date(new Date().getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1000);
-        if (!this.aiEnabledUntil || newAiEnabledUntil > this.aiEnabledUntil) {
+        if (!this.aiEnabledUntil || newAiEnabledUntil.getTime() > this.aiEnabledUntil.getTime()) {
             this.aiEnabledUntil = newAiEnabledUntil;
             console.log(`sendMessage - AI disabled until ${this.aiEnabledUntil} due to direct admin message.`);
-            // Persist the updated aiEnabledUntil status
             if (this.userId) {
                 this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
                     next: () => console.log('sendMessage - AI enabled until status saved to DB.'),
@@ -305,74 +300,74 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
                 });
             }
         }
-        this.isLoading = false;
-        this.currentStatusMessage = '';
-        this.adjustTextareaHeight();
-        setTimeout(() => this.scrollToBottom(), 0);
-        return; // Skip AI call entirely
+        callAiService = false; // Explicitly do not call AI if admin sends [[ADMIN]]
     }
 
-    let currentSystemPromptContent = this.systemPrompt.content;
+    if (callAiService) {
+      let currentSystemPromptContent = this.systemPrompt.content;
 
-    if (this.userId && this.employeeMemories && this.employeeMemories.length > 0) {
-      const memoriesString = this.employeeMemories.map(memory => `"${memory}"`).join(', ');
-      currentSystemPromptContent += `\n\nUser's known characteristics: ${memoriesString}`;
-    }
-
-    const systemPromptForAi: ChatMessage = { role: 'system', content: currentSystemPromptContent };
-
-    const historyForAi = this.messages.slice(-10);
-    const aiPayload: ChatMessage[] = [systemPromptForAi, ...historyForAi];
-
-    // Pass employeeId to aiService.callAi
-    const employeeIdNum = this.userId ? parseInt(this.userId, 10) : null;
-    console.log('Calling initial AI with payload:', aiPayload, 'and employeeId:', employeeIdNum);
-    this.aiService.callAi(aiPayload, employeeIdNum).subscribe({
-      next: (response: string) => {
-        console.log('Initial AI response received:', response);
-        // If response is empty, it means AI was disabled by backend check (though now frontend handles it primarily)
-        if (!response) {
-            this.isLoading = false;
-            this.currentStatusMessage = '';
-            const noAiMessage: ChatMessage = { role: 'assistant', content: "Our team is currently reviewing your case. AI responses are temporarily paused. Please await a direct response from our support staff." };
-            this.messages.push(noAiMessage);
-            this.saveMessageToDb(noAiMessage);
-            this.scrollToBottom();
-            return;
-        }
-
-        const { response: processedResponse, tagProcessed } = this.parseAiResponseForTags(response);
-        let assistantMessage: ChatMessage | null = null;
-        if (processedResponse) {
-          assistantMessage = { role: 'assistant', content: processedResponse };
-          // Process the message to strip any tags before displaying
-          this.messages.push(this.processMessageContent(assistantMessage));
-          this.saveMessageToDb(assistantMessage);
-          console.log('Assistant message added:', assistantMessage);
-        }
-
-        this.isLoading = false;
-        this.currentStatusMessage = '';
-
-        if (assistantMessage) {
-          console.log('Triggering follow-up AI.');
-          this.triggerFollowUpAi(userMessage, assistantMessage);
-        }
-        setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after AI response
-      },
-      error: (error) => {
-        console.error('AI call failed:', error);
-        const errorMessage: ChatMessage = { role: 'assistant', content: 'Error: Could not get a response from the AI.' };
-        this.messages.push(errorMessage);
-        this.saveMessageToDb(errorMessage);
-        this.isLoading = false;
-        this.currentStatusMessage = '';
-        setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after error message
+      if (this.userId && this.employeeMemories && this.employeeMemories.length > 0) {
+        const memoriesString = this.employeeMemories.map(memory => `"${memory}"`).join(', ');
+        currentSystemPromptContent += `\n\nUser's known characteristics: ${memoriesString}`;
       }
-    });
+
+      const systemPromptForAi: ChatMessage = { role: 'system', content: currentSystemPromptContent };
+
+      const historyForAi = this.messages.slice(-10);
+      const aiPayload: ChatMessage[] = [systemPromptForAi, ...historyForAi];
+
+      // Pass employeeId to aiService.callAi
+      const employeeIdNum = this.userId ? parseInt(this.userId, 10) : null;
+      console.log('Calling initial AI with payload:', aiPayload, 'and employeeId:', employeeIdNum);
+      this.aiService.callAi(aiPayload, employeeIdNum).subscribe({
+        next: (response: string) => {
+          console.log('Initial AI response received:', response);
+          // If response is empty, it means AI was disabled by backend check (though now frontend handles it primarily)
+          if (!response) {
+              this.isLoading = false;
+              this.currentStatusMessage = '';
+              // No disabled message needed here, just skip AI response
+              this.scrollToBottom();
+              return;
+          }
+
+          const { response: processedResponse, tagProcessed } = this.parseAiResponseForTags(response);
+          let assistantMessage: ChatMessage | null = null;
+          if (processedResponse) {
+            assistantMessage = { role: 'assistant', content: processedResponse };
+            // Process the message to strip any tags before displaying
+            this.messages.push(this.processMessageContent(assistantMessage));
+            this.saveMessageToDb(assistantMessage);
+            console.log('Assistant message added:', assistantMessage);
+          }
+
+          this.isLoading = false;
+          this.currentStatusMessage = '';
+
+          if (assistantMessage) {
+            console.log('Triggering follow-up AI.');
+            this.triggerFollowUpAi(userMessage, assistantMessage);
+          }
+          setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after AI response
+        },
+        error: (error) => {
+          console.error('AI call failed:', error);
+          const errorMessage: ChatMessage = { role: 'assistant', content: 'Error: Could not get a response from the AI.' };
+          this.messages.push(errorMessage);
+          this.saveMessageToDb(errorMessage);
+          this.isLoading = false;
+          this.currentStatusMessage = '';
+          setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after error message
+        }
+      });
+    } else {
+      console.log('sendMessage - AI service call skipped because AI is disabled.');
+      this.isLoading = false;
+      this.currentStatusMessage = '';
+      setTimeout(() => this.scrollToBottom(), 0); // Just scroll to bottom after user's message
+    }
     this.adjustTextareaHeight();
   }
-
   private saveMessageToDb(message: ChatMessage): void {
     console.log('Attempting to save message. UserID:', this.userId, 'AgencyID:', this.agencyId);
     if (this.userId && this.agencyId && this.agencyId !== 'null' && this.agencyId !== 'undefined') {

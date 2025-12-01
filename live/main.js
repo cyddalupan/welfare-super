@@ -31499,16 +31499,6 @@ var ChatComponent = class _ChatComponent {
       console.log("New message is empty, returning.");
       return;
     }
-    if (this.aiEnabledUntil && this.aiEnabledUntil.getTime() > (/* @__PURE__ */ new Date()).getTime()) {
-      console.log("sendMessage - AI is currently disabled until:", this.aiEnabledUntil);
-      const disabledMessage = { role: "assistant", content: "Our team is currently reviewing your case. AI responses are temporarily paused. Please await a direct response from our support staff." };
-      this.messages.push(disabledMessage);
-      this.saveMessageToDb(disabledMessage);
-      this.newMessage = "";
-      this.adjustTextareaHeight();
-      setTimeout(() => this.scrollToBottom(), 0);
-      return;
-    }
     this.isLoading = true;
     this.currentStatusMessage = "Typing...";
     setTimeout(() => {
@@ -31518,10 +31508,15 @@ var ChatComponent = class _ChatComponent {
     this.messages.push(userMessage);
     this.saveMessageToDb(userMessage);
     this.newMessage = "";
+    let callAiService = true;
+    if (this.aiEnabledUntil && this.aiEnabledUntil.getTime() > (/* @__PURE__ */ new Date()).getTime()) {
+      console.log("sendMessage - AI is currently disabled until:", this.aiEnabledUntil);
+      callAiService = false;
+    }
     if (userMessage.content.includes("[[ADMIN]]")) {
-      console.log("Admin message with [[ADMIN]] tag detected. Skipping AI response.");
+      console.log("sendMessage - Admin message with [[ADMIN]] tag detected. Skipping AI response and setting disablement.");
       const newAiEnabledUntil = new Date((/* @__PURE__ */ new Date()).getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1e3);
-      if (!this.aiEnabledUntil || newAiEnabledUntil > this.aiEnabledUntil) {
+      if (!this.aiEnabledUntil || newAiEnabledUntil.getTime() > this.aiEnabledUntil.getTime()) {
         this.aiEnabledUntil = newAiEnabledUntil;
         console.log(`sendMessage - AI disabled until ${this.aiEnabledUntil} due to direct admin message.`);
         if (this.userId) {
@@ -31531,62 +31526,62 @@ var ChatComponent = class _ChatComponent {
           });
         }
       }
-      this.isLoading = false;
-      this.currentStatusMessage = "";
-      this.adjustTextareaHeight();
-      setTimeout(() => this.scrollToBottom(), 0);
-      return;
+      callAiService = false;
     }
-    let currentSystemPromptContent = this.systemPrompt.content;
-    if (this.userId && this.employeeMemories && this.employeeMemories.length > 0) {
-      const memoriesString = this.employeeMemories.map((memory) => `"${memory}"`).join(", ");
-      currentSystemPromptContent += `
+    if (callAiService) {
+      let currentSystemPromptContent = this.systemPrompt.content;
+      if (this.userId && this.employeeMemories && this.employeeMemories.length > 0) {
+        const memoriesString = this.employeeMemories.map((memory) => `"${memory}"`).join(", ");
+        currentSystemPromptContent += `
 
 User's known characteristics: ${memoriesString}`;
-    }
-    const systemPromptForAi = { role: "system", content: currentSystemPromptContent };
-    const historyForAi = this.messages.slice(-10);
-    const aiPayload = [systemPromptForAi, ...historyForAi];
-    const employeeIdNum = this.userId ? parseInt(this.userId, 10) : null;
-    console.log("Calling initial AI with payload:", aiPayload, "and employeeId:", employeeIdNum);
-    this.aiService.callAi(aiPayload, employeeIdNum).subscribe({
-      next: (response) => {
-        console.log("Initial AI response received:", response);
-        if (!response) {
+      }
+      const systemPromptForAi = { role: "system", content: currentSystemPromptContent };
+      const historyForAi = this.messages.slice(-10);
+      const aiPayload = [systemPromptForAi, ...historyForAi];
+      const employeeIdNum = this.userId ? parseInt(this.userId, 10) : null;
+      console.log("Calling initial AI with payload:", aiPayload, "and employeeId:", employeeIdNum);
+      this.aiService.callAi(aiPayload, employeeIdNum).subscribe({
+        next: (response) => {
+          console.log("Initial AI response received:", response);
+          if (!response) {
+            this.isLoading = false;
+            this.currentStatusMessage = "";
+            this.scrollToBottom();
+            return;
+          }
+          const { response: processedResponse, tagProcessed } = this.parseAiResponseForTags(response);
+          let assistantMessage = null;
+          if (processedResponse) {
+            assistantMessage = { role: "assistant", content: processedResponse };
+            this.messages.push(this.processMessageContent(assistantMessage));
+            this.saveMessageToDb(assistantMessage);
+            console.log("Assistant message added:", assistantMessage);
+          }
           this.isLoading = false;
           this.currentStatusMessage = "";
-          const noAiMessage = { role: "assistant", content: "Our team is currently reviewing your case. AI responses are temporarily paused. Please await a direct response from our support staff." };
-          this.messages.push(noAiMessage);
-          this.saveMessageToDb(noAiMessage);
-          this.scrollToBottom();
-          return;
+          if (assistantMessage) {
+            console.log("Triggering follow-up AI.");
+            this.triggerFollowUpAi(userMessage, assistantMessage);
+          }
+          setTimeout(() => this.scrollToBottom(), 0);
+        },
+        error: (error) => {
+          console.error("AI call failed:", error);
+          const errorMessage = { role: "assistant", content: "Error: Could not get a response from the AI." };
+          this.messages.push(errorMessage);
+          this.saveMessageToDb(errorMessage);
+          this.isLoading = false;
+          this.currentStatusMessage = "";
+          setTimeout(() => this.scrollToBottom(), 0);
         }
-        const { response: processedResponse, tagProcessed } = this.parseAiResponseForTags(response);
-        let assistantMessage = null;
-        if (processedResponse) {
-          assistantMessage = { role: "assistant", content: processedResponse };
-          this.messages.push(this.processMessageContent(assistantMessage));
-          this.saveMessageToDb(assistantMessage);
-          console.log("Assistant message added:", assistantMessage);
-        }
-        this.isLoading = false;
-        this.currentStatusMessage = "";
-        if (assistantMessage) {
-          console.log("Triggering follow-up AI.");
-          this.triggerFollowUpAi(userMessage, assistantMessage);
-        }
-        setTimeout(() => this.scrollToBottom(), 0);
-      },
-      error: (error) => {
-        console.error("AI call failed:", error);
-        const errorMessage = { role: "assistant", content: "Error: Could not get a response from the AI." };
-        this.messages.push(errorMessage);
-        this.saveMessageToDb(errorMessage);
-        this.isLoading = false;
-        this.currentStatusMessage = "";
-        setTimeout(() => this.scrollToBottom(), 0);
-      }
-    });
+      });
+    } else {
+      console.log("sendMessage - AI service call skipped because AI is disabled.");
+      this.isLoading = false;
+      this.currentStatusMessage = "";
+      setTimeout(() => this.scrollToBottom(), 0);
+    }
     this.adjustTextareaHeight();
   }
   saveMessageToDb(message) {
