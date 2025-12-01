@@ -31341,8 +31341,8 @@ var ChatComponent = class _ChatComponent {
     this.setInitialSystemPrompt();
     if (this.userId) {
       await this.loadAiEnabledUntilStatus();
-      this.loadChatHistory();
-      this.loadEmployeeMemories();
+      await this.loadChatHistory();
+      await this.loadEmployeeMemories();
       this.startMainStatusMonitoring();
     } else {
       this.messages = [];
@@ -31451,22 +31451,22 @@ var ChatComponent = class _ChatComponent {
       this.systemPrompt.content = SYSTEM_PROMPT_LOGIN_ASSISTANT + "\n\n" + SYSTEM_PROMPT_COMPLAINTS_ASSISTANT;
     }
   }
-  loadChatHistory() {
-    if (this.userId) {
-      this.databaseService.getChatHistory(parseInt(this.userId, 10)).subscribe({
-        next: (history) => {
-          this.messages = history.map((msg) => this.processMessageContent(msg));
-          console.log("ChatComponent: Chat history loaded. Explicitly detecting changes and scrolling to bottom.");
-          this.cdRef.detectChanges();
-          this.scrollToBottom();
-        },
-        error: (error) => {
-          console.error("Failed to load chat history:", error);
-          this.messages.push({ role: "assistant", content: "Sorry, I was unable to load your previous conversation." });
-          this.cdRef.detectChanges();
-          this.scrollToBottom();
-        }
-      });
+  async loadChatHistory() {
+    if (!this.userId) {
+      return;
+    }
+    try {
+      const history = await firstValueFrom(this.databaseService.getChatHistory(parseInt(this.userId, 10)));
+      this.updateAiEnabledUntilFromHistory(history);
+      this.messages = history.map((msg) => this.processMessageContent(msg));
+      console.log("ChatComponent: Chat history loaded. Explicitly detecting changes and scrolling to bottom.");
+      this.cdRef.detectChanges();
+      this.scrollToBottom();
+    } catch (error) {
+      console.error("Failed to load chat history:", error);
+      this.messages.push({ role: "assistant", content: "Sorry, I was unable to load your previous conversation." });
+      this.cdRef.detectChanges();
+      this.scrollToBottom();
     }
   }
   loadEmployeeMemories() {
@@ -31601,28 +31601,36 @@ User's known characteristics: ${memoriesString}`;
       console.log("Save skipped: UserID or AgencyID is missing or invalid.");
     }
   }
-  processMessageContent(message) {
-    const adminTagRegex = /\[\[ADMIN\]\]/g;
-    let cleanedContent = message.content;
-    if (message.content.includes("[[ADMIN]]") && message.timestamp) {
-      const messageDate = /* @__PURE__ */ new Date(message.timestamp.replace(" ", "T") + "Z");
-      const now = /* @__PURE__ */ new Date();
-      const timeDiffMinutes = (now.getTime() - messageDate.getTime()) / (1e3 * 60);
-      if (timeDiffMinutes < ADMIN_AI_DISABLE_DURATION_MINUTES) {
-        const newAiEnabledUntil = new Date(messageDate.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1e3);
-        console.log(`processMessageContent - Message timestamp: ${message.timestamp}, messageDate: ${messageDate}, now: ${now}, timeDiffMinutes: ${timeDiffMinutes}, newAiEnabledUntil: ${newAiEnabledUntil}`);
-        if (!this.aiEnabledUntil || newAiEnabledUntil > this.aiEnabledUntil) {
-          this.aiEnabledUntil = newAiEnabledUntil;
-          console.log(`processMessageContent - AI disabled until ${this.aiEnabledUntil} due to recent admin message.`);
-          if (this.userId) {
-            this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
-              next: () => console.log("processMessageContent - AI enabled until status saved to DB."),
-              error: (err2) => console.error("processMessageContent - Failed to save AI enabled until status:", err2)
-            });
+  updateAiEnabledUntilFromHistory(history) {
+    if (!this.userId)
+      return;
+    let latestDisablementTime = this.aiEnabledUntil;
+    for (const message of history) {
+      if (message.content.includes("[[ADMIN]]") && message.timestamp) {
+        const messageDate = new Date(message.timestamp.replace(" ", "T"));
+        const now = /* @__PURE__ */ new Date();
+        const timeDiffMinutes = (now.getTime() - messageDate.getTime()) / (1e3 * 60);
+        if (timeDiffMinutes < ADMIN_AI_DISABLE_DURATION_MINUTES) {
+          const newAiEnabledUntil = new Date(messageDate.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1e3);
+          if (!latestDisablementTime || newAiEnabledUntil > latestDisablementTime) {
+            latestDisablementTime = newAiEnabledUntil;
           }
         }
       }
     }
+    const needsDbUpdate = latestDisablementTime && !this.aiEnabledUntil || latestDisablementTime && this.aiEnabledUntil && latestDisablementTime.getTime() !== this.aiEnabledUntil.getTime();
+    this.aiEnabledUntil = latestDisablementTime;
+    if (needsDbUpdate) {
+      console.log(`updateAiEnabledUntilFromHistory - A new disablement time was found. Updating AI disabled until ${this.aiEnabledUntil}`);
+      this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
+        next: () => console.log("updateAiEnabledUntilFromHistory - AI enabled until status saved to DB."),
+        error: (err2) => console.error("updateAiEnabledUntilFromHistory - Failed to save AI enabled until status:", err2)
+      });
+    }
+  }
+  processMessageContent(message) {
+    const adminTagRegex = /\[\[ADMIN\]\]/g;
+    let cleanedContent = message.content;
     cleanedContent = cleanedContent.replace(adminTagRegex, "").trim();
     cleanedContent = cleanedContent.replace(/\[\[MEMORY:"([^"]+)"\]\]/g, "").trim();
     cleanedContent = cleanedContent.replace(/\[\[REPORT\]\]/g, "").trim();
@@ -31924,7 +31932,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-SZH3RLDP.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-YTEXYUIV.js").then((m) => m.AdminModule)
   }
 ];
 

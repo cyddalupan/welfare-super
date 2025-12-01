@@ -73,10 +73,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setInitialSystemPrompt();
 
     if (this.userId) {
-      await this.loadAiEnabledUntilStatus(); // New: Load AI enabled status
-      this.loadChatHistory(); // Initial load of chat history
-      this.loadEmployeeMemories(); // Initial load of employee memories
-      this.startMainStatusMonitoring(); // Start monitoring main status
+      // Load everything sequentially to avoid race conditions
+      await this.loadAiEnabledUntilStatus();
+      await this.loadChatHistory();
+      await this.loadEmployeeMemories();
+      this.startMainStatusMonitoring();
     } else {
       this.messages = [];
       console.log('ChatComponent: User unauthenticated. Pushing welcome message. Initial scroll will be handled by ngAfterViewInit.');
@@ -205,23 +206,27 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private loadChatHistory(): void {
-    if (this.userId) {
-      this.databaseService.getChatHistory(parseInt(this.userId, 10)).subscribe({
-        next: (history) => {
-          // Process each message for tags and cleaning, then assign to messages
-          this.messages = history.map(msg => this.processMessageContent(msg));
-          console.log('ChatComponent: Chat history loaded. Explicitly detecting changes and scrolling to bottom.');
-          this.cdRef.detectChanges(); // Force change detection to ensure content is rendered before scroll
-          this.scrollToBottom(); // Always scroll to bottom after loading history, especially for refreshes
-        },
-        error: (error) => {
-          console.error('Failed to load chat history:', error);
-          this.messages.push({ role: 'assistant', content: 'Sorry, I was unable to load your previous conversation.' });
-          this.cdRef.detectChanges(); // Force change detection to ensure error message is rendered
-          this.scrollToBottom(); // Scroll to show the error message
-        }
-      });
+  private async loadChatHistory(): Promise<void> {
+    if (!this.userId) {
+      return;
+    }
+    try {
+      const history = await firstValueFrom(this.databaseService.getChatHistory(parseInt(this.userId, 10)));
+      
+      // Manually process history for [[ADMIN]] tags to set aiEnabledUntil
+      this.updateAiEnabledUntilFromHistory(history);
+      
+      // Then, map the messages for display, which will now only strip tags
+      this.messages = history.map(msg => this.processMessageContent(msg));
+      
+      console.log('ChatComponent: Chat history loaded. Explicitly detecting changes and scrolling to bottom.');
+      this.cdRef.detectChanges(); // Force change detection to ensure content is rendered before scroll
+      this.scrollToBottom(); // Always scroll to bottom after loading history
+    } catch (error) {
+      console.error('Failed to load chat history:', error);
+      this.messages.push({ role: 'assistant', content: 'Sorry, I was unable to load your previous conversation.' });
+      this.cdRef.detectChanges();
+      this.scrollToBottom();
     }
   }
 
@@ -381,36 +386,47 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private processMessageContent(message: ChatMessage): ChatMessage {
-    const adminTagRegex = /\[\[ADMIN\]\]/g;
-    let cleanedContent = message.content;
+  private updateAiEnabledUntilFromHistory(history: ChatMessage[]): void {
+    if (!this.userId) return;
 
-    // Check for ADMIN tag and disable AI if recent
-    if (message.content.includes('[[ADMIN]]') && message.timestamp) {
-      // Timestamps from DB are usually in UTC. Append 'Z' if it's not there to ensure correct parsing.
-      const messageDate = new Date(message.timestamp.replace(' ', 'T') + 'Z');
-      const now = new Date();
-      const timeDiffMinutes = (now.getTime() - messageDate.getTime()) / (1000 * 60);
+    let latestDisablementTime: Date | null = this.aiEnabledUntil;
+    
+    for (const message of history) {
+      if (message.content.includes('[[ADMIN]]') && message.timestamp) {
+        const messageDate = new Date(message.timestamp.replace(' ', 'T'));
+        const now = new Date();
+        const timeDiffMinutes = (now.getTime() - messageDate.getTime()) / (1000 * 60);
 
-      if (timeDiffMinutes < ADMIN_AI_DISABLE_DURATION_MINUTES) {
-        const newAiEnabledUntil = new Date(messageDate.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1000);
-        console.log(`processMessageContent - Message timestamp: ${message.timestamp}, messageDate: ${messageDate}, now: ${now}, timeDiffMinutes: ${timeDiffMinutes}, newAiEnabledUntil: ${newAiEnabledUntil}`);
-        // Only update if the new time is later than an existing one
-        if (!this.aiEnabledUntil || newAiEnabledUntil > this.aiEnabledUntil) {
-          this.aiEnabledUntil = newAiEnabledUntil;
-          console.log(`processMessageContent - AI disabled until ${this.aiEnabledUntil} due to recent admin message.`);
-          // Persist the updated aiEnabledUntil status
-          if (this.userId) {
-            this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
-              next: () => console.log('processMessageContent - AI enabled until status saved to DB.'),
-              error: (err) => console.error('processMessageContent - Failed to save AI enabled until status:', err)
-            });
+        if (timeDiffMinutes < ADMIN_AI_DISABLE_DURATION_MINUTES) {
+          const newAiEnabledUntil = new Date(messageDate.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1000);
+          if (!latestDisablementTime || newAiEnabledUntil > latestDisablementTime) {
+            latestDisablementTime = newAiEnabledUntil;
           }
         }
       }
     }
 
-    // Strip all known tags for UI display
+    const needsDbUpdate = (latestDisablementTime && !this.aiEnabledUntil) || 
+                          (latestDisablementTime && this.aiEnabledUntil && latestDisablementTime.getTime() !== this.aiEnabledUntil.getTime());
+
+    this.aiEnabledUntil = latestDisablementTime;
+
+    if (needsDbUpdate) {
+      console.log(`updateAiEnabledUntilFromHistory - A new disablement time was found. Updating AI disabled until ${this.aiEnabledUntil}`);
+      this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
+        next: () => console.log('updateAiEnabledUntilFromHistory - AI enabled until status saved to DB.'),
+        error: (err) => console.error('updateAiEnabledUntilFromHistory - Failed to save AI enabled until status:', err)
+      });
+    }
+  }
+
+  private processMessageContent(message: ChatMessage): ChatMessage {
+    const adminTagRegex = /\[\[ADMIN\]\]/g;
+    let cleanedContent = message.content;
+
+    // This logic is now handled by updateAiEnabledUntilFromHistory
+    // All that's left is to strip the tags for display.
+
     cleanedContent = cleanedContent.replace(adminTagRegex, '').trim();
     cleanedContent = cleanedContent.replace(/\[\[MEMORY:"([^"]+)"\]\]/g, '').trim();
     cleanedContent = cleanedContent.replace(/\[\[REPORT\]\]/g, '').trim();

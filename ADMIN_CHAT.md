@@ -35,16 +35,17 @@ This component provides the interface for administrators to view an applicant's 
     *   **Applicant Details**: Fetches and displays the applicant's name in the header.
         *   **Code Reference**: [`src/app/admin/pages/manual-chat/manual-chat.ts`](src/app/admin/pages/manual-chat/manual-chat.ts#L41-L46,L65-L67) (methods `ngOnInit` and `loadApplicantDetails`)
     *   **Chat History Display**: Presents the conversation history. For the administrator's view, messages sent by the applicant appear on the left, and messages sent by the admin (or previous AI responses) appear on the right.
-        *   **Code Reference**: [`src/app/admin/pages/manual-chat/manual-chat.html`](src/app/admin/pages/manual-chat/manual-chat.html#L14-L19)
+        *   **Code Reference**: [`src/app/admin/pages/manual-chat/manual-chat.html`](src/app/admin/pages/manual-chat/manual-chat.html#L14-L19) and [`src/app/admin/pages/manual-chat/manual-chat.ts`](src/app/admin/pages/manual-chat/manual-chat.ts) (method `getDisplayContent`)
         ```html
           <div *ngFor="let message of messages" class="flex mb-4" [class.justify-end]="message.role === 'assistant'" [class.justify-start]="message.role === 'user'">
             <div class="p-3 rounded-lg max-w-[70%]"
                  [class.admin-message-bubble]="message.role === 'assistant'"
                  [class.applicant-message-bubble]="message.role === 'user'">
-              <div class="chat-message-content" [innerHTML]="message.content"></div>
+              <div class="chat-message-content" [innerHTML]="getDisplayContent(message)"></div>
             </div>
           </div>
         ```
+        *   **Note:** The `getDisplayContent` method in `manual-chat.ts` is used to remove the internal `[[ADMIN]]` tag before displaying the message content in the UI.
         *   **Styling**: [`src/app/admin/pages/manual-chat/manual-chat.css`](src/app/admin/pages/manual-chat/manual-chat.css#L42-L56)
     *   **Sending Messages**: Administrators can type and send messages. This action triggers the AI disablement for the applicant.
 

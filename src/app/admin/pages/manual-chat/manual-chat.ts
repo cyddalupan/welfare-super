@@ -111,9 +111,6 @@ export class ManualChatComponent implements AfterViewChecked, OnInit, OnDestroy 
       next: () => {
         console.log('Admin message saved and AI disabled for applicant:', this.applicantId);
         this.newMessage = '';
-        if (this.messageInput && this.messageInput.nativeElement) {
-          this.messageInput.nativeElement.value = ''; // Explicitly clear native element
-        }
         this.isLoading = false;
         this.adjustTextareaHeight();
         this.cdr.detectChanges();
@@ -132,6 +129,13 @@ export class ManualChatComponent implements AfterViewChecked, OnInit, OnDestroy 
     return this.databaseService.saveChatMessage(message, applicantId, adminAgencyId).pipe(
       concatMap(() => this.databaseService.disableAiForApplicant(applicantId, 10))
     );
+  }
+
+  public getDisplayContent(message: ChatMessage): string {
+    if (message.role === 'assistant' && message.content.includes(' [[ADMIN]]')) {
+      return message.content.replace(' [[ADMIN]]', '');
+    }
+    return message.content;
   }
 
   public adjustTextareaHeight(): void {
