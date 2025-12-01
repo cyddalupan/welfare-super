@@ -31512,6 +31512,9 @@ var ChatComponent = class _ChatComponent {
     if (this.aiEnabledUntil && this.aiEnabledUntil.getTime() > (/* @__PURE__ */ new Date()).getTime()) {
       callAiService = false;
     }
+    console.log("sendMessage: Checking user message for [[ADMIN]] tag.");
+    console.log("sendMessage: userMessage.content:", userMessage.content);
+    console.log('sendMessage: userMessage.content.includes("[[ADMIN]]"):', userMessage.content.includes("[[ADMIN]]"));
     if (userMessage.content.includes("[[ADMIN]]")) {
       const newAiEnabledUntil = new Date((/* @__PURE__ */ new Date()).getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1e3);
       if (!this.aiEnabledUntil || newAiEnabledUntil.getTime() > this.aiEnabledUntil.getTime()) {

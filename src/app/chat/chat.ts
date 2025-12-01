@@ -272,6 +272,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       callAiService = false; // Do not call AI service
     }
 
+    // Debug log for [[ADMIN]] tag detection
+    console.log('sendMessage: Checking user message for [[ADMIN]] tag.');
+    console.log('sendMessage: userMessage.content:', userMessage.content);
+    console.log('sendMessage: userMessage.content.includes("[[ADMIN]]"):', userMessage.content.includes('[[ADMIN]]'));
+
     // Check for ADMIN tag in the current message being sent by the user (admin)
     // This part still needs to prevent AI response and set disablement.
     if (userMessage.content.includes('[[ADMIN]]')) {
