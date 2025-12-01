@@ -31457,6 +31457,7 @@ var ChatComponent = class _ChatComponent {
     }
     try {
       const history = await firstValueFrom(this.databaseService.getChatHistory(parseInt(this.userId, 10)));
+      console.log("ChatComponent.loadChatHistory: Received history from DB service:", history);
       this.updateAiEnabledUntilFromHistory(history);
       this.messages = history.map((msg) => this.processMessageContent(msg));
       console.log("ChatComponent: Chat history loaded. Explicitly detecting changes and scrolling to bottom.");
@@ -31503,7 +31504,7 @@ var ChatComponent = class _ChatComponent {
     this.currentStatusMessage = "Typing...";
     setTimeout(() => {
       this.scrollToBottom();
-    }, 100);
+    }, 0);
     const userMessage = { role: "user", content: this.newMessage.trim() };
     this.messages.push(userMessage);
     this.saveMessageToDb(userMessage);
@@ -31564,7 +31565,7 @@ User's known characteristics: ${memoriesString}`;
             console.log("Triggering follow-up AI.");
             this.triggerFollowUpAi(userMessage, assistantMessage);
           }
-          setTimeout(() => this.scrollToBottom(), 100);
+          setTimeout(() => this.scrollToBottom(), 0);
         },
         error: (error) => {
           console.error("AI call failed:", error);

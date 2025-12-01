@@ -212,6 +212,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     try {
       const history = await firstValueFrom(this.databaseService.getChatHistory(parseInt(this.userId, 10)));
+      console.log('ChatComponent.loadChatHistory: Received history from DB service:', history); // DEBUG LOG
       
       // Manually process history for [[ADMIN]] tags to set aiEnabledUntil
       this.updateAiEnabledUntilFromHistory(history);
@@ -268,7 +269,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     this.currentStatusMessage = 'Typing...';
     setTimeout(() => {
       this.scrollToBottom();
-    }, 100);
+    }, 0);
 
     const userMessage: ChatMessage = { role: 'user', content: this.newMessage.trim() };
 
@@ -348,7 +349,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
             console.log('Triggering follow-up AI.');
             this.triggerFollowUpAi(userMessage, assistantMessage);
           }
-          setTimeout(() => this.scrollToBottom(), 100); // Explicit scroll after AI response
+          setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after AI response
         },
         error: (error) => {
           console.error('AI call failed:', error);
