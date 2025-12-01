@@ -31600,6 +31600,7 @@ User's known characteristics: ${memoriesString}`;
     if (!this.userId)
       return;
     console.log(`updateAiEnabledUntilFromHistory called at ${(/* @__PURE__ */ new Date()).toLocaleTimeString()}, current aiEnabledUntil: ${this.aiEnabledUntil?.toLocaleTimeString() || "null"}`);
+    console.log("History array content:", history);
     const currentCheckTime = /* @__PURE__ */ new Date();
     let latestDisablementFromHistory = null;
     for (const message of history) {
@@ -31714,7 +31715,7 @@ User's known characteristics: ${memoriesString}`;
         const unauthReportMessage = { role: "assistant", content: "Please log in to file a report." };
         this.messages.push(unauthReportMessage);
         this.saveMessageToDb(unauthReportMessage);
-        setTimeout(() => this.scrollToBottom(), 0);
+        setTimeout(() => this.scrollToBottom(), 100);
       }
     }
     return {
@@ -31729,7 +31730,7 @@ User's known characteristics: ${memoriesString}`;
     }
     this.isLoading = true;
     this.currentStatusMessage = "I've noticed you're describing a serious issue. I'm starting the process to file a formal report for you.";
-    setTimeout(() => this.scrollToBottom(), 0);
+    setTimeout(() => this.scrollToBottom(), 100);
     const onStatusUpdate = (message) => {
       this.currentStatusMessage = message;
       this.scrollToBottom();
@@ -31740,13 +31741,13 @@ User's known characteristics: ${memoriesString}`;
         console.log(`Report process completed. Case ID: ${caseId}`);
         this.isLoading = false;
         this.currentStatusMessage = "";
-        setTimeout(() => this.scrollToBottom(), 0);
+        setTimeout(() => this.scrollToBottom(), 100);
       },
       error: (error) => {
         console.error("Error during report processing:", error);
         this.currentStatusMessage = "An unexpected error occurred during report processing. Please try again.";
         this.isLoading = false;
-        setTimeout(() => this.scrollToBottom(), 0);
+        setTimeout(() => this.scrollToBottom(), 100);
       }
     });
   }
@@ -31782,12 +31783,12 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
           const followUpMessage = { role: "assistant", content: response.trim() };
           this.messages.push(followUpMessage);
           this.saveMessageToDb(followUpMessage);
-          setTimeout(() => this.scrollToBottom(), 0);
+          setTimeout(() => this.scrollToBottom(), 100);
         }
       },
       error: (error) => {
         console.error("Follow-up AI call failed:", error);
-        setTimeout(() => this.scrollToBottom(), 0);
+        setTimeout(() => this.scrollToBottom(), 100);
       }
     });
   }

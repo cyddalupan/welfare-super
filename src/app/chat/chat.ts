@@ -385,6 +385,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.userId) return;
 
     console.log(`updateAiEnabledUntilFromHistory called at ${new Date().toLocaleTimeString()}, current aiEnabledUntil: ${this.aiEnabledUntil?.toLocaleTimeString() || 'null'}`);
+    console.log('History array content:', history); // DEBUG LOG: Check if history is empty or has messages
     const currentCheckTime = new Date(); // Get 'now' once for consistency
 
     let latestDisablementFromHistory: Date | null = null;
@@ -551,7 +552,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.isLoading = true;
     this.currentStatusMessage = "I've noticed you're describing a serious issue. I'm starting the process to file a formal report for you.";
-    setTimeout(() => this.scrollToBottom(), 0); // Scroll when status message changes
+    setTimeout(() => this.scrollToBottom(), 100); // Scroll when status message changes
 
     const onStatusUpdate = (message: string) => {
       this.currentStatusMessage = message;
@@ -565,13 +566,13 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
         console.log(`Report process completed. Case ID: ${caseId}`);
         this.isLoading = false;
         this.currentStatusMessage = '';
-        setTimeout(() => this.scrollToBottom(), 0); // Scroll after report process completed
+        setTimeout(() => this.scrollToBottom(), 100); // Scroll after report process completed
       },
       error: (error) => {
         console.error('Error during report processing:', error);
         this.currentStatusMessage = "An unexpected error occurred during report processing. Please try again.";
         this.isLoading = false;
-        setTimeout(() => this.scrollToBottom(), 0); // Scroll after report error
+        setTimeout(() => this.scrollToBottom(), 100); // Scroll after report error
       }
     });
   }
@@ -610,12 +611,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
           const followUpMessage: ChatMessage = { role: 'assistant', content: response.trim() };
           this.messages.push(followUpMessage);
           this.saveMessageToDb(followUpMessage);
-          setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after follow-up message
+          setTimeout(() => this.scrollToBottom(), 100); // Explicit scroll after follow-up message
         }
       },
       error: (error) => {
         console.error('Follow-up AI call failed:', error);
-        setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after follow-up error
+        setTimeout(() => this.scrollToBottom(), 100); // Explicit scroll after follow-up error
       }
     });
   }
