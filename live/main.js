@@ -31626,6 +31626,11 @@ User's known characteristics: ${memoriesString}`;
     this.aiEnabledUntil = finalAiEnabledUntil;
     if (needsDbUpdate) {
       console.log(`updateAiEnabledUntilFromHistory - State changed. Updating AI disabled until ${this.aiEnabledUntil}`);
+      if (this.aiEnabledUntil) {
+        this.messages.push({ role: "assistant", content: `DEBUG: AI disablement detected from history refresh. Paused until ${this.aiEnabledUntil.toLocaleTimeString()}` });
+        this.cdRef.detectChanges();
+        this.scrollToBottom();
+      }
       this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
         next: () => console.log("updateAiEnabledUntilFromHistory - AI enabled until status saved to DB."),
         error: (err2) => console.error("updateAiEnabledUntilFromHistory - Failed to save AI enabled until status:", err2)

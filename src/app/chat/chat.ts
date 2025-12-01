@@ -423,6 +423,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (needsDbUpdate) {
       console.log(`updateAiEnabledUntilFromHistory - State changed. Updating AI disabled until ${this.aiEnabledUntil}`);
+      // Add a temporary debug message to the chat for visual confirmation
+      if (this.aiEnabledUntil) {
+          this.messages.push({ role: 'assistant', content: `DEBUG: AI disablement detected from history refresh. Paused until ${this.aiEnabledUntil.toLocaleTimeString()}` });
+          this.cdRef.detectChanges();
+          this.scrollToBottom();
+      }
       this.databaseService.saveApplicantAiEnabledUntil(parseInt(this.userId, 10), this.aiEnabledUntil).subscribe({
         next: () => console.log('updateAiEnabledUntilFromHistory - AI enabled until status saved to DB.'),
         error: (err) => console.error('updateAiEnabledUntilFromHistory - Failed to save AI enabled until status:', err)
