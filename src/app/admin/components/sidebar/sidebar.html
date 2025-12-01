@@ -66,6 +66,13 @@
     </ion-item>
   </ion-menu-toggle>
 
+  <ion-menu-toggle autoHide="false">
+    <ion-item routerLink="/" routerDirection="root" detail="false">
+      <ion-icon slot="start" name="home-outline"></ion-icon>
+      <ion-label>Go back to Home</ion-label>
+    </ion-item>
+  </ion-menu-toggle>
+
   <ion-footer>
     <ion-toolbar>
       <ion-button expand="full" color="danger" (click)="logout()">
