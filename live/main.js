@@ -165,7 +165,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-SWFPS7SN.js";
+} from "./chunk-FGNICEFK.js";
 import "./chunk-B7UJR2GH.js";
 import "./chunk-W7NNY2EY.js";
 import "./chunk-HTLDGIIN.js";
@@ -31610,9 +31610,9 @@ User's known characteristics: ${memoriesString}`;
         const messageDate = new Date(message.timestamp.replace(" ", "T"));
         const now = /* @__PURE__ */ new Date();
         const timeDiffMinutes = (now.getTime() - messageDate.getTime()) / (1e3 * 60);
-        if (timeDiffMinutes < ADMIN_AI_DISABLE_DURATION_MINUTES) {
-          const newAiEnabledUntil = new Date(messageDate.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1e3);
-          if (!latestDisablementTime || newAiEnabledUntil > latestDisablementTime) {
+        if (timeDiffMinutes >= 0 && timeDiffMinutes <= ADMIN_AI_DISABLE_DURATION_MINUTES) {
+          const newAiEnabledUntil = new Date(now.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1e3);
+          if (!latestDisablementTime || newAiEnabledUntil.getTime() > latestDisablementTime.getTime()) {
             latestDisablementTime = newAiEnabledUntil;
           }
         }
@@ -31932,7 +31932,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-YTEXYUIV.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-KGUBEAIA.js").then((m) => m.AdminModule)
   }
 ];
 

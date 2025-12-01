@@ -397,9 +397,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
         const now = new Date();
         const timeDiffMinutes = (now.getTime() - messageDate.getTime()) / (1000 * 60);
 
-        if (timeDiffMinutes < ADMIN_AI_DISABLE_DURATION_MINUTES) {
-          const newAiEnabledUntil = new Date(messageDate.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1000);
-          if (!latestDisablementTime || newAiEnabledUntil > latestDisablementTime) {
+        // A message is "less than 10 minutes old" if it's not in the future and not more than 10 minutes in the past.
+        // timeDiffMinutes is (now - messageDate) in minutes.
+        if (timeDiffMinutes >= 0 && timeDiffMinutes <= ADMIN_AI_DISABLE_DURATION_MINUTES) {
+          const newAiEnabledUntil = new Date(now.getTime() + ADMIN_AI_DISABLE_DURATION_MINUTES * 60 * 1000); // Always calculate from 'now' to ensure it's future
+          if (!latestDisablementTime || newAiEnabledUntil.getTime() > latestDisablementTime.getTime()) {
             latestDisablementTime = newAiEnabledUntil;
           }
         }

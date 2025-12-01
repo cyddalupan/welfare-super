@@ -75,19 +75,28 @@ export class DatabaseService {
     return this.query(INSERT_APPLICANT_CHAT_MESSAGE, [employeeId, agencyId, message.content, sender]);
   }
 
+  private formatLocalToMySQLDatetime(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
+
   public disableAiForApplicant(applicantId: number, durationMinutes: number): Observable<any> {
     const futureDate = new Date();
     futureDate.setMinutes(futureDate.getMinutes() + durationMinutes);
-    const futureTimestamp = futureDate.toISOString().slice(0, 19).replace('T', ' '); // Format for MySQL DATETIME
+    const futureTimestamp = this.formatLocalToMySQLDatetime(futureDate);
 
     return this.query(UPDATE_AI_ENABLED_UNTIL, [futureTimestamp, applicantId]);
   }
 
   public saveApplicantAiEnabledUntil(applicantId: number, timestamp: Date | null): Observable<any> {
-    const formattedTimestamp = timestamp ? timestamp.toISOString().slice(0, 19).replace('T', ' ') : null;
+    const formattedTimestamp = timestamp ? this.formatLocalToMySQLDatetime(timestamp) : null;
     return this.query(UPDATE_AI_ENABLED_UNTIL, [formattedTimestamp, applicantId]);
   }
-
   public getApplicantAiEnabledUntil(applicantId: number): Observable<string | null> {
     return this.query(GET_APPLICANT_AI_ENABLED_UNTIL, [applicantId]).pipe(
       map((response: any) => {

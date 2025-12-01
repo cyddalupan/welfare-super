@@ -48,37 +48,6 @@ To support this structure, prompts and queries are centralized in dedicated file
 *   **Key Management:** The shared secret `key` and `IV` (Initialization Vector) must be securely stored in environment variables on both the frontend and backend servers. They must not be hardcoded in the source code.
 *   **API Responses:** Responses sent from the backend back to the frontend are **not** encrypted.
 
-# Building and Running
-
-## Development Server
-
-To start the local development server, run:
-
-```bash
-ng serve
-```
-
-Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Build
-
-To build the project for deployment, run:
-
-```bash
-npm run build
-```
-
-This command compiles the Angular application and copies the necessary files to the `live` directory.
-Always run this after changing an angular code.
-
-## Running Unit Tests
-
-To run unit tests with Karma, use the following command:
-
-```bash
-ng test
-```
-
 # Deployment
 
 The `live` folder is the main deployment directory. It contains the compiled Angular application and a dedicated `api/` subfolder for backend PHP scripts. The `live` folder is not ignored by Git, allowing the PHP API files to be committed to the repository.
@@ -90,6 +59,8 @@ The `npm run build` command handles the entire build process:
 3.  **`cp -R dist/welfareph/browser/. live/`**: Copies the compiled Angular app to the root of the `live` folder.
 
 This setup allows backend PHP files to persist in `live/api` across builds.
+
+Note: after code change build `npm run build` then push the code.
 
 ### SPA Routing on Static Servers
 
