@@ -10,7 +10,7 @@ import { CaseService } from '../case.service';
 import { AnnouncementService } from '../admin/services/announcement.service'; // Import AnnouncementService
 import { ChatMessage } from '../schemas';
 import { SYSTEM_PROMPT_COMPLAINTS_ASSISTANT, SYSTEM_PROMPT_LOGIN_ASSISTANT, SYSTEM_PROMPT_FOLLOWUP_ASSISTANT } from '../prompts';
-import { firstValueFrom } from 'rxjs'; // New import
+
 
 const MAX_TEXTAREA_HEIGHT = 150;
 const ADMIN_AI_DISABLE_DURATION_MINUTES = 10;
@@ -134,7 +134,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   private async checkAndSetComplaintStatus(): Promise<void> {
     if (this.userId) {
       try {
-        const mainStatus = await firstValueFrom(this.databaseService.getApplicantMainStatus(parseInt(this.userId, 10)));
+        const mainStatus = await new Promise<string | null>((resolve, reject) => {
+          this.databaseService.getApplicantMainStatus(parseInt(this.userId!, 10)).subscribe({
+            next: (data) => resolve(data),
+            error: (err) => reject(err)
+          });
+        });
         const hasComplaint = mainStatus && mainStatus.toLowerCase().includes('complain');
 
         if (hasComplaint && !this.complaintStatusActive) {
@@ -174,7 +179,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   private async loadAiEnabledUntilStatus(): Promise<void> {
     if (this.userId) {
       try {
-        const timestamp = await firstValueFrom(this.databaseService.getApplicantAiEnabledUntil(parseInt(this.userId, 10)));
+        const timestamp = await new Promise<string | null>((resolve, reject) => {
+          this.databaseService.getApplicantAiEnabledUntil(parseInt(this.userId!, 10)).subscribe({
+            next: (data) => resolve(data),
+            error: (err) => reject(err)
+          });
+        });
         if (timestamp) {
           this.aiEnabledUntil = new Date(timestamp);
         } else {
@@ -204,7 +214,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     try {
-      const history = await firstValueFrom(this.databaseService.getChatHistory(parseInt(this.userId, 10)));
+      const history = await new Promise<ChatMessage[]>((resolve, reject) => {
+        this.databaseService.getChatHistory(parseInt(this.userId!, 10)).subscribe({
+          next: (data) => resolve(data),
+          error: (err) => reject(err)
+        });
+      });
       
       // Manually process history for [[ADMIN]] tags to set aiEnabledUntil
       this.updateAiEnabledUntilFromHistory(history);
