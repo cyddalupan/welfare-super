@@ -2,6 +2,7 @@ import { Component, ViewChild, ElementRef, OnInit, OnDestroy, AfterViewInit, Cha
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, IonContent } from '@ionic/angular';
+import { Router } from '@angular/router'; // Import Router
 import { AiService } from '../ai.service';
 import { AuthService } from '../auth.service';
 import { DatabaseService } from '../database.service';
@@ -42,6 +43,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   private mainStatusMonitorInterval: any; // New property to hold the main status monitor interval ID
   private complaintStatusActive: boolean = false; // New property to track complaint status
   private initialScrollDone: boolean = false; // New property to track initial scroll
+  private clickCount: number = 0; // New: Click counter for admin redirect
+  private lastClickTime: number = 0; // New: Timestamp of last click for admin redirect
 
   constructor(
     private aiService: AiService,
@@ -49,7 +52,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     private databaseService: DatabaseService,
     private caseService: CaseService,
     private announcementService: AnnouncementService, // Inject AnnouncementService
-    private cdRef: ChangeDetectorRef // Inject ChangeDetectorRef
+    private cdRef: ChangeDetectorRef, // Inject ChangeDetectorRef
+    private router: Router // Inject Router
   ) {
     this.systemPrompt = {
       role: 'system',
@@ -573,6 +577,25 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   private scrollToBottom(): void {
     if (this.chatContainer) {
       this.chatContainer.scrollToBottom(50);
+    }
+  }
+
+  // New method to handle clicks on the ion-title for admin redirection
+  public onTitleClick(): void {
+    const currentTime = Date.now();
+    const clickThreshold = 500; // milliseconds
+
+    if (currentTime - this.lastClickTime < clickThreshold) {
+      this.clickCount++;
+    } else {
+      this.clickCount = 1;
+    }
+
+    this.lastClickTime = currentTime;
+
+    if (this.clickCount === 3) {
+      this.router.navigate(['/admin']);
+      this.clickCount = 0; // Reset after redirection
     }
   }
 }

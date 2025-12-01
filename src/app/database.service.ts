@@ -59,6 +59,7 @@ export class DatabaseService {
         }
 
         const messages: ChatMessage[] = responseData.map((rawMsg: RawChatMessage) => {
+          console.log('DatabaseService: Raw message content from backend:', rawMsg.message); // DEBUG LOG
           return {
             role: rawMsg.sender === 'Employee' ? 'user' : 'assistant',
             content: rawMsg.message,
