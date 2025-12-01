@@ -31574,7 +31574,7 @@ User's known characteristics: ${memoriesString}`;
           this.saveMessageToDb(errorMessage);
           this.isLoading = false;
           this.currentStatusMessage = "";
-          setTimeout(() => this.scrollToBottom(), 100);
+          setTimeout(() => this.scrollToBottom(), 0);
         }
       });
     } else {
@@ -31795,10 +31795,13 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
   }
   scrollToBottom() {
     if (this.chatContainer && this.chatContainer.nativeElement) {
-      this.chatContainer.nativeElement.scrollTo({
-        top: this.chatContainer.nativeElement.scrollHeight,
-        behavior: "smooth"
-      });
+      const scrollElement = this.chatContainer.nativeElement.querySelector(".inner-scroll");
+      if (scrollElement) {
+        scrollElement.scrollTo({
+          top: scrollElement.scrollHeight,
+          behavior: "smooth"
+        });
+      }
     }
   }
   static \u0275fac = function ChatComponent_Factory(__ngFactoryType__) {

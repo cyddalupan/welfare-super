@@ -358,7 +358,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
           this.saveMessageToDb(errorMessage);
           this.isLoading = false;
           this.currentStatusMessage = '';
-          setTimeout(() => this.scrollToBottom(), 100); // Explicit scroll after error message
+          setTimeout(() => this.scrollToBottom(), 0); // Explicit scroll after error message
         }
       });
     } else {
@@ -624,10 +624,13 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private scrollToBottom(): void {
     if (this.chatContainer && this.chatContainer.nativeElement) {
-      this.chatContainer.nativeElement.scrollTo({
-        top: this.chatContainer.nativeElement.scrollHeight,
-        behavior: 'smooth'
-      });
+      const scrollElement = this.chatContainer.nativeElement.querySelector('.inner-scroll');
+      if (scrollElement) {
+        scrollElement.scrollTo({
+          top: scrollElement.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
     }
   }
 }
