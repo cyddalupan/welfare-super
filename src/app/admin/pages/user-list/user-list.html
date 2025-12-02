@@ -5,11 +5,10 @@
     </ion-buttons>
     <ion-title>Admin Users</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="navigateToNewUser()">
-        <ion-icon name="add-circle-outline"></ion-icon>
-        New User
-      </ion-button>
-    </ion-buttons>
+              <ion-button (click)="navigateToNewUser()">
+                <i class="fa-solid fa-plus-circle"></i>
+                New User
+              </ion-button>    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -27,10 +26,10 @@
       </ion-label>
       <ion-buttons slot="end">
         <ion-button (click)="editUser(user.id)">
-          <ion-icon name="create-outline"></ion-icon>
+          <i class="fa-solid fa-pen-to-square"></i>
         </ion-button>
         <ion-button color="danger" (click)="deleteUser(user.id)" *ngIf="isAdmin">
-          <ion-icon name="trash-outline"></ion-icon>
+          <i class="fa-solid fa-trash"></i>
         </ion-button>
       </ion-buttons>
     </ion-item>

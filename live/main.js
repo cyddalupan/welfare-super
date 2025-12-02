@@ -75,7 +75,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-Q3SHZYM3.js";
+} from "./chunk-NMRKO3S5.js";
 import "./chunk-B7UJR2GH.js";
 import "./chunk-W7NNY2EY.js";
 import "./chunk-HTLDGIIN.js";
@@ -404,7 +404,7 @@ function ChatComponent_ion_card_7_Template(rf, ctx) {
       const ctx_r3 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r3.dismissAnnouncementBanner());
     });
-    \u0275\u0275element(8, "ion-icon", 19);
+    \u0275\u0275element(8, "i", 19);
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
@@ -976,7 +976,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
       \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.chatContainer = _t.first);
       \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.messageInput = _t.first);
     }
-  }, decls: 17, vars: 6, consts: [["chatContainer", ""], ["messageInput", ""], [1, "glass-toolbar"], [3, "click"], [1, "fas", "fa-hands-helping", "mr-2"], [1, "ion-padding", "custom-scrollbar"], ["class", "glass-card ion-no-margin ion-margin-bottom", 4, "ngIf"], ["class", "flex mb-4", 3, "justify-end", "justify-start", 4, "ngFor", "ngForOf"], ["class", "flex justify-center mb-4", 4, "ngIf"], [1, "flex", "items-center", "p-2"], ["rows", "1", "placeholder", "Type your message...", "autoGrow", "true", 1, "flex-1", "resize-none", "outline-none", "placeholder-gray-400", "p-2", "rounded-lg", "custom-scrollbar", 3, "ngModelChange", "ionInput", "keydown.enter", "ngModel", "disabled"], [1, "ml-2", 3, "click", "disabled"], ["name", "send"], [1, "glass-card", "ion-no-margin", "ion-margin-bottom"], [1, "flex", "items-start", "justify-between"], [1, "font-bold", "text-lg", "mb-2"], ["lines", "none", 1, "bg-transparent"], ["class", "bg-transparent ion-no-padding", 4, "ngFor", "ngForOf"], ["fill", "clear", "color", "dark", 3, "click"], ["name", "close-circle-outline", "size", "large"], [1, "bg-transparent", "ion-no-padding"], [1, "ion-text-wrap"], [1, "flex", "mb-4"], [1, "p-3", "rounded-lg", "max-w-[70%]"], [1, "chat-message-content", 3, "innerHTML"], [1, "flex", "justify-center", "mb-4"], [1, "p-3", "rounded-lg", "max-w-xl", "flex", "items-center", "space-x-2", "text-white"], ["class", "animate-spin rounded-full h-4 w-4 border-b-2 border-white", 4, "ngIf"], [1, "animate-spin", "rounded-full", "h-4", "w-4", "border-b-2", "border-white"]], template: function ChatComponent_Template(rf, ctx) {
+  }, decls: 17, vars: 6, consts: [["chatContainer", ""], ["messageInput", ""], [1, "glass-toolbar"], [3, "click"], [1, "fas", "fa-hands-helping", "mr-2"], [1, "ion-padding", "custom-scrollbar"], ["class", "glass-card ion-no-margin ion-margin-bottom", 4, "ngIf"], ["class", "flex mb-4", 3, "justify-end", "justify-start", 4, "ngFor", "ngForOf"], ["class", "flex justify-center mb-4", 4, "ngIf"], [1, "flex", "items-center", "p-2"], ["rows", "1", "placeholder", "Type your message...", "autoGrow", "true", 1, "flex-1", "resize-none", "outline-none", "placeholder-gray-400", "p-2", "rounded-lg", "custom-scrollbar", 3, "ngModelChange", "ionInput", "keydown.enter", "ngModel", "disabled"], [1, "ml-2", 3, "click", "disabled"], [1, "fa-solid", "fa-paper-plane"], [1, "glass-card", "ion-no-margin", "ion-margin-bottom"], [1, "flex", "items-start", "justify-between"], [1, "font-bold", "text-lg", "mb-2"], ["lines", "none", 1, "bg-transparent"], ["class", "bg-transparent ion-no-padding", 4, "ngFor", "ngForOf"], ["fill", "clear", "color", "dark", 3, "click"], ["size", "large", 1, "fa-solid", "fa-circle-xmark"], [1, "bg-transparent", "ion-no-padding"], [1, "ion-text-wrap"], [1, "flex", "mb-4"], [1, "p-3", "rounded-lg", "max-w-[70%]"], [1, "chat-message-content", 3, "innerHTML"], [1, "flex", "justify-center", "mb-4"], [1, "p-3", "rounded-lg", "max-w-xl", "flex", "items-center", "space-x-2", "text-white"], ["class", "animate-spin rounded-full h-4 w-4 border-b-2 border-white", 4, "ngIf"], [1, "animate-spin", "rounded-full", "h-4", "w-4", "border-b-2", "border-white"]], template: function ChatComponent_Template(rf, ctx) {
     if (rf & 1) {
       const _r1 = \u0275\u0275getCurrentView();
       \u0275\u0275elementStart(0, "ion-header")(1, "ion-toolbar", 2)(2, "ion-title", 3);
@@ -1010,7 +1010,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
         \u0275\u0275restoreView(_r1);
         return \u0275\u0275resetView(ctx.sendMessage());
       });
-      \u0275\u0275element(16, "ion-icon", 12);
+      \u0275\u0275element(16, "i", 12);
       \u0275\u0275elementEnd()()()();
     }
     if (rf & 2) {
@@ -1043,7 +1043,6 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
     IonItem,
     IonLabel,
     IonButton,
-    IonIcon,
     IonFooter,
     IonTextarea
   ], styles: ['\n\n[_nghost-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  min-height: 100vh;\n  font-family: "Inter", sans-serif;\n  color: var(--ion-text-color);\n}\nion-header[_ngcontent-%COMP%], \nion-footer[_ngcontent-%COMP%] {\n  box-shadow: none !important;\n}\nion-toolbar[_ngcontent-%COMP%] {\n  --background: var(--ion-background-color);\n  --color: var(--ion-text-color);\n  --border-color: transparent;\n  --min-height: 56px;\n  padding: 0 10px;\n}\nion-content[_ngcontent-%COMP%] {\n  --background: var(--ion-background-color);\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  overflow-y: auto;\n}\nion-content[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%] {\n  width: 100%;\n  display: flex;\n  margin-bottom: 10px;\n}\nion-content[_ngcontent-%COMP%]    > div.justify-end[_ngcontent-%COMP%] {\n  justify-content: flex-end;\n}\nion-content[_ngcontent-%COMP%]    > div.justify-start[_ngcontent-%COMP%] {\n  justify-content: flex-start;\n}\nion-content[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%] {\n  padding: 10px 15px;\n  border-radius: 20px;\n  max-width: 80%;\n  word-wrap: break-word;\n  color: var(--ion-text-color);\n}\n.user-message-bubble[_ngcontent-%COMP%] {\n  background: var(--ion-color-primary);\n  color: var(--ion-color-primary-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border-bottom-right-radius: 5px;\n  margin-right: 10px;\n}\n.assistant-message-bubble[_ngcontent-%COMP%] {\n  background: var(--ion-color-success);\n  color: var(--ion-color-success-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border: 1px solid var(--ion-color-step-300);\n  border-bottom-left-radius: 5px;\n  margin-left: 10px;\n}\n.chat-message-content[_ngcontent-%COMP%] {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n.chat-message-content[_ngcontent-%COMP%]   pre[_ngcontent-%COMP%] {\n  white-space: pre-wrap;\n  word-break: break-all;\n  background-color: var(--ion-color-step-200);\n  padding: 8px;\n  border-radius: 5px;\n  color: var(--ion-text-color);\n}\n.chat-message-content[_ngcontent-%COMP%]   table[_ngcontent-%COMP%] {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n.chat-message-content[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.chat-message-content[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid var(--ion-color-step-300);\n  color: var(--ion-text-color);\n}\n.chat-message-content[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  max-width: 100%;\n  height: auto;\n  border-radius: 8px;\n}\n.ion-content[_ngcontent-%COMP%]    > .flex.justify-center[_ngcontent-%COMP%] {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\nion-textarea[_ngcontent-%COMP%] {\n  --padding-start: 10px;\n  --padding-end: 10px;\n  --padding-top: 10px;\n  --padding-bottom: 10px;\n  --background: var(--ion-background-color);\n  border-radius: 20px;\n  color: var(--ion-text-color);\n  min-height: 40px;\n  max-height: 150px;\n  overflow-y: auto;\n  font-size: 1rem;\n  --placeholder-color: rgba(var(--ion-text-color-rgb), 0.5);\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 8px;\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\nion-button[_ngcontent-%COMP%] {\n  --background: var(--ion-color-tertiary);\n  --background-activated: var(--ion-color-tertiary-tint);\n  --border-radius: 20px;\n  height: 40px;\n  font-size: 1rem;\n  margin-left: 10px;\n  text-transform: none;\n  color: var(--ion-color-tertiary-contrast);\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 8px;\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\n/*# sourceMappingURL=chat.css.map */'] });
@@ -1087,7 +1086,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
         </ion-list>
       </div>
       <ion-button fill="clear" color="dark" (click)="dismissAnnouncementBanner()">
-        <ion-icon name="close-circle-outline" size="large"></ion-icon>
+        <i class="fa-solid fa-circle-xmark" size="large"></i>
       </ion-button>
     </ion-card-content>
   </ion-card>
@@ -1126,7 +1125,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
         autoGrow="true"
       ></ion-textarea>
       <ion-button (click)="sendMessage()" [disabled]="isLoading" class="ml-2">
-        <ion-icon name="send"></ion-icon>
+        <i class="fa-solid fa-paper-plane"></i>
       </ion-button>
     </div>
   </ion-toolbar>
@@ -1148,7 +1147,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-MNH6EHWS.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-2PGHJKJY.js").then((m) => m.AdminModule)
   }
 ];
 

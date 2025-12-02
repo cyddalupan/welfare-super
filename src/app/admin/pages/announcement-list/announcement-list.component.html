@@ -2,11 +2,10 @@
   <ion-toolbar>
     <ion-title>Announcements</ion-title>
     <ion-buttons slot="end">
-      <ion-button routerLink="/admin/announcements/new">
-        <ion-icon name="add-outline"></ion-icon>
-        New Announcement
-      </ion-button>
-    </ion-buttons>
+              <ion-button routerLink="/admin/announcements/new">
+                <i class="fa-solid fa-plus"></i>
+                New Announcement
+              </ion-button>    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -20,10 +19,10 @@
 
   <ion-list *ngIf="!isLoading">
     <ion-item-divider>
-      <ion-label (click)="sort('message')">Message <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
-      <ion-label (click)="sort('is_active')">Active <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
-      <ion-label (click)="sort('created_at')">Created At <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
-      <ion-label (click)="sort('updated_at')">Updated At <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
+      <ion-label (click)="sort('message')">Message <i class="fa-solid fa-arrows-up-down"></i></ion-label>
+      <ion-label (click)="sort('is_active')">Active <i class="fa-solid fa-arrows-up-down"></i></ion-label>
+      <ion-label (click)="sort('created_at')">Created At <i class="fa-solid fa-arrows-up-down"></i></ion-label>
+      <ion-label (click)="sort('updated_at')">Updated At <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label class="ion-text-right">Actions</ion-label>
     </ion-item-divider>
 
@@ -42,10 +41,10 @@
       </ion-label>
       <ion-buttons slot="end">
         <ion-button [routerLink]="['/admin/announcements/edit', announcement.id]" fill="clear">
-          <ion-icon name="create-outline"></ion-icon>
+          <i class="fa-solid fa-pen-to-square"></i>
         </ion-button>
         <ion-button (click)="deleteAnnouncement(announcement.id)" fill="clear" color="danger" *ngIf="isAdminUser">
-          <ion-icon name="trash-outline"></ion-icon>
+          <i class="fa-solid fa-trash"></i>
         </ion-button>
       </ion-buttons>
     </ion-item>

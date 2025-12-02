@@ -2,11 +2,10 @@
   <ion-toolbar>
     <ion-title>Referrals</ion-title>
     <ion-buttons slot="end">
-      <ion-button routerLink="/admin/referrals/new">
-        <ion-icon name="add-outline"></ion-icon>
-        New Referral
-      </ion-button>
-    </ion-buttons>
+              <ion-button routerLink="/admin/referrals/new">
+                <i class="fa-solid fa-plus"></i>
+                New Referral
+              </ion-button>    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -20,9 +19,9 @@
 
   <ion-list *ngIf="!isLoading">
     <ion-item-divider>
-      <ion-label (click)="sort('name')">Name <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
-      <ion-label (click)="sort('contact')">Contact <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
-      <ion-label (click)="sort('referred_by')">Referred By <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
+      <ion-label (click)="sort('name')">Name <i class="fa-solid fa-arrows-up-down"></i></ion-label>
+      <ion-label (click)="sort('contact')">Contact <i class="fa-solid fa-arrows-up-down"></i></ion-label>
+      <ion-label (click)="sort('referred_by')">Referred By <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label class="ion-text-right">Actions</ion-label>
     </ion-item-divider>
 
@@ -34,10 +33,10 @@
       </ion-label>
       <ion-buttons slot="end">
         <ion-button [routerLink]="['/admin/referrals/edit', referral.id]" fill="clear">
-          <ion-icon name="create-outline"></ion-icon>
+          <i class="fa-solid fa-pen-to-square"></i>
         </ion-button>
         <ion-button (click)="deleteReferral(referral.id)" fill="clear" color="danger" *ngIf="isAdminUser">
-          <ion-icon name="trash-outline"></ion-icon>
+          <i class="fa-solid fa-trash"></i>
         </ion-button>
       </ion-buttons>
     </ion-item>

@@ -5,27 +5,27 @@
 
   <ion-menu-toggle autoHide="false">
     <ion-item routerLink="/admin/dashboard" routerLinkActive="selected" routerDirection="root" detail="false">
-      <ion-icon slot="start" name="apps"></ion-icon>
+      <i slot="start" class="fa-solid fa-table-columns"></i>
       <ion-label>Dashboard</ion-label>
     </ion-item>
   </ion-menu-toggle>
 
   <ion-item button (click)="toggleApplicantMenu()">
-    <ion-icon slot="start" name="people"></ion-icon>
+    <i slot="start" class="fa-solid fa-users"></i>
     <ion-label>Applicants</ion-label>
-    <ion-icon slot="end" [name]="isApplicantMenuOpen ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+    <i slot="end" class="fa-solid" [class.fa-chevron-up]="isApplicantMenuOpen" [class.fa-chevron-down]="!isApplicantMenuOpen"></i>
   </ion-item>
 
   <ion-list *ngIf="isApplicantMenuOpen">
     <ion-menu-toggle autoHide="false">
       <ion-item routerLink="/admin/applicants" routerLinkActive="selected" routerDirection="root" detail="false">
-        <ion-icon slot="start" name="list"></ion-icon>
+        <i slot="start" class="fa-solid fa-list"></i>
         <ion-label>All Applicants</ion-label>
       </ion-item>
     </ion-menu-toggle>
     <ion-menu-toggle autoHide="false" *ngFor="let status of applicantStatuses">
       <ion-item [routerLink]="['/admin/applicants/status', status]" routerLinkActive="selected" routerDirection="root" detail="false">
-        <ion-icon slot="start" name="person"></ion-icon>
+        <i slot="start" class="fa-solid fa-user"></i>
         <ion-label>{{ status | titlecase }}</ion-label>
       </ion-item>
     </ion-menu-toggle>
@@ -33,42 +33,42 @@
 
   <ion-menu-toggle autoHide="false">
     <ion-item routerLink="/admin/cases" routerLinkActive="selected" routerDirection="root" detail="false">
-      <ion-icon slot="start" name="folder-open"></ion-icon>
+      <i slot="start" class="fa-solid fa-folder-open"></i>
       <ion-label>Cases</ion-label>
     </ion-item>
   </ion-menu-toggle>
 
   <ion-menu-toggle autoHide="false">
     <ion-item routerLink="/admin/fras" routerLinkActive="selected" routerDirection="root" detail="false">
-      <ion-icon slot="start" name="business"></ion-icon>
+      <i slot="start" class="fa-solid fa-building"></i>
       <ion-label>FRAs</ion-label>
     </ion-item>
   </ion-menu-toggle>
 
   <ion-menu-toggle autoHide="false">
     <ion-item routerLink="/admin/referrals" routerLinkActive="selected" routerDirection="root" detail="false">
-      <ion-icon slot="start" name="people-outline"></ion-icon>
+      <i slot="start" class="fa-solid fa-people-group"></i>
       <ion-label>Referrals</ion-label>
     </ion-item>
   </ion-menu-toggle>
 
   <ion-menu-toggle autoHide="false">
     <ion-item routerLink="/admin/announcements" routerLinkActive="selected" routerDirection="root" detail="false">
-      <ion-icon slot="start" name="megaphone-outline"></ion-icon>
+      <i slot="start" class="fa-solid fa-bullhorn"></i>
       <ion-label>Announcements</ion-label>
     </ion-item>
   </ion-menu-toggle>
 
   <ion-menu-toggle autoHide="false" *ngIf="isAdmin">
     <ion-item routerLink="/admin/users" routerLinkActive="selected" routerDirection="root" detail="false">
-      <ion-icon slot="start" name="people-circle-outline"></ion-icon>
+      <i slot="start" class="fa-solid fa-users-gear"></i>
       <ion-label>Admin Users</ion-label>
     </ion-item>
   </ion-menu-toggle>
 
   <ion-menu-toggle autoHide="false">
     <ion-item routerLink="/" routerDirection="root" detail="false">
-      <ion-icon slot="start" name="home-outline"></ion-icon>
+      <i slot="start" class="fa-solid fa-house"></i>
       <ion-label>Go back to Home</ion-label>
     </ion-item>
   </ion-menu-toggle>
@@ -76,7 +76,7 @@
   <ion-footer>
     <ion-toolbar>
       <ion-button expand="full" color="danger" (click)="logout()">
-        <ion-icon slot="start" name="log-out"></ion-icon>
+        <i slot="start" class="fa-solid fa-right-from-bracket"></i>
         Logout
       </ion-button>
     </ion-toolbar>

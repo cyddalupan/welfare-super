@@ -18,7 +18,7 @@
         </ion-list>
       </div>
       <ion-button fill="clear" color="dark" (click)="dismissAnnouncementBanner()">
-        <ion-icon name="close-circle-outline" size="large"></ion-icon>
+        <i class="fa-solid fa-circle-xmark" size="large"></i>
       </ion-button>
     </ion-card-content>
   </ion-card>
@@ -57,7 +57,7 @@
         autoGrow="true"
       ></ion-textarea>
       <ion-button (click)="sendMessage()" [disabled]="isLoading" class="ml-2">
-        <ion-icon name="send"></ion-icon>
+        <i class="fa-solid fa-paper-plane"></i>
       </ion-button>
     </div>
   </ion-toolbar>

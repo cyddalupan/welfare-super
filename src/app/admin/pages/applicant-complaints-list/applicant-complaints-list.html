@@ -14,10 +14,10 @@
 
   <ion-list *ngIf="!isLoading">
     <ion-item-divider>
-      <ion-label (click)="sort('last_name')">Name <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
-      <ion-label (click)="sort('passport_number')">Passport <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
-      <ion-label (click)="sort('country')">Country <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
-      <ion-label (click)="sort('main_status')">Status <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
+      <ion-label (click)="sort('last_name')">Name <i class="fa-solid fa-arrows-up-down"></i></ion-label>
+      <ion-label (click)="sort('passport_number')">Passport <i class="fa-solid fa-arrows-up-down"></i></ion-label>
+      <ion-label (click)="sort('country')">Country <i class="fa-solid fa-arrows-up-down"></i></ion-label>
+      <ion-label (click)="sort('main_status')">Status <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label class="ion-text-right">Actions</ion-label>
     </ion-item-divider>
 
@@ -32,17 +32,17 @@
       </ion-badge>
       <ion-buttons slot="end">
         <ion-button [routerLink]="['/admin/applicants/edit', app.id]" fill="clear">
-          <ion-icon name="create-outline"></ion-icon>
+          <i class="fa-solid fa-pen-to-square"></i>
         </ion-button>
         <ion-button (click)="deleteApplicant(app.id)" fill="clear" color="danger" *ngIf="isAdminUser">
-          <ion-icon name="trash-outline"></ion-icon>
+          <i class="fa-solid fa-trash"></i>
         </ion-button>
         <ion-button *ngIf="app.main_status && app.main_status.toLowerCase().includes('complaint')" [routerLink]="['/admin/manual-chat', app.id]" fill="clear" color="primary">
-          <ion-icon name="chatbubbles-outline"></ion-icon>
+          <i class="fa-solid fa-comments"></i>
         </ion-button>
         <!-- History link might need to open in a browser or a webview, so it's kept as a regular link for now -->
         <a href="https://welfare.reviewcenterphil.com/api/history.php?app_id={{ app.id }}" target="_blank" rel="noopener noreferrer">
-          <ion-icon name="document-text-outline"></ion-icon>
+          <i class="fa-solid fa-file-lines"></i>
         </a>
       </ion-buttons>
     </ion-item>
