@@ -214,8 +214,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
     try {
+      const historyObservable = this.databaseService.getChatHistory(parseInt(this.userId!, 10));
+      console.log('History Observable:', historyObservable); // Diagnostic Log
+
       const history = await new Promise<ChatMessage[]>((resolve, reject) => {
-        this.databaseService.getChatHistory(parseInt(this.userId!, 10)).subscribe({
+        historyObservable.subscribe({
           next: (data) => resolve(data),
           error: (err) => reject(err)
         });

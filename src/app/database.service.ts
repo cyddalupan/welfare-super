@@ -48,7 +48,9 @@ export class DatabaseService {
   }
 
   public getChatHistory(employeeId: number): Observable<ChatMessage[]> {
-    return this.query(GET_APPLICANT_CHAT_HISTORY, [employeeId]).pipe(
+    const rawObservable = this.query(GET_APPLICANT_CHAT_HISTORY, [employeeId]);
+    console.log('DatabaseService: rawObservable from query:', rawObservable); // Diagnostic Log
+    return rawObservable.pipe(
       map((response: any) => {
         // The API might return {success: true, data: [...]}, so we need to handle that structure.
         const responseData = (response && response.data) ? response.data : response;
