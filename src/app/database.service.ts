@@ -74,10 +74,11 @@ export class DatabaseService {
 
   public saveChatMessage(message: ChatMessage, employeeId: number, agencyId: number): Observable<any> {
     const sender = message.role === 'user' ? 'Employee' : 'AI';
-    return this.query(INSERT_APPLICANT_CHAT_MESSAGE, [employeeId, agencyId, message.content, sender]);
+    // The timestamp is now passed as a parameter to the query
+    return this.query(INSERT_APPLICANT_CHAT_MESSAGE, [employeeId, agencyId, message.content, sender, message.timestamp]);
   }
 
-  private formatLocalToMySQLDatetime(date: Date): string {
+  public formatLocalToMySQLDatetime(date: Date): string {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
