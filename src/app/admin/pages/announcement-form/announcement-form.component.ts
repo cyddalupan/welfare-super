@@ -2,14 +2,14 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonItem, IonTextarea, IonToggle, IonButton, IonSpinner } from '@ionic/angular/standalone';
 import { AnnouncementService } from '../../services/announcement.service';
 import { Announcement } from '../../../schemas/announcement';
 
 @Component({
   selector: 'app-announcement-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule],
+  imports: [CommonModule, ReactiveFormsModule, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonItem, IonTextarea, IonToggle, IonButton, IonSpinner],
   templateUrl: './announcement-form.component.html',
   styleUrl: './announcement-form.component.css',
 })

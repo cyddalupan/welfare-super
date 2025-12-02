@@ -102,7 +102,7 @@ For **Nginx** servers, the `try_files` directive is used in the server block con
     *   Converting the string to a consistent case (`.toLowerCase()` or `.toUpperCase()`).
     The PHP backend should then expect and process these already-normalized values without needing to re-apply such transformations for specific parameters.
 *   **Testing:** All testing will be performed manually by the user. Automated unit tests are not required for new features or bug fixes at this stage.
-*   **Font Awesome:** Included via CDN in `src/index.html` for icon usage across the application.
+*   **Font Awesome:** Included via CDN in `src/index.html` for icon usage across the application. While `@ionic/angular` includes Ionicons, Font Awesome is the preferred and actively used icon library for new development and existing features.
 *   **Glass Card Styling:** The `.glass-card` CSS class, defined in `src/styles.css`, is used to apply a consistent "liquidglass" or "frosted glass" effect across various UI components, including chat bubbles on the homepage, and containers within the admin panel (login form, sidebar, and main content areas). This class provides a semi-transparent background, `backdrop-filter` blur, and a subtle border, mimicking an iOS-like aesthetic.
 
 ## Chat Functionality Details

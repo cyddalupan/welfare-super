@@ -2,11 +2,10 @@
   <ion-toolbar>
     <ion-title>Cases</ion-title>
     <ion-buttons slot="end">
-      <ion-button routerLink="/admin/cases/new">
-        <ion-icon name="add-outline"></ion-icon>
-        New Case
-      </ion-button>
-    </ion-buttons>
+              <ion-button routerLink="/admin/cases/new">
+                <i class="fa-solid fa-plus"></i>
+                New Case
+              </ion-button>    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -20,10 +19,10 @@
 
   <ion-list *ngIf="!isLoading">
     <ion-item-divider>
-      <ion-label (click)="sort('employee_name')">Employee <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
-      <ion-label (click)="sort('category')">Category <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
-      <ion-label (click)="sort('report_status')">Status <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
-      <ion-label (click)="sort('date_reported')">Date Reported <ion-icon name="swap-vertical-outline"></ion-icon></ion-label>
+      <ion-label (click)="sort('employee_name')">Employee <i class="fa-solid fa-arrows-up-down"></i></ion-label>
+      <ion-label (click)="sort('category')">Category <i class="fa-solid fa-arrows-up-down"></i></ion-label>
+      <ion-label (click)="sort('report_status')">Status <i class="fa-solid fa-arrows-up-down"></i></ion-label>
+      <ion-label (click)="sort('date_reported')">Date Reported <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label class="ion-text-right">Actions</ion-label>
     </ion-item-divider>
 
@@ -38,10 +37,10 @@
       </ion-badge>
       <ion-buttons slot="end">
         <ion-button [routerLink]="['/admin/cases/edit', caseItem.id]" fill="clear">
-          <ion-icon name="create-outline"></ion-icon>
+          <i class="fa-solid fa-pen-to-square"></i>
         </ion-button>
         <ion-button (click)="deleteCase(caseItem.id)" fill="clear" color="danger" *ngIf="isAdminUser">
-          <ion-icon name="trash-outline"></ion-icon>
+          <i class="fa-solid fa-trash"></i>
         </ion-button>
       </ion-buttons>
     </ion-item>

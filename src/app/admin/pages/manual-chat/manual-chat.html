@@ -27,7 +27,6 @@
 
 <ion-footer>
   <ion-toolbar class="glass-toolbar">
-    <div class="flex items-center p-2">
       <ion-textarea
         #messageInput
         rows="1"
@@ -39,9 +38,8 @@
         [disabled]="isLoading"
         autoGrow="true"
       ></ion-textarea>
-      <ion-button (click)="sendMessage()" [disabled]="isLoading" class="ml-2">
-        <ion-icon name="send"></ion-icon>
-      </ion-button>
-    </div>
+              <ion-button (click)="sendMessage()" [disabled]="isLoading" class="ml-2">
+                <i class="fa-solid fa-paper-plane"></i>
+              </ion-button>
   </ion-toolbar>
 </ion-footer>

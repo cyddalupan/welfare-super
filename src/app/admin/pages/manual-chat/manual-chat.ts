@@ -2,7 +2,8 @@ import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit, inject, Cha
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { IonicModule, IonContent } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
+import { IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonSpinner, IonFooter, IonTextarea, IonButton, IonContent as IonContentStandalone } from '@ionic/angular/standalone';
 import { Observable } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 import { DatabaseService } from '../../../database.service';
@@ -13,7 +14,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-manual-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule],
+  imports: [CommonModule, FormsModule, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContentStandalone, IonSpinner, IonFooter, IonTextarea, IonButton],
   templateUrl: './manual-chat.html',
   styleUrls: ['./manual-chat.css']
 })
