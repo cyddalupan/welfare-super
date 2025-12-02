@@ -338,7 +338,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
           const { response: processedResponse, tagProcessed } = this.parseAiResponseForTags(response);
           let assistantMessage: ChatMessage | null = null;
           if (processedResponse) {
-            assistantMessage = { role: 'assistant', content: processedResponse };
+            assistantMessage = {
+              role: 'assistant',
+              content: processedResponse,
+              timestamp: this.databaseService.formatLocalToMySQLDatetime(new Date())
+            };
             // Process the message to strip any tags before displaying
             this.messages.push(assistantMessage);
             this.saveMessageToDb(assistantMessage);
