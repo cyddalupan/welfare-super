@@ -98,11 +98,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     // Ensure the chatContainer is available before attempting to scroll
     if (this.chatContainer && !this.initialScrollDone) {
-      this.scrollToBottom();
-      this.initialScrollDone = true;
-      // Manually trigger change detection if the content was loaded asynchronously
-      // and the scroll might not immediately reflect in the view.
-      this.cdRef.detectChanges();
+      // Add a small delay to ensure IonContent is fully rendered and its internal elements are accessible
+      setTimeout(() => {
+        this.scrollToBottom();
+        this.initialScrollDone = true;
+        this.cdRef.detectChanges(); // Trigger change detection after scrolling
+      }, 0);
     }
   }
 
@@ -592,8 +593,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private scrollToBottom(): void {
     if (this.chatContainer) {
-      console.log('Diagnostic: chatContainer:', this.chatContainer); // Diagnostic Log
-      console.log('Diagnostic: chatContainer.scrollToBottom:', this.chatContainer.scrollToBottom); // Diagnostic Log
       this.chatContainer.scrollToBottom(50);
     }
   }

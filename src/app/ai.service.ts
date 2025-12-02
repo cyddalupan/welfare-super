@@ -14,18 +14,15 @@ export class AiService {
   private encryptionService = inject(EncryptionService); // Inject the EncryptionService
 
   public callAi(aiPayload: ChatMessage[], employeeId: number | null): Observable<string> {
-    console.log('AiService.callAi: AI service called.'); // Log invocation
     const payload = JSON.stringify({ messages: aiPayload, employee_id: employeeId });
-    console.log('AiService.callAi: Payload before encryption:', payload); // Log payload
     const base64Payload = this.encryptionService.encrypt(payload);
 
     return this.http.post(this.apiUrl, base64Payload, {
       headers: { 'Content-Type': 'text/plain' },
       responseType: 'text'
     }).pipe(
-      tap(response => console.log('AiService.callAi: Raw response from backend:', response)), // Log response
       catchError(error => {
-        console.error('AiService.callAi: Error during AI call:', error); // Log errors
+        console.error('AiService.callAi: Error during AI call:', error); // Keep error logs
         return throwError(() => error);
       })
     );

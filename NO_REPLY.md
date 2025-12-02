@@ -64,30 +64,44 @@ We have cycled through several hypotheses and applied fixes, systematically addr
 - **Hypothesis:** A `loadChatHistory` call from the 10-second refresh could fetch stale data (missing a newly sent `[[ADMIN]]` message) and overwrite the valid in-memory `aiEnabledUntil` with `null`.
 - **Fix Applied:** The logic in `updateAiEnabledUntilFromHistory` was made more robust. It now calculates the latest time from history, and only updates the component's `this.aiEnabledUntil` if the new time is later than the current one, preventing premature nullification.
 
-## 4. The Unresolved Mystery & The Final Diagnostic Step
+## 4. The Unresolved Mystery & The Final Diagnostic Step (Updated)
 
-Despite all the above fixes being implemented in the code (as confirmed by repeated `read_file` calls), the user's latest test shows the trigger still does not work on the 10-second refresh.
+Despite all the above fixes being implemented in the code, the `[[ADMIN]]` tag was still not correctly triggering the AI disablement. Extensive logging was added throughout the frontend to trace the exact state of chat messages, particularly their content and timestamps, as they passed through the system.
 
-**The Crucial Log:**
-```
-updateAiEnabledUntilFromHistory called at 4:53:39 PM, current aiEnabledUntil: null
-chat.ts:432 updateAiEnabledUntilFromHistory - After loop, bestAiEnabledUntil: null
-chat.ts:441 updateAiEnabledUntilFromHistory - State unchanged. aiEnabledUntil: null
-```
+**Initial Hypothesis Disproven:**
+The original hypothesis that the `message.timestamp` property was `null`, `undefined`, or "falsy" was disproven by detailed logging. It was confirmed that messages consistently had valid timestamp strings.
 
-This log proves that when `updateAiEnabledUntilFromHistory` runs, it is not finding any recent `[[ADMIN]]` tags in the `history` array it receives, even though the user confirms the message is present in the UI.
+**Key Findings from Detailed Logging:**
+1.  **`[[ADMIN]]` Tag Retrieval:** It was definitively confirmed that `[[ADMIN]]` tags (e.g., "ano ba yun [[ADMIN]]", "ok tol [[ADMIN]]") were correctly retrieved by `database.service.ts` from the PHP backend. The logs showed the raw message content including the `[[ADMIN]]` tag.
+2.  **`[[ADMIN]]` Tag Detection in Frontend:** The `updateAiEnabledUntilFromHistory` function correctly detected the `[[ADMIN]]` tag within the `message.content` property using `includes()`.
+3.  **Timestamp Parsing:** `new Date(message.timestamp.replace(' ', 'T'))` correctly parsed the timestamp string from the database into a `Date` object, and `timeDiffMinutes` was calculated accurately.
 
-**This leads to one primary, outstanding hypothesis:**
+**The Actual Problem Identified:**
+The logs revealed that even for newly sent messages containing `[[ADMIN]]`, the `timeDiffMinutes` (difference between the message's timestamp and the current system time) was significantly large (e.g., 14 hours / 840 minutes). This caused the condition `timeDiffMinutes <= ADMIN_AI_DISABLE_DURATION_MINUTES` (where `ADMIN_AI_DISABLE_DURATION_MINUTES` is `10` minutes) to consistently evaluate to `false`.
 
-- **The `message.timestamp` property is `null`, `undefined`, or otherwise "falsy" on the message objects being passed into the `updateAiEnabledUntilFromHistory` function.**
+Consequently, the AI disablement logic correctly determined that the `[[ADMIN]]` message was "NOT recent," and therefore, `this.aiEnabledUntil` was not updated, allowing the AI to continue replying.
 
-The check is `if (message.content.includes('[[ADMIN]]') && message.timestamp)`. If `message.timestamp` is not a valid string, this entire condition will fail, and the "ADMIN tag found!" log will never appear, which is exactly what we are seeing.
+## 5. Root Cause Identified and Frontend Solutions
 
-### Next Actionable Diagnostic Plan
+### 5.1 Root Cause: Database Timestamp Discrepancy
 
-To get undeniable proof of this hypothesis, we must log the raw data at two key points:
+The primary issue preventing the `[[ADMIN]]` tag from disabling the AI is a **discrepancy in timestamping at the database level**. Newly inserted chat messages using `NOW()` (or equivalent) are being recorded with timestamps that are significantly in the past (e.g., 14 hours prior) compared to the actual current time.
 
-1.  **In `database.service.ts`**: Log the `responseData` array directly after it is received from the backend, before the `.map()` operation. This will show us if the `timestamp` field is present in the raw data from the server.
-2.  **In `chat.ts`**: Log each `message` object at the beginning of the `for...of` loop inside `updateAiEnabledUntilFromHistory`. This will show us the structure of the `ChatMessage` object after it has been mapped in the service.
+*   **Impact:** Even when a new message with `[[ADMIN]]` is sent, its recorded database timestamp makes it appear "too old" to the frontend's recency check, preventing AI disablement.
+*   **Resolution (Backend/Database):** This issue requires investigation into the database server's time configuration, its timezone settings, and how the `NOW()` function behaves when inserting data. The database must record timestamps accurately reflecting the current time.
 
-This will confirm if the `timestamp` is being lost at the backend, during the HTTP transfer, or during the RxJS `map` operation.
+### 5.2 Frontend Solutions Implemented
+
+While the root cause lies in the backend/database, several improvements were made to the frontend to ensure robust handling of action tags and a clear separation of data from display:
+
+*   **`ChatMessage` Interface Refinement (`src/app/schemas.ts`):**
+    *   The `ChatMessage` interface was confirmed to use its `content` property to store the raw message string, including all action tags (e.g., `[[ADMIN]]`, `[[MEMORY]]`, `[[REPORT]]`). This ensures the full, unstripped content is always available for internal logic.
+*   **Action Tag Hiding for UI (`src/app/chat/chat.ts`, `src/app/chat/chat.html`):**
+    *   The `processMessageContent` function was refactored to take the raw message `content` (string) and return a *new string* with all action tags *removed* (i.e., replaced with an empty string `''`). This ensures the tags are completely invisible in the rendered HTML.
+    *   `chat.html` was updated to use `[innerHTML]="processMessageContent(message.content)"` to render messages, thereby displaying the cleaned content.
+    *   Any corresponding CSS rules (`.hide-tag`) previously intended for visual hiding were removed as they became unnecessary.
+*   **AI Service Logging (`src/app/ai.service.ts`):**
+    *   Temporary diagnostic logs were added to `AiService.callAi()` to trace payload and responses, then removed after confirming the AI service call itself was not the primary issue.
+*   **Comprehensive Debug Log Removal:** All extensive debug `console.log` statements added throughout `src/app/chat/chat.ts` and `src/app/database.service.ts` during the investigation were removed to clean up the codebase.
+
+These frontend changes ensure the system correctly processes and displays messages, and is prepared to disable the AI once the underlying timestamp issue is resolved.
