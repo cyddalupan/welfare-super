@@ -165,7 +165,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-PZ4N4NZO.js";
+} from "./chunk-VIDBDYUJ.js";
 import "./chunk-B7UJR2GH.js";
 import "./chunk-W7NNY2EY.js";
 import "./chunk-HTLDGIIN.js";
@@ -31471,8 +31471,10 @@ var ChatComponent = class _ChatComponent {
       return;
     }
     try {
+      const historyObservable = this.databaseService.getChatHistory(parseInt(this.userId, 10));
+      console.log("History Observable:", historyObservable);
       const history = await new Promise((resolve, reject) => {
-        this.databaseService.getChatHistory(parseInt(this.userId, 10)).subscribe({
+        historyObservable.subscribe({
           next: (data) => resolve(data),
           error: (err2) => reject(err2)
         });
@@ -31965,7 +31967,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-MRQQDBME.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-DPERTBLM.js").then((m) => m.AdminModule)
   }
 ];
 
