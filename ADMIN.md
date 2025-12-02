@@ -70,6 +70,9 @@ The admin panel includes the following pages, accessible via the sidebar navigat
         *   Component: [`src/app/admin/pages/applicant-list/applicant-list.ts`](src/app/admin/pages/applicant-list/applicant-list.ts)
     -   **Applicants by Status** (`/admin/applicants/status/:status`)
         *   Component: [`src/app/admin/pages/applicant-list/applicant-list.ts`](src/app/admin/pages/applicant-list/applicant-list.ts)
+    -   **Applicants with Complaints** (`/admin/applicants/complaints`)
+        *   Component: [`src/app/admin/pages/applicant-complaints-list/applicant-complaints-list.ts`](src/app/admin/pages/applicant-complaints-list/applicant-complaints-list.ts)
+        *   **Description:** This page lists all applicants whose `main_status` contains the word "complain" (e.g., 'with_complain', 'Complaint'). The data is fetched using an enhanced `ApplicantService` method that supports `LIKE` queries for status.
 -   **Cases** (`/admin/cases`)
     *   Component: [`src/app/admin/pages/case-list/case-list.ts`](src/app/admin/pages/case-list/case-list.ts)
 -   **FRAs** (`/admin/fras`)
@@ -87,3 +90,11 @@ The admin panel includes the following pages, accessible via the sidebar navigat
         *   `with_complain`: Indicates an applicant has an active complaint.
         *   Statuses containing "arriv" (e.g., "arrived", "on arrival") are also recognized by the system for specific internal logic and charting.
     *   **Note on Case Sensitivity:** The Angular frontend (`applicant-list.html`) currently performs a case-sensitive check for `'active'` and `'with_complain'`. While the system may internally treat variations (e.g., "ACTIVE_COMPLAIN", "active complain") as equivalent in some contexts, the frontend display logic requires an exact match to `'active'` or `'with_complain'` for specific styling. Ensure consistent casing from the backend for correct display in the UI.
+
+### Notification Features
+
+*   **Complaint Notification Bell**: A bell icon is now present in the main admin header (`src/app/admin/layouts/admin-layout/admin-layout.html`).
+    *   This icon displays a real-time count of applicants whose `main_status` contains "complain".
+    *   Clicking the bell icon navigates to the dedicated "Applicants with Complaints" page (`/admin/applicants/complaints`).
+    *   The count is dynamically fetched using `ApplicantService.countApplicantsWithComplaints()`.
+    *   `ApplicantService.getApplicants()` was also updated to support filtering by `main_status LIKE '%<status>%'` to power the new complaints list page.

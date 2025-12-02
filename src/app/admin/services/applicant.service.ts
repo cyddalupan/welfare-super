@@ -7,7 +7,8 @@ import {
   UPDATE_APPLICANT,
   DELETE_APPLICANT,
   DELETE_APPLICANT_MEMORY,
-  GET_APPLICANT_STATUSES
+  GET_APPLICANT_STATUSES,
+  COUNT_APPLICANTS_WITH_COMPLAINTS // Import the new query
 } from '../../queries';
 import { Applicant, ApplicantHistory } from '../../schemas';
 import { firstValueFrom } from 'rxjs';
@@ -20,13 +21,16 @@ export class ApplicantService {
   private db = inject(DatabaseService);
   private applicantHistoryService = inject(ApplicantHistoryService);
 
-  async getApplicants(status?: string): Promise<Applicant[]> {
+  async getApplicants(status?: string, likeStatus?: string): Promise<Applicant[]> {
     let query = GET_APPLICANTS;
     const params: any[] = [];
 
     if (status) {
       query = 'SELECT id, first_name, last_name, passport_number, country, main_status FROM employee_employee WHERE main_status = ? ORDER BY last_name, first_name';
       params.push(status);
+    } else if (likeStatus) {
+      query = `SELECT id, first_name, last_name, passport_number, country, main_status FROM employee_employee WHERE main_status LIKE ? ORDER BY last_name, first_name`;
+      params.push(`%${likeStatus}%`);
     }
     const response: any = await firstValueFrom(this.db.query(query, params));
     return (response && response.data) ? response.data as Applicant[] : [];
@@ -43,6 +47,12 @@ export class ApplicantService {
       return res.data.map((item: any) => item.status_name);
     }
     return [];
+  }
+
+  async countApplicantsWithComplaints(): Promise<number> {
+    const res: any = await firstValueFrom(this.db.query(COUNT_APPLICANTS_WITH_COMPLAINTS));
+    // The query returns a single row with a count, e.g., [{ 'COUNT(*)': 5 }]
+    return (res && res.data && res.data.length > 0) ? res.data[0]['COUNT(*)'] : 0;
   }
 
   async createApplicant(applicant: Omit<Applicant, 'id'>): Promise<any> {

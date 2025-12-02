@@ -22,6 +22,7 @@ import { UserFormComponent } from './components/user-form/user-form';
 import { AnnouncementListComponent } from './pages/announcement-list/announcement-list.component'; // New import
 import { AnnouncementFormComponent } from './pages/announcement-form/announcement-form.component'; // New import
 import { ManualChatComponent } from './pages/manual-chat/manual-chat'; // Placeholder for new component
+import { ApplicantComplaintsListComponent } from './pages/applicant-complaints-list/applicant-complaints-list'; // New import
 import { AdminUsersService } from './services/admin-users.service';
 
 import { authGuard } from './guards/auth.guard';
@@ -41,6 +42,7 @@ export const ADMIN_ROUTES: Routes = [
       { path: 'applicants/status/:status', component: ApplicantListComponent },
       { path: 'applicants/new', component: ApplicantFormComponent },
       { path: 'applicants/edit/:id', component: ApplicantFormComponent },
+      { path: 'applicants/complaints', component: ApplicantComplaintsListComponent }, // New route
       { path: 'cases', component: CaseListComponent },
       { path: 'cases/new', component: CaseFormComponent },
       { path: 'cases/edit/:id', component: CaseFormComponent },
@@ -84,7 +86,8 @@ export const ADMIN_ROUTES: Routes = [
     UserFormComponent,
     AnnouncementListComponent, // New component import
     AnnouncementFormComponent, // New component import
-    ManualChatComponent // New component import
+    ManualChatComponent, // New component import
+    ApplicantComplaintsListComponent // New component import
   ],
   declarations: [],
   providers: [

@@ -18,6 +18,12 @@
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
         <ion-title>Admin Dashboard</ion-title>
+        <ion-buttons slot="end">
+          <ion-button routerLink="/admin/applicants/complaints">
+            <ion-icon name="bell-outline"></ion-icon>
+            <ion-badge color="danger" *ngIf="complaintCount > 0">{{ complaintCount }}</ion-badge>
+          </ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content>

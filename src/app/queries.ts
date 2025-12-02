@@ -165,3 +165,7 @@ export const UPDATE_REFERRAL = `
   WHERE id = ?
 `;
 export const DELETE_REFERRAL = 'DELETE FROM referal WHERE id = ?';
+
+export const COUNT_APPLICANTS_WITH_COMPLAINTS = `
+  SELECT COUNT(*) FROM employee_employee WHERE main_status LIKE '%complain%'
+`;
