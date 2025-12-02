@@ -2,13 +2,13 @@ import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular'; // <--- Added this import
+import { IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonInput, IonButton, IonText } from '@ionic/angular/standalone';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-admin-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule], // <--- Added IonicModule here
+  imports: [CommonModule, FormsModule, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonInput, IonButton, IonText], // <--- Added IonicModule here
   templateUrl: './admin-login.html',
   styleUrl: './admin-login.css',
 })

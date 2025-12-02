@@ -1,14 +1,29 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Import CommonModule
 import { RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonApp, IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonRouterOutlet, IonIcon, IonBadge } from '@ionic/angular/standalone';
 import { SidebarComponent } from '../../components/sidebar/sidebar';
 import { ApplicantService } from '../../services/applicant.service'; // Import ApplicantService
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [RouterModule, SidebarComponent, IonicModule, CommonModule], // Add CommonModule here
+  imports: [
+    CommonModule,
+    RouterModule,
+    SidebarComponent,
+    IonApp,
+    IonMenu,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonMenuButton,
+    IonRouterOutlet,
+    IonIcon, // Add IonIcon
+    IonBadge, // Add IonBadge
+  ],
   templateUrl: './admin-layout.html',
   styleUrl: './admin-layout.css',
 })

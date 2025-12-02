@@ -1,7 +1,8 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, AlertController, ViewWillEnter } from '@ionic/angular';
+import { AlertController, ViewWillEnter } from '@ionic/angular';
+import { IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonButton, IonIcon, IonContent, IonSpinner, IonList, IonItem, IonLabel, IonCard, IonCardContent } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { AdminUsersService } from '../../services/admin-users.service';
@@ -11,7 +12,24 @@ import { AdminUsersService } from '../../services/admin-users.service';
   templateUrl: './user-list.html',
   styleUrls: ['./user-list.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule],
+  imports: [
+  CommonModule,
+  FormsModule,
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonTitle,
+  IonButton,
+  IonIcon,
+  IonContent,
+  IonSpinner,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonCard,
+  IonCardContent,
+],
 })
 export class UserListComponent implements OnInit, ViewWillEnter {
   users: any[] = [];

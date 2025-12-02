@@ -3,14 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Fra } from '../../../schemas';
-import { IonicModule } from '@ionic/angular';
+import { IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonCard, IonCardContent, IonSpinner, IonList, IonItem, IonInput, IonTextarea, IonSelect, IonSelectOption, IonButton } from '@ionic/angular/standalone';
 
 import { FraService } from '../../services/fra.service';
 
 @Component({
   selector: 'app-fra-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, IonicModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonCard, IonCardContent, IonSpinner, IonList, IonItem, IonInput, IonTextarea, IonSelect, IonSelectOption, IonButton],
   templateUrl: './fra-form.html',
   styleUrls: ['./fra-form.css'],
 })

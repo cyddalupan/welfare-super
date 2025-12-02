@@ -1,7 +1,8 @@
 import { Component, ViewChild, ElementRef, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, IonContent } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
+import { IonHeader, IonToolbar, IonTitle, IonCard, IonCardContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFooter, IonTextarea, IonContent as IonContentStandalone } from '@ionic/angular/standalone';
 import { Router } from '@angular/router'; // Import Router
 import { AiService } from '../ai.service';
 import { AuthService } from '../auth.service';
@@ -18,7 +19,23 @@ const ADMIN_AI_DISABLE_DURATION_MINUTES = 10;
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContentStandalone,
+    IonCard,
+    IonCardContent,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonButton,
+    IonIcon,
+    IonFooter,
+    IonTextarea,
+  ],
   templateUrl: './chat.html',
   styleUrls: ['./chat.css']
 })

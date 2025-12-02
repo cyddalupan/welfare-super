@@ -2,7 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonCard, IonCardContent, IonSpinner, IonList, IonItem, IonSelect, IonSelectOption, IonInput, IonTextarea, IonButton } from '@ionic/angular/standalone';
 import { Case, Applicant } from '../../../schemas';
 import { CaseService } from '../../services/case.service';
 import { ApplicantService } from '../../services/applicant.service'; // To get applicants for dropdown
@@ -10,7 +10,7 @@ import { ApplicantService } from '../../services/applicant.service'; // To get a
 @Component({
   selector: 'app-case-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonCard, IonCardContent, IonSpinner, IonList, IonItem, IonSelect, IonSelectOption, IonInput, IonTextarea, IonButton],
   templateUrl: './case-form.html',
   styleUrl: './case-form.css',
 })

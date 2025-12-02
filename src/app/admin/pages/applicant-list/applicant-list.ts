@@ -2,7 +2,8 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-import { IonicModule, ViewWillEnter } from '@ionic/angular'; // <--- Added this import
+import { ViewWillEnter } from '@ionic/angular';
+import { IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonContent, IonSearchbar, IonSpinner, IonList, IonItemDivider, IonLabel, IonItem, IonBadge } from '@ionic/angular/standalone';
 import { Applicant } from '../../../schemas';
 import { ApplicantService } from '../../services/applicant.service';
 import { AuthService } from '../../services/auth.service';
@@ -10,7 +11,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, IonicModule], // <--- Added IonicModule here
+  imports: [CommonModule, FormsModule, RouterModule, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonContent, IonSearchbar, IonSpinner, IonList, IonItemDivider, IonLabel, IonItem, IonBadge], // <--- Added IonicModule here
   templateUrl: './applicant-list.html',
   styleUrl: './applicant-list.css',
 })

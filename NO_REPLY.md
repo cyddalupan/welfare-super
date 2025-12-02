@@ -104,4 +104,11 @@ While the root cause lies in the backend/database, several improvements were mad
     *   Temporary diagnostic logs were added to `AiService.callAi()` to trace payload and responses, then removed after confirming the AI service call itself was not the primary issue.
 *   **Comprehensive Debug Log Removal:** All extensive debug `console.log` statements added throughout `src/app/chat/chat.ts` and `src/app/database.service.ts` during the investigation were removed to clean up the codebase.
 
+*   **Client-Side Timestamp Generation (`src/app/queries.ts`, `src/app/database.service.ts`, `src/app/chat/chat.ts`, `src/app/admin/pages/manual-chat/manual-chat.ts`):**
+    *   To counteract the database timestamp discrepancy, the application was modified to generate timestamps on the frontend (client-side) and explicitly send them to the database.
+    *   The `INSERT_APPLICANT_CHAT_MESSAGE` query in `src/app/queries.ts` was updated to accept a timestamp parameter instead of relying on `NOW()`.
+    *   `database.service.ts`'s `saveChatMessage` method was updated to accept and pass this frontend-generated timestamp to the query, and `formatLocalToMySQLDatetime` was made public.
+    *   Both `ChatComponent` and `ManualChatComponent` (for admin messages) were updated to generate a new `Date()` object and format it using `databaseService.formatLocalToMySQLDatetime()` before including it in the `ChatMessage` object for saving.
+    *   This ensures that the timestamp recorded in the database accurately reflects the time the message was sent from the user's or admin's application, thereby resolving the "not recent" issue for `[[ADMIN]]` tags.
+
 These frontend changes ensure the system correctly processes and displays messages, and is prepared to disable the AI once the underlying timestamp issue is resolved.

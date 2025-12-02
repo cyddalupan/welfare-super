@@ -2,14 +2,14 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonCard, IonCardContent, IonSpinner, IonList, IonItem, IonInput, IonButton } from '@ionic/angular/standalone';
 import { Referral } from '../../../schemas';
 import { ReferralService } from '../../services/referral.service';
 
 @Component({
   selector: 'app-referral-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, IonicModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonCard, IonCardContent, IonSpinner, IonList, IonItem, IonInput, IonButton],
   templateUrl: './referral-form.html',
   styleUrls: ['./referral-form.css'],
 })

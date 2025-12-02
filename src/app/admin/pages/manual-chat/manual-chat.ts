@@ -102,14 +102,17 @@ export class ManualChatComponent implements AfterViewChecked, OnInit, OnDestroy 
       return;
     }
 
-    const adminMessage: ChatMessage = { role: 'assistant', content: this.newMessage.trim() + ' [[ADMIN]]' };
+    const adminMessage: ChatMessage = {
+      role: 'assistant',
+      content: this.newMessage.trim() + ' [[ADMIN]]',
+      timestamp: this.databaseService.formatLocalToMySQLDatetime(new Date()) // Add current timestamp
+    };
     this.messages.push(adminMessage);
 
     this.isLoading = true;
 
     this.saveAdminMessageToDb(adminMessage, this.applicantId).subscribe({
       next: () => {
-        console.log('Admin message saved and AI disabled for applicant:', this.applicantId);
         this.newMessage = '';
         this.isLoading = false;
         this.adjustTextareaHeight();
