@@ -2,7 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AlertController, ViewWillEnter } from '@ionic/angular';
-import { IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonButton, IonIcon, IonContent, IonSpinner, IonList, IonItem, IonLabel, IonCard, IonCardContent } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonButton, IonContent, IonSpinner, IonList, IonItem, IonLabel, IonCard, IonCardContent } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { AdminUsersService } from '../../services/admin-users.service';
@@ -21,7 +21,6 @@ import { AdminUsersService } from '../../services/admin-users.service';
   IonMenuButton,
   IonTitle,
   IonButton,
-  IonIcon,
   IonContent,
   IonSpinner,
   IonList,

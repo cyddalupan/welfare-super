@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { IonList, IonListHeader, IonLabel, IonMenuToggle, IonItem, IonIcon, IonFooter, IonToolbar, IonButton } from '@ionic/angular/standalone';
+import { IonList, IonListHeader, IonLabel, IonMenuToggle, IonItem, IonFooter, IonToolbar, IonButton } from '@ionic/angular/standalone';
 import { AuthService } from '../../services/auth.service';
 import { ApplicantService } from '../../services/applicant.service';
 import { CommonModule } from '@angular/common';
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterModule, CommonModule, IonList, IonListHeader, IonLabel, IonMenuToggle, IonItem, IonIcon, IonFooter, IonToolbar, IonButton],
+  imports: [RouterModule, CommonModule, IonList, IonListHeader, IonLabel, IonMenuToggle, IonItem, IonFooter, IonToolbar, IonButton],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',
 })

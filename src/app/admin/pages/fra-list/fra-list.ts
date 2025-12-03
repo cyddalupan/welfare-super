@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ViewWillEnter } from '@ionic/angular';
-import { IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonContent, IonSearchbar, IonSpinner, IonList, IonItemDivider, IonLabel, IonItem } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonSearchbar, IonSpinner, IonList, IonItemDivider, IonLabel, IonItem } from '@ionic/angular/standalone';
 import { Fra } from '../../../schemas';
 import { FraService } from '../../services/fra.service';
 import { AuthService } from '../../services/auth.service';
@@ -11,7 +11,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-fra-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonContent, IonSearchbar, IonSpinner, IonList, IonItemDivider, IonLabel, IonItem], // <--- Added IonicModule here
+  imports: [CommonModule, FormsModule, RouterModule, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonSearchbar, IonSpinner, IonList, IonItemDivider, IonLabel, IonItem], // <--- Added IonicModule here
   templateUrl: './fra-list.html',
   styleUrl: './fra-list.css',
 })

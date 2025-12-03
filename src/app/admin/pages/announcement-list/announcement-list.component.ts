@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ViewWillEnter } from '@ionic/angular';
-import { IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonContent, IonSearchbar, IonSpinner, IonList, IonItemDivider, IonLabel, IonItem, IonToggle } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonSearchbar, IonSpinner, IonList, IonItemDivider, IonLabel, IonItem, IonToggle } from '@ionic/angular/standalone';
 import { Announcement } from '../../../schemas/announcement';
 import { AnnouncementService } from '../../services/announcement.service';
 import { AuthService } from '../../services/auth.service'; // Still need AuthService for user_type
@@ -11,7 +11,7 @@ import { AuthService } from '../../services/auth.service'; // Still need AuthSer
 @Component({
   selector: 'app-announcement-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonContent, IonSearchbar, IonSpinner, IonList, IonItemDivider, IonLabel, IonItem, IonToggle],
+  imports: [CommonModule, FormsModule, RouterModule, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonSearchbar, IonSpinner, IonList, IonItemDivider, IonLabel, IonItem, IonToggle],
   templateUrl: './announcement-list.component.html',
   styleUrl: './announcement-list.component.css',
 })

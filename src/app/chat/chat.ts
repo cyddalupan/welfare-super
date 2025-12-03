@@ -2,7 +2,7 @@ import { Component, ViewChild, ElementRef, OnInit, OnDestroy, AfterViewInit, Cha
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent } from '@ionic/angular';
-import { IonHeader, IonToolbar, IonTitle, IonCard, IonCardContent, IonList, IonItem, IonLabel, IonButton, IonIcon, IonFooter, IonTextarea, IonContent as IonContentStandalone } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonCard, IonCardContent, IonList, IonItem, IonLabel, IonButton, IonFooter, IonTextarea, IonContent as IonContentStandalone } from '@ionic/angular/standalone';
 import { Router } from '@angular/router'; // Import Router
 import { AiService } from '../ai.service';
 import { AuthService } from '../auth.service';
@@ -32,7 +32,6 @@ const ADMIN_AI_DISABLE_DURATION_MINUTES = 10;
     IonItem,
     IonLabel,
     IonButton,
-    IonIcon,
     IonFooter,
     IonTextarea,
   ],

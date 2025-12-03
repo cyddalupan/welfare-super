@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ViewWillEnter } from '@ionic/angular';
-import { IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonContent, IonSearchbar, IonSpinner, IonList, IonItemDivider, IonLabel, IonItem } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonSearchbar, IonSpinner, IonList, IonItemDivider, IonLabel, IonItem } from '@ionic/angular/standalone';
 import { Referral } from '../../../schemas'; // Changed from Fra
 import { ReferralService } from '../../services/referral.service'; // Changed from FraService
 import { AuthService } from '../../services/auth.service';
@@ -11,7 +11,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-referral-list', // Changed from app-fra-list
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonContent, IonSearchbar, IonSpinner, IonList, IonItemDivider, IonLabel, IonItem],
+  imports: [CommonModule, FormsModule, RouterModule, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonSearchbar, IonSpinner, IonList, IonItemDivider, IonLabel, IonItem],
   templateUrl: './referral-list.html', // Changed from ./fra-list.html
   styleUrl: './referral-list.css', // Changed from ./fra-list.css
 })
