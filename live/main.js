@@ -74,43 +74,43 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-YFWAEDLO.js";
-import "./chunk-54EHFMK3.js";
-import "./chunk-AXOFHZOB.js";
-import "./chunk-GLLWQ6IW.js";
-import "./chunk-NDFK44YX.js";
-import "./chunk-VQNBKA3N.js";
-import "./chunk-NHI4VGHO.js";
-import "./chunk-W6SC2ZZR.js";
-import "./chunk-VN2667RU.js";
-import "./chunk-6H7O3ZGC.js";
-import "./chunk-TZLVID7F.js";
-import "./chunk-PS2WLTKC.js";
-import "./chunk-EQ2GA6WQ.js";
-import "./chunk-Z4GA75BW.js";
-import "./chunk-7FFH6ZJ7.js";
-import "./chunk-W26RH5TH.js";
-import "./chunk-BYOQVAT4.js";
-import "./chunk-BCLF3UN2.js";
-import "./chunk-OLOXINNV.js";
-import "./chunk-SZBHOXEU.js";
-import "./chunk-JNZV46EC.js";
-import "./chunk-QYATNU66.js";
-import "./chunk-P3HQPATW.js";
-import "./chunk-4Y2RWIQT.js";
-import "./chunk-5LTWFEUH.js";
-import "./chunk-KFBF5L4X.js";
-import "./chunk-JUUZCNWN.js";
-import "./chunk-S457GDS4.js";
-import "./chunk-N7V3VD4X.js";
-import "./chunk-7I4W2NTL.js";
-import "./chunk-GIWC7F3R.js";
-import "./chunk-6NDCCITS.js";
+} from "./chunk-DKQYFDWT.js";
+import "./chunk-B7UJR2GH.js";
+import "./chunk-W7NNY2EY.js";
+import "./chunk-HTLDGIIN.js";
+import "./chunk-4VSZYFMW.js";
+import "./chunk-WFMQ6FSS.js";
+import "./chunk-CSKJ3OEL.js";
+import "./chunk-T5LCTCQ6.js";
+import "./chunk-ERN6DZWD.js";
+import "./chunk-3BYXFNWM.js";
+import "./chunk-ZNVIAQR7.js";
+import "./chunk-GEBZYO7I.js";
+import "./chunk-Y57NCBR3.js";
+import "./chunk-RH7KB5DO.js";
+import "./chunk-KJ4RTQDP.js";
+import "./chunk-F3JJ4YWB.js";
+import "./chunk-QOQL43QQ.js";
+import "./chunk-JF7NSFRE.js";
+import "./chunk-IVBL4Y7V.js";
+import "./chunk-2T2YJSEB.js";
+import "./chunk-OP56HYPY.js";
+import "./chunk-XRULW7VX.js";
+import "./chunk-3ZGDTXDI.js";
+import "./chunk-TV7O33EV.js";
+import "./chunk-DZBRP4UD.js";
+import "./chunk-7GPIVXJN.js";
+import "./chunk-CEAAMTO4.js";
+import "./chunk-256GWCFY.js";
+import "./chunk-5EU4VLVR.js";
+import "./chunk-GZ5BDCOT.js";
+import "./chunk-HUY7ESWV.js";
+import "./chunk-GXFEW35R.js";
 import {
   __spreadProps,
   __spreadValues,
   __toESM
-} from "./chunk-2RBMRLQD.js";
+} from "./chunk-C7TRL22M.js";
 
 // src/app/prompts.ts
 var SYSTEM_PROMPT_COMPLAINTS_ASSISTANT = `You are Welfare, a friendly AI assistant here to help Overseas Filipino Workers (OFWs) with their concerns. Your replies should be extremely concise, friendly, use Taglish, avoid deep or uncommon words, and focus on one point or question at a time. Many users just want someone to talk to, so be approachable and supportive.
@@ -184,17 +184,43 @@ var AiService = class _AiService {
   apiUrl = "/api/ai.php";
   http = inject(HttpClient);
   encryptionService = inject(EncryptionService);
-  // Inject the EncryptionService
   callAi(aiPayload, employeeId) {
     const payload = JSON.stringify({ messages: aiPayload, employee_id: employeeId });
     const base64Payload = this.encryptionService.encrypt(payload);
     return this.http.post(this.apiUrl, base64Payload, {
       headers: { "Content-Type": "text/plain" },
       responseType: "text"
-    }).pipe(catchError((error) => {
+    }).pipe(map((response) => {
+      if (this.isRawPhpResponse(response)) {
+        console.error("Detected raw PHP response from server:", response);
+        throw new Error("An unexpected server error occurred. Please try again later.");
+      }
+      return response;
+    }), catchError((error) => {
       console.error("AiService.callAi: Error during AI call:", error);
-      return throwError(() => error);
+      if (error.message === "An unexpected server error occurred. Please try again later.") {
+        return throwError(() => error);
+      }
+      return throwError(() => new Error("A network error occurred. Please check your internet connection and try again."));
     }));
+  }
+  // Helper function to detect raw PHP content
+  isRawPhpResponse(responseText) {
+    const phpMarkers = [
+      "<?php",
+      "curl_init",
+      "CURLOPT_URL",
+      "json_encode",
+      "file_get_contents('php://input')",
+      "$ch = curl_init();"
+      // More specific to the user's snippet
+    ];
+    for (const marker of phpMarkers) {
+      if (responseText.includes(marker)) {
+        return true;
+      }
+    }
+    return false;
   }
   static \u0275fac = function AiService_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _AiService)();
@@ -213,13 +239,14 @@ var AiService = class _AiService {
 // src/app/auth.service.ts
 var CryptoJS = __toESM(require_crypto_js());
 var AuthService = class _AuthService {
+  http;
+  apiUrl = "api/database.php";
+  // Path to your PHP backend
+  encryptionKey;
   constructor(http) {
     this.http = http;
     this.encryptionKey = environment.encryptionKey;
   }
-  apiUrl = "api/database.php";
-  // Path to your PHP backend
-  encryptionKey;
   login(lastName, passportNumber) {
     const processedLastName = lastName.trim().toLowerCase();
     const processedPassportNumber = passportNumber.trim().toLowerCase();
@@ -271,6 +298,8 @@ var AuthService = class _AuthService {
 
 // src/app/case.service.ts
 var CaseService = class _CaseService {
+  databaseService;
+  aiService;
   constructor(databaseService, aiService) {
     this.databaseService = databaseService;
     this.aiService = aiService;
@@ -449,20 +478,13 @@ function ChatComponent_div_9_Template(rf, ctx) {
 var MAX_TEXTAREA_HEIGHT = 150;
 var ADMIN_AI_DISABLE_DURATION_MINUTES = 10;
 var ChatComponent = class _ChatComponent {
-  // New: Timestamp of last click for admin redirect
-  constructor(aiService, authService, databaseService, caseService, announcementService, cdRef, router) {
-    this.aiService = aiService;
-    this.authService = authService;
-    this.databaseService = databaseService;
-    this.caseService = caseService;
-    this.announcementService = announcementService;
-    this.cdRef = cdRef;
-    this.router = router;
-    this.systemPrompt = {
-      role: "system",
-      content: ""
-    };
-  }
+  aiService;
+  authService;
+  databaseService;
+  caseService;
+  announcementService;
+  cdRef;
+  router;
   title = "analytics-agent";
   chatContainer;
   messageInput;
@@ -491,6 +513,20 @@ var ChatComponent = class _ChatComponent {
   clickCount = 0;
   // New: Click counter for admin redirect
   lastClickTime = 0;
+  // New: Timestamp of last click for admin redirect
+  constructor(aiService, authService, databaseService, caseService, announcementService, cdRef, router) {
+    this.aiService = aiService;
+    this.authService = authService;
+    this.databaseService = databaseService;
+    this.caseService = caseService;
+    this.announcementService = announcementService;
+    this.cdRef = cdRef;
+    this.router = router;
+    this.systemPrompt = {
+      role: "system",
+      content: ""
+    };
+  }
   async ngOnInit() {
     let userId = localStorage.getItem("user_id");
     let agencyId = localStorage.getItem("agency_id");
@@ -1034,7 +1070,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
     IonButton,
     IonFooter,
     IonTextarea
-  ], styles: ['\n\n[_nghost-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  min-height: 100vh;\n  font-family: "Inter", sans-serif;\n  color: var(--ion-text-color);\n}\nion-header[_ngcontent-%COMP%], \nion-footer[_ngcontent-%COMP%] {\n  box-shadow: none !important;\n}\nion-toolbar[_ngcontent-%COMP%] {\n  --background: var(--ion-background-color);\n  --color: var(--ion-text-color);\n  --border-color: transparent;\n  --min-height: 56px;\n  padding: 0 10px;\n}\nion-content[_ngcontent-%COMP%] {\n  --background: var(--ion-background-color);\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  overflow-y: auto;\n}\nion-content[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%] {\n  width: 100%;\n  display: flex;\n  margin-bottom: 10px;\n}\nion-content[_ngcontent-%COMP%]    > div.justify-end[_ngcontent-%COMP%] {\n  justify-content: flex-end;\n}\nion-content[_ngcontent-%COMP%]    > div.justify-start[_ngcontent-%COMP%] {\n  justify-content: flex-start;\n}\nion-content[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%] {\n  padding: 10px 15px;\n  border-radius: 20px;\n  max-width: 80%;\n  word-wrap: break-word;\n  color: var(--ion-text-color);\n}\n.user-message-bubble[_ngcontent-%COMP%] {\n  background: var(--ion-color-primary);\n  color: var(--ion-color-primary-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border-bottom-right-radius: 5px;\n  margin-right: 10px;\n}\n.assistant-message-bubble[_ngcontent-%COMP%] {\n  background: var(--ion-color-success);\n  color: var(--ion-color-success-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border: 1px solid var(--ion-color-step-300);\n  border-bottom-left-radius: 5px;\n  margin-left: 10px;\n}\n.chat-message-content[_ngcontent-%COMP%] {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n.chat-message-content[_ngcontent-%COMP%]   pre[_ngcontent-%COMP%] {\n  white-space: pre-wrap;\n  word-break: break-all;\n  background-color: var(--ion-color-step-200);\n  padding: 8px;\n  border-radius: 5px;\n  color: var(--ion-text-color);\n}\n.chat-message-content[_ngcontent-%COMP%]   table[_ngcontent-%COMP%] {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n.chat-message-content[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.chat-message-content[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid var(--ion-color-step-300);\n  color: var(--ion-text-color);\n}\n.chat-message-content[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  max-width: 100%;\n  height: auto;\n  border-radius: 8px;\n}\n.ion-content[_ngcontent-%COMP%]    > .flex.justify-center[_ngcontent-%COMP%] {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\nion-textarea[_ngcontent-%COMP%] {\n  --padding-start: 10px;\n  --padding-end: 10px;\n  --padding-top: 10px;\n  --padding-bottom: 10px;\n  --background: var(--ion-background-color);\n  border-radius: 20px;\n  color: var(--ion-text-color);\n  min-height: 40px;\n  max-height: 150px;\n  overflow-y: auto;\n  font-size: 1rem;\n  --placeholder-color: rgba(var(--ion-text-color-rgb), 0.5);\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 8px;\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\nion-button[_ngcontent-%COMP%] {\n  --background: var(--ion-color-tertiary);\n  --background-activated: var(--ion-color-tertiary-tint);\n  --border-radius: 20px;\n  height: 40px;\n  font-size: 1rem;\n  margin-left: 10px;\n  text-transform: none;\n  color: var(--ion-color-tertiary-contrast);\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 8px;\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}'] });
+  ], styles: ['\n\n[_nghost-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  min-height: 100vh;\n  font-family: "Inter", sans-serif;\n  color: var(--ion-text-color);\n}\nion-header[_ngcontent-%COMP%], \nion-footer[_ngcontent-%COMP%] {\n  box-shadow: none !important;\n}\nion-toolbar[_ngcontent-%COMP%] {\n  --background: var(--ion-background-color);\n  --color: var(--ion-text-color);\n  --border-color: transparent;\n  --min-height: 56px;\n  padding: 0 10px;\n}\nion-content[_ngcontent-%COMP%] {\n  --background: var(--ion-background-color);\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  overflow-y: auto;\n}\nion-content[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%] {\n  width: 100%;\n  display: flex;\n  margin-bottom: 10px;\n}\nion-content[_ngcontent-%COMP%]    > div.justify-end[_ngcontent-%COMP%] {\n  justify-content: flex-end;\n}\nion-content[_ngcontent-%COMP%]    > div.justify-start[_ngcontent-%COMP%] {\n  justify-content: flex-start;\n}\nion-content[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%] {\n  padding: 10px 15px;\n  border-radius: 20px;\n  max-width: 80%;\n  word-wrap: break-word;\n  color: var(--ion-text-color);\n}\n.user-message-bubble[_ngcontent-%COMP%] {\n  background: var(--ion-color-primary);\n  color: var(--ion-color-primary-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border-bottom-right-radius: 5px;\n  margin-right: 10px;\n}\n.assistant-message-bubble[_ngcontent-%COMP%] {\n  background: var(--ion-color-success);\n  color: var(--ion-color-success-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border: 1px solid var(--ion-color-step-300);\n  border-bottom-left-radius: 5px;\n  margin-left: 10px;\n}\n.chat-message-content[_ngcontent-%COMP%] {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n.chat-message-content[_ngcontent-%COMP%]   pre[_ngcontent-%COMP%] {\n  white-space: pre-wrap;\n  word-break: break-all;\n  background-color: var(--ion-color-step-200);\n  padding: 8px;\n  border-radius: 5px;\n  color: var(--ion-text-color);\n}\n.chat-message-content[_ngcontent-%COMP%]   table[_ngcontent-%COMP%] {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n.chat-message-content[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.chat-message-content[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid var(--ion-color-step-300);\n  color: var(--ion-text-color);\n}\n.chat-message-content[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  max-width: 100%;\n  height: auto;\n  border-radius: 8px;\n}\n.ion-content[_ngcontent-%COMP%]    > .flex.justify-center[_ngcontent-%COMP%] {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\nion-textarea[_ngcontent-%COMP%] {\n  --padding-start: 10px;\n  --padding-end: 10px;\n  --padding-top: 10px;\n  --padding-bottom: 10px;\n  --background: var(--ion-background-color);\n  border-radius: 20px;\n  color: var(--ion-text-color);\n  min-height: 40px;\n  max-height: 150px;\n  overflow-y: auto;\n  font-size: 1rem;\n  --placeholder-color: rgba(var(--ion-text-color-rgb), 0.5);\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 8px;\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\nion-button[_ngcontent-%COMP%] {\n  --background: var(--ion-color-tertiary);\n  --background-activated: var(--ion-color-tertiary-tint);\n  --border-radius: 20px;\n  height: 40px;\n  font-size: 1rem;\n  margin-left: 10px;\n  text-transform: none;\n  color: var(--ion-color-tertiary-contrast);\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 8px;\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\n/*# sourceMappingURL=chat.css.map */'] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ChatComponent, [{
@@ -1117,7 +1153,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
       </ion-button>
     </div>
   </ion-toolbar>
-</ion-footer>`, styles: ['/* src/app/chat/chat.css */\n:host {\n  display: flex;\n  flex-direction: column;\n  min-height: 100vh;\n  font-family: "Inter", sans-serif;\n  color: var(--ion-text-color);\n}\nion-header,\nion-footer {\n  box-shadow: none !important;\n}\nion-toolbar {\n  --background: var(--ion-background-color);\n  --color: var(--ion-text-color);\n  --border-color: transparent;\n  --min-height: 56px;\n  padding: 0 10px;\n}\nion-content {\n  --background: var(--ion-background-color);\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  overflow-y: auto;\n}\nion-content > div {\n  width: 100%;\n  display: flex;\n  margin-bottom: 10px;\n}\nion-content > div.justify-end {\n  justify-content: flex-end;\n}\nion-content > div.justify-start {\n  justify-content: flex-start;\n}\nion-content > div > div {\n  padding: 10px 15px;\n  border-radius: 20px;\n  max-width: 80%;\n  word-wrap: break-word;\n  color: var(--ion-text-color);\n}\n.user-message-bubble {\n  background: var(--ion-color-primary);\n  color: var(--ion-color-primary-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border-bottom-right-radius: 5px;\n  margin-right: 10px;\n}\n.assistant-message-bubble {\n  background: var(--ion-color-success);\n  color: var(--ion-color-success-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border: 1px solid var(--ion-color-step-300);\n  border-bottom-left-radius: 5px;\n  margin-left: 10px;\n}\n.chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n.chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n  background-color: var(--ion-color-step-200);\n  padding: 8px;\n  border-radius: 5px;\n  color: var(--ion-text-color);\n}\n.chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n.chat-message-content th,\n.chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid var(--ion-color-step-300);\n  color: var(--ion-text-color);\n}\n.chat-message-content img {\n  max-width: 100%;\n  height: auto;\n  border-radius: 8px;\n}\n.ion-content > .flex.justify-center {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\nion-textarea {\n  --padding-start: 10px;\n  --padding-end: 10px;\n  --padding-top: 10px;\n  --padding-bottom: 10px;\n  --background: var(--ion-background-color);\n  border-radius: 20px;\n  color: var(--ion-text-color);\n  min-height: 40px;\n  max-height: 150px;\n  overflow-y: auto;\n  font-size: 1rem;\n  --placeholder-color: rgba(var(--ion-text-color-rgb), 0.5);\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar {\n  width: 8px;\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\nion-button {\n  --background: var(--ion-color-tertiary);\n  --background-activated: var(--ion-color-tertiary-tint);\n  --border-radius: 20px;\n  height: 40px;\n  font-size: 1rem;\n  margin-left: 10px;\n  text-transform: none;\n  color: var(--ion-color-tertiary-contrast);\n}\n.custom-scrollbar::-webkit-scrollbar {\n  width: 8px;\n}\n.custom-scrollbar::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\n.custom-scrollbar::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\n'] }]
+</ion-footer>`, styles: ['/* src/app/chat/chat.css */\n:host {\n  display: flex;\n  flex-direction: column;\n  min-height: 100vh;\n  font-family: "Inter", sans-serif;\n  color: var(--ion-text-color);\n}\nion-header,\nion-footer {\n  box-shadow: none !important;\n}\nion-toolbar {\n  --background: var(--ion-background-color);\n  --color: var(--ion-text-color);\n  --border-color: transparent;\n  --min-height: 56px;\n  padding: 0 10px;\n}\nion-content {\n  --background: var(--ion-background-color);\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  overflow-y: auto;\n}\nion-content > div {\n  width: 100%;\n  display: flex;\n  margin-bottom: 10px;\n}\nion-content > div.justify-end {\n  justify-content: flex-end;\n}\nion-content > div.justify-start {\n  justify-content: flex-start;\n}\nion-content > div > div {\n  padding: 10px 15px;\n  border-radius: 20px;\n  max-width: 80%;\n  word-wrap: break-word;\n  color: var(--ion-text-color);\n}\n.user-message-bubble {\n  background: var(--ion-color-primary);\n  color: var(--ion-color-primary-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border-bottom-right-radius: 5px;\n  margin-right: 10px;\n}\n.assistant-message-bubble {\n  background: var(--ion-color-success);\n  color: var(--ion-color-success-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border: 1px solid var(--ion-color-step-300);\n  border-bottom-left-radius: 5px;\n  margin-left: 10px;\n}\n.chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n.chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n  background-color: var(--ion-color-step-200);\n  padding: 8px;\n  border-radius: 5px;\n  color: var(--ion-text-color);\n}\n.chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n.chat-message-content th,\n.chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid var(--ion-color-step-300);\n  color: var(--ion-text-color);\n}\n.chat-message-content img {\n  max-width: 100%;\n  height: auto;\n  border-radius: 8px;\n}\n.ion-content > .flex.justify-center {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\nion-textarea {\n  --padding-start: 10px;\n  --padding-end: 10px;\n  --padding-top: 10px;\n  --padding-bottom: 10px;\n  --background: var(--ion-background-color);\n  border-radius: 20px;\n  color: var(--ion-text-color);\n  min-height: 40px;\n  max-height: 150px;\n  overflow-y: auto;\n  font-size: 1rem;\n  --placeholder-color: rgba(var(--ion-text-color-rgb), 0.5);\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar {\n  width: 8px;\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\nion-button {\n  --background: var(--ion-color-tertiary);\n  --background-activated: var(--ion-color-tertiary-tint);\n  --border-radius: 20px;\n  height: 40px;\n  font-size: 1rem;\n  margin-left: 10px;\n  text-transform: none;\n  color: var(--ion-color-tertiary-contrast);\n}\n.custom-scrollbar::-webkit-scrollbar {\n  width: 8px;\n}\n.custom-scrollbar::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\n.custom-scrollbar::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\n/*# sourceMappingURL=chat.css.map */\n'] }]
   }], () => [{ type: AiService }, { type: AuthService }, { type: DatabaseService }, { type: CaseService }, { type: AnnouncementService }, { type: ChangeDetectorRef }, { type: Router }], { chatContainer: [{
     type: ViewChild,
     args: ["chatContainer", { static: false }]
@@ -1135,7 +1171,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-AXOR3WFY.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-WC7REJAZ.js").then((m) => m.AdminModule)
   }
 ];
 
@@ -1150,11 +1186,13 @@ var appConfig = {
 
 // src/app/app.ts
 var AppComponent = class _AppComponent {
+  databaseService;
+  aiService;
+  title = "welfare-super";
   constructor(databaseService, aiService) {
     this.databaseService = databaseService;
     this.aiService = aiService;
   }
-  title = "welfare-super";
   ngOnInit() {
   }
   static \u0275fac = function AppComponent_Factory(__ngFactoryType__) {
@@ -1166,12 +1204,12 @@ var AppComponent = class _AppComponent {
       \u0275\u0275element(1, "ion-router-outlet");
       \u0275\u0275elementEnd();
     }
-  }, dependencies: [RouterModule, CommonModule, IonicModule, IonApp, IonRouterOutlet], styles: ['\n\n[_nghost-%COMP%] {\n  display: block;\n  min-height: 100vh;\n  background-size: cover;\n  background-position: center;\n  font-family: "Inter", sans-serif;\n}\n.glass-container[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.1);\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);\n}\n.glass-card[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(255, 255, 255, 0.15);\n}\n[_nghost-%COMP%]  .chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n[_nghost-%COMP%]  .chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n}\n[_nghost-%COMP%]  .chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n[_nghost-%COMP%]  .chat-message-content th, \n[_nghost-%COMP%]  .chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid rgba(255, 255, 255, 0.2);\n}\n[_nghost-%COMP%]  .chat-message-content img {\n  max-width: 100%;\n  height: auto;\n}\n.user-message-bubble[_ngcontent-%COMP%] {\n  background: rgba(0, 123, 255, 0.3);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(0, 123, 255, 0.25);\n}\n.glass-input[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.15);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n  border: 1px solid rgba(255, 255, 255, 0.2);\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);\n  color: white;\n}\n.glass-input[_ngcontent-%COMP%]::placeholder {\n  color: rgba(255, 255, 255, 0.7);\n}\n.glass-button[_ngcontent-%COMP%] {\n  background: rgba(76, 175, 80, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(76, 175, 80, 0.3);\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);\n}\n.glass-button[_ngcontent-%COMP%]:hover {\n  background: rgba(76, 175, 80, 0.3);\n}\n.log-container-plan[_ngcontent-%COMP%], \n.log-container-execution[_ngcontent-%COMP%] {\n  max-height: 60vh;\n}\n@media (max-width: 768px) {\n  .log-container-plan[_ngcontent-%COMP%], \n   .log-container-execution[_ngcontent-%COMP%] {\n    max-height: 30vh;\n  }\n}'] });
+  }, dependencies: [RouterModule, CommonModule, IonicModule, IonApp, IonRouterOutlet], styles: ['\n\n[_nghost-%COMP%] {\n  display: block;\n  min-height: 100vh;\n  background-size: cover;\n  background-position: center;\n  font-family: "Inter", sans-serif;\n}\n.glass-container[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.1);\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);\n}\n.glass-card[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(255, 255, 255, 0.15);\n}\n[_nghost-%COMP%]  .chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n[_nghost-%COMP%]  .chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n}\n[_nghost-%COMP%]  .chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n[_nghost-%COMP%]  .chat-message-content th, \n[_nghost-%COMP%]  .chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid rgba(255, 255, 255, 0.2);\n}\n[_nghost-%COMP%]  .chat-message-content img {\n  max-width: 100%;\n  height: auto;\n}\n.user-message-bubble[_ngcontent-%COMP%] {\n  background: rgba(0, 123, 255, 0.3);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(0, 123, 255, 0.25);\n}\n.glass-input[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.15);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n  border: 1px solid rgba(255, 255, 255, 0.2);\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);\n  color: white;\n}\n.glass-input[_ngcontent-%COMP%]::placeholder {\n  color: rgba(255, 255, 255, 0.7);\n}\n.glass-button[_ngcontent-%COMP%] {\n  background: rgba(76, 175, 80, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(76, 175, 80, 0.3);\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);\n}\n.glass-button[_ngcontent-%COMP%]:hover {\n  background: rgba(76, 175, 80, 0.3);\n}\n.log-container-plan[_ngcontent-%COMP%], \n.log-container-execution[_ngcontent-%COMP%] {\n  max-height: 60vh;\n}\n@media (max-width: 768px) {\n  .log-container-plan[_ngcontent-%COMP%], \n   .log-container-execution[_ngcontent-%COMP%] {\n    max-height: 30vh;\n  }\n}\n/*# sourceMappingURL=app.css.map */'] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AppComponent, [{
     type: Component,
-    args: [{ selector: "app-root", standalone: true, imports: [RouterModule, CommonModule, IonicModule], template: "<ion-app>\n  <ion-router-outlet></ion-router-outlet>\n</ion-app>\n", styles: ['/* src/app/app.css */\n:host {\n  display: block;\n  min-height: 100vh;\n  background-size: cover;\n  background-position: center;\n  font-family: "Inter", sans-serif;\n}\n.glass-container {\n  background: rgba(255, 255, 255, 0.1);\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);\n}\n.glass-card {\n  background: rgba(255, 255, 255, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(255, 255, 255, 0.15);\n}\n:host::ng-deep .chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n:host::ng-deep .chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n}\n:host::ng-deep .chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n:host::ng-deep .chat-message-content th,\n:host::ng-deep .chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid rgba(255, 255, 255, 0.2);\n}\n:host::ng-deep .chat-message-content img {\n  max-width: 100%;\n  height: auto;\n}\n.user-message-bubble {\n  background: rgba(0, 123, 255, 0.3);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(0, 123, 255, 0.25);\n}\n.glass-input {\n  background: rgba(255, 255, 255, 0.15);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n  border: 1px solid rgba(255, 255, 255, 0.2);\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);\n  color: white;\n}\n.glass-input::placeholder {\n  color: rgba(255, 255, 255, 0.7);\n}\n.glass-button {\n  background: rgba(76, 175, 80, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(76, 175, 80, 0.3);\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);\n}\n.glass-button:hover {\n  background: rgba(76, 175, 80, 0.3);\n}\n.log-container-plan,\n.log-container-execution {\n  max-height: 60vh;\n}\n@media (max-width: 768px) {\n  .log-container-plan,\n  .log-container-execution {\n    max-height: 30vh;\n  }\n}\n'] }]
+    args: [{ selector: "app-root", standalone: true, imports: [RouterModule, CommonModule, IonicModule], template: "<ion-app>\n  <ion-router-outlet></ion-router-outlet>\n</ion-app>\n", styles: ['/* src/app/app.css */\n:host {\n  display: block;\n  min-height: 100vh;\n  background-size: cover;\n  background-position: center;\n  font-family: "Inter", sans-serif;\n}\n.glass-container {\n  background: rgba(255, 255, 255, 0.1);\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);\n}\n.glass-card {\n  background: rgba(255, 255, 255, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(255, 255, 255, 0.15);\n}\n:host::ng-deep .chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n:host::ng-deep .chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n}\n:host::ng-deep .chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n:host::ng-deep .chat-message-content th,\n:host::ng-deep .chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid rgba(255, 255, 255, 0.2);\n}\n:host::ng-deep .chat-message-content img {\n  max-width: 100%;\n  height: auto;\n}\n.user-message-bubble {\n  background: rgba(0, 123, 255, 0.3);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(0, 123, 255, 0.25);\n}\n.glass-input {\n  background: rgba(255, 255, 255, 0.15);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n  border: 1px solid rgba(255, 255, 255, 0.2);\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);\n  color: white;\n}\n.glass-input::placeholder {\n  color: rgba(255, 255, 255, 0.7);\n}\n.glass-button {\n  background: rgba(76, 175, 80, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(76, 175, 80, 0.3);\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);\n}\n.glass-button:hover {\n  background: rgba(76, 175, 80, 0.3);\n}\n.log-container-plan,\n.log-container-execution {\n  max-height: 60vh;\n}\n@media (max-width: 768px) {\n  .log-container-plan,\n  .log-container-execution {\n    max-height: 30vh;\n  }\n}\n/*# sourceMappingURL=app.css.map */\n'] }]
   }], () => [{ type: DatabaseService }, { type: AiService }], null);
 })();
 (() => {
@@ -3560,3 +3598,13 @@ patchBrowser(Zone$1);
 
 // src/main.ts
 bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err));
+/*! Bundled license information:
+
+zone.js/fesm2015/zone.js:
+  (**
+   * @license Angular v<unknown>
+   * (c) 2010-2025 Google LLC. https://angular.io/
+   * License: MIT
+   *)
+*/
+//# sourceMappingURL=main.js.map
