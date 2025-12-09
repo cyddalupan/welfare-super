@@ -44,7 +44,23 @@
           },
           "configurations": {
             "production": {
-              "optimization": false
+              "optimization": {
+                "scripts": false,
+                "styles": true,
+                "fonts": true
+              },
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2MB",
+                  "maximumError": "5MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ]
             },
             "development": {
               "optimization": false,
