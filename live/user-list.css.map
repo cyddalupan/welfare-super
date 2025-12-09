@@ -1,7 +1,7 @@
 {
   "version": 3,
-  "sources": [],
-  "sourcesContent": [],
-  "mappings": "",
+  "sources": ["src/app/admin/pages/user-list/user-list.css"],
+  "sourcesContent": [".user-item-row {\n  display: flex;\n  align-items: center;\n  /* Add some spacing below each item */\n  margin-bottom: 8px;\n}\n\n.user-item-row ion-label {\n  flex-grow: 1; /* Allow label to take up remaining space */\n  margin-right: 10px; /* Space between label and buttons */\n}\n\n.user-item-row ion-label h2,\n.user-item-row ion-label p {\n  white-space: nowrap; /* Prevent text wrapping */\n  overflow: hidden; /* Hide overflow content */\n  text-overflow: ellipsis; /* Show ellipsis for overflow */\n}\n\n.user-item-row ion-buttons {\n  flex-shrink: 0; /* Prevent buttons from shrinking */\n  display: flex;\n  align-items: center;\n}\n\n/* Ensure icons within ion-buttons are properly spaced */\n.user-item-row ion-buttons ion-button {\n  --padding-start: 5px;\n  --padding-end: 5px;\n}"],
+  "mappings": ";AAAA,CAAC;AACC,WAAS;AACT,eAAa;AAEb,iBAAe;AACjB;AAEA,CAPC,cAOc;AACb,aAAW;AACX,gBAAc;AAChB;AAEA,CAZC,cAYc,UAAU;AACzB,CAbC,cAac,UAAU;AACvB,eAAa;AACb,YAAU;AACV,iBAAe;AACjB;AAEA,CAnBC,cAmBc;AACb,eAAa;AACb,WAAS;AACT,eAAa;AACf;AAGA,CA1BC,cA0Bc,YAAY;AACzB,mBAAiB;AACjB,iBAAe;AACjB;",
   "names": []
 }

@@ -1,0 +1,32 @@
+.form-group {
+  margin-bottom: 1rem; /* Equivalent to mb-4 in Tailwind */
+}
+
+.form-label {
+  display: block;
+  color: var(--ion-text-color, #fff); /* Use Ionic text color for theme awareness */
+  font-size: 0.875rem; /* Equivalent to text-sm */
+  font-weight: bold;
+  margin-bottom: 0.5rem; /* Equivalent to mb-2 */
+}
+
+.form-field {
+  background: rgba(255, 255, 255, 0.15); /* Derived from glass-input in app.css */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: var(--ion-text-color, #fff);
+  padding: 0.5rem 0.75rem; /* Equivalent to px-3 py-2 */
+  border-radius: 0.5rem; /* Equivalent to rounded-lg */
+  width: 100%; /* Equivalent to w-full */
+}
+
+.form-field::placeholder {
+  color: rgba(255, 255, 255, 0.7); /* Derived from glass-input::placeholder */
+}
+
+/* Adjust padding for ion-card to match the original div's padding */
+ion-card.glass-card {
+  padding: 2rem; /* Equivalent to p-8 in Tailwind */
+}

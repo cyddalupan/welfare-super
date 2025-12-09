@@ -61,7 +61,7 @@ The `npm run build` command handles the entire build process:
 This setup allows backend PHP files to persist in `live/api` across builds.
 
 Note: after code change build `npm run build` then push the code.
-**It is crucial to confirm that the code changes work as expected after modification. This involves building the application and thoroughly testing the implemented changes before pushing the code to the repository.**
+**It is crucial to confirm that the code changes work as expected after modification. This involves running `npm run build` to compile the application and copy the build artifacts to the `live/` directory. These `live/` directory contents, including the built files, must then be pushed to the repository as this is essential for deployment.**
 
 ### SPA Routing on Static Servers
 

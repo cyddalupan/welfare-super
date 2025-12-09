@@ -1,0 +1,77 @@
+ion-searchbar {
+  --background: rgba(255, 255, 255, 0.1); /* Slightly transparent background */
+  --color: var(--ion-text-color); /* Inherit text color from theme */
+  --placeholder-color: rgba(var(--ion-text-color-rgb), 0.7); /* Adjust placeholder for contrast */
+  --border-radius: 10px; /* Rounded corners */
+  border: 1px solid var(--ion-color-step-300); /* Subtle border */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  margin: 10px; /* Add some margin around it */
+}
+
+/* Override for dark mode if necessary, though --ion-text-color should handle it */
+@media (prefers-color-scheme: dark) {
+  ion-searchbar {
+    --background: rgba(0, 0, 0, 0.2); /* Darker transparent background for dark mode */
+  }
+}
+
+/* Styling for applicant list rows */
+.applicant-list-row {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem; /* Adjust padding for readability */
+  background: var(--ion-item-background, var(--ion-background-color)); /* Default background */
+  border-bottom: 1px solid var(--ion-color-step-150);
+}
+
+/* Hover and Focus states for ion-item */
+ion-item.applicant-list-row {
+  --background-hover: rgba(var(--ion-color-primary-rgb), 0.1); /* Subtle hover effect */
+  --background-focused: rgba(var(--ion-color-primary-rgb), 0.15); /* Subtle focus effect */
+}
+
+/* Column distribution for headers and items */
+ion-item-divider.applicant-list-row div,
+ion-item.applicant-list-row ion-label {
+  flex: 1; /* Distribute columns evenly */
+  overflow: hidden; /* Hide overflowing content */
+  text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+/* Specific column widths if needed, or let flex handle it */
+.col-name, .col-passport, .col-country, .col-status {
+  flex: 2; /* Allocate more space for these columns */
+}
+.col-actions {
+  flex: 1.5; /* Allocate space for actions */
+  text-align: right;
+}
+
+/* Text overflow for long content in ion-label */
+ion-item .applicant-info h2,
+ion-item .applicant-info p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Spacing for action buttons */
+.applicant-actions ion-button {
+  margin-left: 0.5rem; /* Space between buttons */
+  --padding-end: 0; /* Remove default ionic button padding */
+  --padding-start: 0; /* Remove default ionic button padding */
+}
+
+.applicant-actions ion-button i {
+  font-size: 1.2em; /* Adjust icon size */
+}
+
+/* Style for anchor tags used as buttons */
+.applicant-actions a {
+  margin-left: 0.5rem; /* Space between buttons */
+  color: var(--ion-color-primary); /* Use primary color for links */
+  font-size: 1.2em; /* Adjust icon size */
+  display: flex; /* Allow flex properties */
+  align-items: center; /* Center icon vertically */
+}

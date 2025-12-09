@@ -1,0 +1,38 @@
+.announcement-row {
+  display: flex;
+  align-items: center;
+  /* Adjust padding if needed, Ionic's default might be enough */
+}
+
+.announcement-row ion-label {
+  flex: 1; /* Distribute space evenly */
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden; /* Hide overflow content */
+  text-overflow: ellipsis; /* Show ellipsis for overflow */
+  padding-right: 10px; /* Add some spacing between columns */
+}
+
+.announcement-row ion-label:nth-child(1) { /* Message column */
+  flex: 3; /* Give more space to message */
+}
+
+.announcement-row ion-label:nth-child(2) { /* Active toggle column */
+  flex: 0 0 80px; /* Fixed width for toggle */
+  text-align: center;
+}
+
+.announcement-row ion-label:nth-child(3), /* Created At column */
+.announcement-row ion-label:nth-child(4) { /* Updated At column */
+  flex: 1.5; /* More space for dates */
+}
+
+.announcement-row ion-buttons { /* Actions column */
+  flex: 0 0 100px; /* Fixed width for actions */
+  justify-content: flex-end;
+}
+
+/* Ensure icons within ion-buttons are properly spaced */
+.announcement-row ion-buttons ion-button {
+  --padding-start: 5px;
+  --padding-end: 5px;
+}

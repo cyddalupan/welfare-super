@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/admin/pages/referral-list/referral-list.css"],
+  "sourcesContent": [".referral-row {\n  display: flex;\n  align-items: center;\n}\n\n.referral-row ion-label {\n  flex: 1; /* Distribute space evenly */\n  white-space: nowrap; /* Prevent text wrapping */\n  overflow: hidden; /* Hide overflow content */\n  text-overflow: ellipsis; /* Show ellipsis for overflow */\n  padding-right: 10px; /* Add some spacing between columns */\n}\n\n.referral-row ion-label:nth-child(1) { /* Name column */\n  flex: 2;\n}\n\n.referral-row ion-label:nth-child(2) { /* Contact column */\n  flex: 2;\n}\n\n.referral-row ion-label:nth-child(3) { /* Referred By column */\n  flex: 1.5;\n}\n\n.referral-row ion-buttons { /* Actions column */\n  flex: 0 0 100px; /* Fixed width for actions */\n  justify-content: flex-end;\n}\n\n/* Ensure icons within ion-buttons are properly spaced */\n.referral-row ion-buttons ion-button {\n  --padding-start: 5px;\n  --padding-end: 5px;\n}\n"],
+  "mappings": ";AAAA,CAAC;AACC,WAAS;AACT,eAAa;AACf;AAEA,CALC,aAKa;AACZ,QAAM;AACN,eAAa;AACb,YAAU;AACV,iBAAe;AACf,iBAAe;AACjB;AAEA,CAbC,aAaa,SAAS;AACrB,QAAM;AACR;AAEA,CAjBC,aAiBa,SAAS;AACrB,QAAM;AACR;AAEA,CArBC,aAqBa,SAAS;AACrB,QAAM;AACR;AAEA,CAzBC,aAyBa;AACZ,QAAM,EAAE,EAAE;AACV,mBAAiB;AACnB;AAGA,CA/BC,aA+Ba,YAAY;AACxB,mBAAiB;AACjB,iBAAe;AACjB;",
+  "names": []
+}

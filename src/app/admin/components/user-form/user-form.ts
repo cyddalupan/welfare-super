@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
-import { IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonItem, IonInput, IonSelect, IonSelectOption, IonButton } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonItem, IonInput, IonSelect, IonSelectOption, IonButton, IonCard, IonCardContent } from '@ionic/angular/standalone';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminUsersService } from '../../services/admin-users.service';
 
@@ -11,7 +11,7 @@ import { AdminUsersService } from '../../services/admin-users.service';
   templateUrl: './user-form.html',
   styleUrls: ['./user-form.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonItem, IonInput, IonSelect, IonSelectOption, IonButton],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonItem, IonInput, IonSelect, IonSelectOption, IonButton, IonCard, IonCardContent],
 })
 export class UserFormComponent implements OnInit {
   userId: number | null = null;

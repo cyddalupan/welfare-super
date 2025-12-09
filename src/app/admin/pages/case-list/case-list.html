@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="glass-toolbar">
     <ion-title>Cases</ion-title>
     <ion-buttons slot="end">
               <ion-button routerLink="/admin/cases/new">
@@ -18,7 +18,7 @@
   </div>
 
   <ion-list *ngIf="!isLoading">
-    <ion-item-divider>
+    <ion-item-divider class="case-row">
       <ion-label (click)="sort('employee_name')">Employee <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label (click)="sort('category')">Category <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label (click)="sort('report_status')">Status <i class="fa-solid fa-arrows-up-down"></i></ion-label>
@@ -26,7 +26,7 @@
       <ion-label class="ion-text-right">Actions</ion-label>
     </ion-item-divider>
 
-    <ion-item *ngFor="let caseItem of filteredCases">
+    <ion-item class="case-row" *ngFor="let caseItem of filteredCases">
       <ion-label>
         <h2>{{ caseItem.employee_name }}</h2>
         <p>{{ caseItem.category }}</p>

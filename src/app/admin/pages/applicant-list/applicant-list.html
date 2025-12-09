@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="glass-toolbar">
     <ion-title>Applicants</ion-title>
     <ion-buttons slot="end">
               <ion-button routerLink="/admin/applicants/new">
@@ -18,24 +18,26 @@
   </div>
 
   <ion-list *ngIf="!isLoading">
-    <ion-item-divider>
-      <ion-label (click)="sort('last_name')">Name <i class="fa-solid fa-arrows-up-down"></i></ion-label>
-      <ion-label (click)="sort('passport_number')">Passport <i class="fa-solid fa-arrows-up-down"></i></ion-label>
-      <ion-label (click)="sort('country')">Country <i class="fa-solid fa-arrows-up-down"></i></ion-label>
-      <ion-label (click)="sort('main_status')">Status <i class="fa-solid fa-arrows-up-down"></i></ion-label>
-      <ion-label class="ion-text-right">Actions</ion-label>
+    <ion-item-divider class="applicant-list-row">
+      <div class="col-name"><ion-label (click)="sort('last_name')">Name <i class="fa-solid fa-arrows-up-down"></i></ion-label></div>
+      <div class="col-passport"><ion-label (click)="sort('passport_number')">Passport <i class="fa-solid fa-arrows-up-down"></i></ion-label></div>
+      <div class="col-country"><ion-label (click)="sort('country')">Country <i class="fa-solid fa-arrows-up-down"></i></ion-label></div>
+      <div class="col-status"><ion-label (click)="sort('main_status')">Status <i class="fa-solid fa-arrows-up-down"></i></ion-label></div>
+      <div class="col-actions ion-text-right"><ion-label>Actions</ion-label></div>
     </ion-item-divider>
 
-    <ion-item *ngFor="let app of filteredApplicants">
+    <ion-item *ngFor="let app of filteredApplicants" class="applicant-list-row">
       <ion-label>
-        <h2>{{ app.last_name }}, {{ app.first_name }}</h2>
-        <p>{{ app.passport_number }}</p>
-        <p>{{ app.country }}</p>
+        <div class="applicant-info">
+          <h2>{{ app.last_name }}, {{ app.first_name }}</h2>
+          <p>{{ app.passport_number }}</p>
+          <p>{{ app.country }}</p>
+        </div>
       </ion-label>
       <ion-badge slot="end" [color]="app.main_status === 'active' ? 'success' : (app.main_status === 'with_complain' ? 'warning' : 'danger')">
         {{ app.main_status }}
       </ion-badge>
-      <ion-buttons slot="end">
+      <ion-buttons slot="end" class="applicant-actions">
         <ion-button [routerLink]="['/admin/applicants/edit', app.id]" fill="clear">
           <i class="fa-solid fa-pen-to-square"></i>
         </ion-button>

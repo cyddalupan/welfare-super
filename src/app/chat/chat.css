@@ -22,14 +22,7 @@ ion-toolbar {
   padding: 0 10px;
 }
 
-/* Remove glass-toolbar as it's no longer needed for theming */
-/* .glass-toolbar {
-  background: var(--ion-toolbar-background, var(--ion-background-color));
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--ion-color-step-150);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  color: var(--ion-text-color);
-} */
+
 
 ion-content {
   --background: var(--ion-background-color);

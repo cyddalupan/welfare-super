@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="glass-toolbar">
     <ion-title>Applicants with Complaints</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -13,7 +13,7 @@
   </div>
 
   <ion-list *ngIf="!isLoading">
-    <ion-item-divider>
+    <ion-item-divider class="applicant-complaints-row">
       <ion-label (click)="sort('last_name')">Name <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label (click)="sort('passport_number')">Passport <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label (click)="sort('country')">Country <i class="fa-solid fa-arrows-up-down"></i></ion-label>
@@ -21,7 +21,7 @@
       <ion-label class="ion-text-right">Actions</ion-label>
     </ion-item-divider>
 
-    <ion-item *ngFor="let app of filteredApplicants">
+    <ion-item class="applicant-complaints-row" *ngFor="let app of filteredApplicants">
       <ion-label>
         <h2>{{ app.last_name }}, {{ app.first_name }}</h2>
         <p>{{ app.passport_number }}</p>

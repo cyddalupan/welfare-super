@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="glass-toolbar">
     <ion-title>Referrals</ion-title>
     <ion-buttons slot="end">
               <ion-button routerLink="/admin/referrals/new">
@@ -18,14 +18,14 @@
   </div>
 
   <ion-list *ngIf="!isLoading">
-    <ion-item-divider>
+    <ion-item-divider class="referral-row">
       <ion-label (click)="sort('name')">Name <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label (click)="sort('contact')">Contact <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label (click)="sort('referred_by')">Referred By <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label class="ion-text-right">Actions</ion-label>
     </ion-item-divider>
 
-    <ion-item *ngFor="let referral of filteredReferrals">
+    <ion-item class="referral-row" *ngFor="let referral of filteredReferrals">
       <ion-label>
         <h2>{{ referral.name }}</h2>
         <p>{{ referral.contact }}</p>

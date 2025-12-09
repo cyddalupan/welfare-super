@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/admin/pages/fra-list/fra-list.css"],
+  "sourcesContent": [".fra-row {\n  display: flex;\n  align-items: center;\n}\n\n.fra-row ion-label {\n  flex: 1; /* Distribute space evenly */\n  white-space: nowrap; /* Prevent text wrapping */\n  overflow: hidden; /* Hide overflow content */\n  text-overflow: ellipsis; /* Show ellipsis for overflow */\n  padding-right: 10px; /* Add some spacing between columns */\n}\n\n.fra-row ion-label:nth-child(1) { /* Name column */\n  flex: 2;\n}\n\n.fra-row ion-label:nth-child(2) { /* Contact column */\n  flex: 2;\n}\n\n.fra-row ion-label:nth-child(3) { /* Country column */\n  flex: 1.5;\n}\n\n.fra-row ion-buttons { /* Actions column */\n  flex: 0 0 100px; /* Fixed width for actions */\n  justify-content: flex-end;\n}\n\n/* Ensure icons within ion-buttons are properly spaced */\n.fra-row ion-buttons ion-button {\n  --padding-start: 5px;\n  --padding-end: 5px;\n}\n"],
+  "mappings": ";AAAA,CAAC;AACC,WAAS;AACT,eAAa;AACf;AAEA,CALC,QAKQ;AACP,QAAM;AACN,eAAa;AACb,YAAU;AACV,iBAAe;AACf,iBAAe;AACjB;AAEA,CAbC,QAaQ,SAAS;AAChB,QAAM;AACR;AAEA,CAjBC,QAiBQ,SAAS;AAChB,QAAM;AACR;AAEA,CArBC,QAqBQ,SAAS;AAChB,QAAM;AACR;AAEA,CAzBC,QAyBQ;AACP,QAAM,EAAE,EAAE;AACV,mBAAiB;AACnB;AAGA,CA/BC,QA+BQ,YAAY;AACnB,mBAAiB;AACjB,iBAAe;AACjB;",
+  "names": []
+}

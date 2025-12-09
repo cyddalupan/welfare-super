@@ -1,1 +1,30 @@
-/* Add any specific styles for user-list here */
+.user-item-row {
+  display: flex;
+  align-items: center;
+  /* Add some spacing below each item */
+  margin-bottom: 8px;
+}
+
+.user-item-row ion-label {
+  flex-grow: 1; /* Allow label to take up remaining space */
+  margin-right: 10px; /* Space between label and buttons */
+}
+
+.user-item-row ion-label h2,
+.user-item-row ion-label p {
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden; /* Hide overflow content */
+  text-overflow: ellipsis; /* Show ellipsis for overflow */
+}
+
+.user-item-row ion-buttons {
+  flex-shrink: 0; /* Prevent buttons from shrinking */
+  display: flex;
+  align-items: center;
+}
+
+/* Ensure icons within ion-buttons are properly spaced */
+.user-item-row ion-buttons ion-button {
+  --padding-start: 5px;
+  --padding-end: 5px;
+}

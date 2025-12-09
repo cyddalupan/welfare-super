@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="glass-toolbar">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -19,7 +19,7 @@
   </div>
 
   <ion-list *ngIf="!isLoading">
-    <ion-item *ngFor="let user of users">
+    <ion-item class="user-item-row" *ngFor="let user of users">
       <ion-label>
         <h2>{{ user.full_name }}</h2>
         <p>{{ user.email }} - {{ user.user_type }}</p>

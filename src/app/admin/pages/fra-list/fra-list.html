@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="glass-toolbar">
     <ion-title>Foreign Recruitment Agencies</ion-title>
     <ion-buttons slot="end">
               <ion-button routerLink="/admin/fras/new">
@@ -18,14 +18,14 @@
   </div>
 
   <ion-list *ngIf="!isLoading">
-    <ion-item-divider>
+    <ion-item-divider class="fra-row">
       <ion-label (click)="sort('name')">Name <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label (click)="sort('contact')">Contact <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label (click)="sort('country')">Country <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label class="ion-text-right">Actions</ion-label>
     </ion-item-divider>
 
-    <ion-item *ngFor="let fra of filteredFras">
+    <ion-item class="fra-row" *ngFor="let fra of filteredFras">
       <ion-label>
         <h2>{{ fra.name }}</h2>
         <p>{{ fra.contact }}</p>

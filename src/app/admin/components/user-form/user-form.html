@@ -7,43 +7,47 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <form [formGroup]="userForm" (ngSubmit)="saveUser()">
-    <ion-item>
-      <ion-input label="Full Name" type="text" formControlName="full_name" placeholder="Enter full name"></ion-input>
-    </ion-item>
-    <div *ngIf="userForm.get('full_name')?.invalid && userForm.get('full_name')?.touched" class="ion-padding-start ion-text-danger">
-      <span *ngIf="userForm.get('full_name')?.errors?.['required']">Full Name is required.</span>
-      <span *ngIf="userForm.get('full_name')?.errors?.['maxlength']">Full Name cannot exceed 255 characters.</span>
-    </div>
+<ion-content>
+  <ion-card class="glass-card ion-margin">
+    <ion-card-content>
+      <form [formGroup]="userForm" (ngSubmit)="saveUser()">
+        <ion-item>
+          <ion-input label="Full Name" type="text" formControlName="full_name" placeholder="Enter full name"></ion-input>
+        </ion-item>
+        <div *ngIf="userForm.get('full_name')?.invalid && userForm.get('full_name')?.touched" class="ion-padding-start ion-text-danger">
+          <span *ngIf="userForm.get('full_name')?.errors?.['required']">Full Name is required.</span>
+          <span *ngIf="userForm.get('full_name')?.errors?.['maxlength']">Full Name cannot exceed 255 characters.</span>
+        </div>
 
-    <ion-item>
-      <ion-input label="Email" type="email" formControlName="email" placeholder="Enter email"></ion-input>
-    </ion-item>
-    <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="ion-padding-start ion-text-danger">
-      <span *ngIf="userForm.get('email')?.errors?.['required']">Email is required.</span>
-      <span *ngIf="userForm.get('email')?.errors?.['email']">Please enter a valid email.</span>
-      <span *ngIf="userForm.get('email')?.errors?.['maxlength']">Email cannot exceed 255 characters.</span>
-    </div>
+        <ion-item>
+          <ion-input label="Email" type="email" formControlName="email" placeholder="Enter email"></ion-input>
+        </ion-item>
+        <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="ion-padding-start ion-text-danger">
+          <span *ngIf="userForm.get('email')?.errors?.['required']">Email is required.</span>
+          <span *ngIf="userForm.get('email')?.errors?.['email']">Please enter a valid email.</span>
+          <span *ngIf="userForm.get('email')?.errors?.['maxlength']">Email cannot exceed 255 characters.</span>
+        </div>
 
-    <ion-item>
-      <ion-input label="Password" type="password" formControlName="password" placeholder="Enter password"></ion-input>
-    </ion-item>
-    <div *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched" class="ion-padding-start ion-text-danger">
-      <span *ngIf="userForm.get('password')?.errors?.['required']">Password is required for new users.</span>
-      <span *ngIf="userForm.get('password')?.errors?.['maxlength']">Password cannot exceed 255 characters.</span>
-    </div>
+        <ion-item>
+          <ion-input label="Password" type="password" formControlName="password" placeholder="Enter password"></ion-input>
+        </ion-item>
+        <div *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched" class="ion-padding-start ion-text-danger">
+          <span *ngIf="userForm.get('password')?.errors?.['required']">Password is required for new users.</span>
+          <span *ngIf="userForm.get('password')?.errors?.['maxlength']">Password cannot exceed 255 characters.</span>
+        </div>
 
-    <ion-item>
-      <ion-select label="User Type" formControlName="user_type" placeholder="Select User Type">
-        <ion-select-option value="admin">Admin</ion-select-option>
-        <ion-select-option value="staff">Staff</ion-select-option>
-      </ion-select>
-    </ion-item>
-    <div *ngIf="userForm.get('user_type')?.invalid && userForm.get('user_type')?.touched" class="ion-padding-start ion-text-danger">
-      User Type is required.
-    </div>
+        <ion-item>
+          <ion-select label="User Type" formControlName="user_type" placeholder="Select User Type">
+            <ion-select-option value="admin">Admin</ion-select-option>
+            <ion-select-option value="staff">Staff</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <div *ngIf="userForm.get('user_type')?.invalid && userForm.get('user_type')?.touched" class="ion-padding-start ion-text-danger">
+          User Type is required.
+        </div>
 
-    <ion-button expand="block" type="submit" class="ion-margin-top" [disabled]="userForm.invalid">Save User</ion-button>
-  </form>
+        <ion-button expand="block" type="submit" class="ion-margin-top" [disabled]="userForm.invalid">Save User</ion-button>
+      </form>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

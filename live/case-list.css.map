@@ -1,7 +1,7 @@
 {
   "version": 3,
-  "sources": [],
-  "sourcesContent": [],
-  "mappings": "",
+  "sources": ["src/app/admin/pages/case-list/case-list.css"],
+  "sourcesContent": [".case-row {\n  display: flex;\n  align-items: center;\n}\n\n.case-row ion-label {\n  flex: 1; /* Distribute space evenly */\n  white-space: nowrap; /* Prevent text wrapping */\n  overflow: hidden; /* Hide overflow content */\n  text-overflow: ellipsis; /* Show ellipsis for overflow */\n  padding-right: 10px; /* Add some spacing between columns */\n}\n\n.case-row ion-label:nth-child(1) { /* Employee Name / Category / Date Reported */\n  flex: 3;\n}\n\n.case-row ion-badge { /* Status Badge */\n  flex: 0 0 80px; /* Fixed width for badge */\n  text-align: center;\n}\n\n.case-row ion-buttons { /* Actions column */\n  flex: 0 0 100px; /* Fixed width for actions */\n  justify-content: flex-end;\n}\n\n/* Ensure icons within ion-buttons are properly spaced */\n.case-row ion-buttons ion-button {\n  --padding-start: 5px;\n  --padding-end: 5px;\n}\n"],
+  "mappings": ";AAAA,CAAC;AACC,WAAS;AACT,eAAa;AACf;AAEA,CALC,SAKS;AACR,QAAM;AACN,eAAa;AACb,YAAU;AACV,iBAAe;AACf,iBAAe;AACjB;AAEA,CAbC,SAaS,SAAS;AACjB,QAAM;AACR;AAEA,CAjBC,SAiBS;AACR,QAAM,EAAE,EAAE;AACV,cAAY;AACd;AAEA,CAtBC,SAsBS;AACR,QAAM,EAAE,EAAE;AACV,mBAAiB;AACnB;AAGA,CA5BC,SA4BS,YAAY;AACpB,mBAAiB;AACjB,iBAAe;AACjB;",
   "names": []
 }

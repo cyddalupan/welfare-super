@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="glass-toolbar">
     <ion-title>Announcements</ion-title>
     <ion-buttons slot="end">
               <ion-button routerLink="/admin/announcements/new">
@@ -18,7 +18,7 @@
   </div>
 
   <ion-list *ngIf="!isLoading">
-    <ion-item-divider>
+    <ion-item-divider class="announcement-row">
       <ion-label (click)="sort('message')">Message <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label (click)="sort('is_active')">Active <i class="fa-solid fa-arrows-up-down"></i></ion-label>
       <ion-label (click)="sort('created_at')">Created At <i class="fa-solid fa-arrows-up-down"></i></ion-label>
@@ -26,7 +26,7 @@
       <ion-label class="ion-text-right">Actions</ion-label>
     </ion-item-divider>
 
-    <ion-item *ngFor="let announcement of filteredAnnouncements">
+    <ion-item class="announcement-row" *ngFor="let announcement of filteredAnnouncements">
       <ion-label>
         <h2>{{ announcement.message | slice:0:50 }}{{ announcement.message.length > 50 ? '...' : '' }}</h2>
       </ion-label>
