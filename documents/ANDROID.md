@@ -49,7 +49,28 @@ Before building the native Android application, the Angular web application need
     npx cap sync android
     ```
 
-## 6. Android Project Configuration Verification
+## 6. Updating Version Numbers
+
+Before building a new APK, ensure that the `versionCode` and `versionName` in `android/app/build.gradle` are appropriately incremented. The `versionCode` must be a unique integer, and `versionName` is the user-visible version string (e.g., "1.0.0", "1.0.1").
+
+*   **Edit `android/app/build.gradle`**:
+    Locate the `android { ... defaultConfig { ... } }` block and update the `versionCode` and `versionName` as follows:
+
+    ```gradle
+    android {
+        defaultConfig {
+            applicationId "com.welfaresuper.app"
+            minSdkVersion rootProject.ext.minSdkVersion
+            compileSdkVersion rootProject.ext.compileSdkVersion
+            targetSdkVersion rootProject.ext.targetSdkVersion
+            versionCode 2 // Increment this for every new release
+            versionName "1.0.1" // Update this for every new release (e.g., "1.0.1", "1.1.0")
+            testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        }
+    }
+    ```
+
+## 8. Android Project Configuration Verification
 
 The following files were inspected to confirm correct configuration for icons, splash screens, and versioning:
 
@@ -61,7 +82,7 @@ The following files were inspected to confirm correct configuration for icons, s
     *   Confirmed `android:icon="@mipmap/ic_launcher"` and `android:roundIcon="@mipmap/ic_launcher_round"` were correctly pointing to the generated resources.
     *   Confirmed the `android:theme` for the `MainActivity` was set, which is crucial for splash screen handling.
 
-## 7. Building the Debug Android APK
+## 9. Building the Debug Android APK
 
 To create an installable Android package (APK) for testing on a physical device, a debug build was performed. This does not require signing credentials, unlike a release build.
 
@@ -75,7 +96,7 @@ To create an installable Android package (APK) for testing on a physical device,
     The generated debug APK can be found at:
     `/Users/cyd/code/welfare/welfare-super/android/app/build/outputs/apk/debug/app-debug.apk`
 
-## 8. Installing the APK on a Device
+## 10. Installing the APK on a Device
 
 To test the application on your Android phone:
 
