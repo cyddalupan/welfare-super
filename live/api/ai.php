@@ -1,8 +1,15 @@
 <?php
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS'); // Added GET for completeness, OPTIONS for preflight
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With'); // Added X-Requested-With
+header('Access-Control-Allow-Credentials: true'); // Allow credentials
+header('Access-Control-Max-Age: 86400'); // Cache preflight for 1 day
 header('Content-Type: text/plain');
+
+// Handle OPTIONS requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0);
+}
 
 require_once 'config.php';
 

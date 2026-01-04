@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "26397400200",
+    "project_id": "welfare-1dd18",
+    "storage_bucket": "welfare-1dd18.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:26397400200:android:a6868b7849633975e1d33d",
+        "android_client_info": {
+          "package_name": "com.welfaresuper.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_WFBZ-wtTxgYKpz-MsZ3XqcP71mYgUok"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

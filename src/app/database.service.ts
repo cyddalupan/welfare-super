@@ -4,7 +4,7 @@ import { Observable, map } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 import { environment } from '../environments/environment';
 import { ChatMessage } from './schemas';
-import { GET_APPLICANT_CHAT_HISTORY, INSERT_APPLICANT_CHAT_MESSAGE, INSERT_APPLICANT_MEMORY, GET_APPLICANT_MEMORIES, UPDATE_AI_ENABLED_UNTIL, GET_APPLICANT_AI_ENABLED_UNTIL, GET_APPLICANT_MAIN_STATUS } from './queries';
+import { GET_APPLICANT_CHAT_HISTORY, INSERT_APPLICANT_CHAT_MESSAGE, INSERT_APPLICANT_MEMORY, GET_APPLICANT_MEMORIES, UPDATE_AI_ENABLED_UNTIL, GET_APPLICANT_AI_ENABLED_UNTIL, GET_APPLICANT_MAIN_STATUS, UPDATE_EMPLOYEE_PUSH_TOKEN } from './queries';
 
 // Define a type for the raw chat history from the database
 interface RawChatMessage {
@@ -139,5 +139,9 @@ export class DatabaseService {
         return responseData.map((rawMemory: RawMemory) => rawMemory.note);
       })
     );
+  }
+
+  public savePushToken(employeeId: number, token: string): Observable<any> {
+    return this.query(UPDATE_EMPLOYEE_PUSH_TOKEN, [token, employeeId]);
   }
 }

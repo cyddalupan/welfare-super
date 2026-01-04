@@ -82,7 +82,120 @@ The following files were inspected to confirm correct configuration for icons, s
     *   Confirmed `android:icon="@mipmap/ic_launcher"` and `android:roundIcon="@mipmap/ic_launcher_round"` were correctly pointing to the generated resources.
     *   Confirmed the `android:theme` for the `MainActivity` was set, which is crucial for splash screen handling.
 
-## 9. Building the Debug Android APK
+## 9. Capacitor Push Notifications Plugin Setup
+
+To enable push notifications using the Capacitor Push Notifications plugin, follow these steps:
+
+### 9.1. Install the Plugin
+
+First, ensure the Capacitor Push Notifications plugin is installed in your project.
+
+```bash
+npm install @capacitor/push-notifications
+npx cap sync
+```
+
+### 9.2. Firebase Project Setup and `google-services.json`
+
+The Capacitor Push Notifications plugin still relies on Firebase Cloud Messaging (FCM) for sending and receiving notifications. You will need a Firebase project configured for your Android app and the `google-services.json` file.
+
+1.  Go to the [Firebase console](https://console.firebase.google.com/).
+2.  Add a new project or select an existing one.
+3.  Add an Android app to your Firebase project.
+4.  When prompted, provide the following information:
+    *   **Android package name**: Use `"com.welfaresuper.app"`. This value is defined in `android/app/build.gradle` as `applicationId`.
+    *   **App nickname**: Provide a descriptive name, e.g., `"Welfare Super Android App"`. This is for your internal reference in Firebase.
+    *   **SHA-1 signing certificate**: This is optional for development but required for release builds to use services like Google Sign-in or Firebase Dynamic Links. You can add it later.
+5.  After registering your app, download the `google-services.json` configuration file from the Firebase console.
+
+### 9.3. Place `google-services.json` in Your Project
+
+Copy the downloaded `google-services.json` file into the `android/app/` directory of your project:
+
+```bash
+cp /path/to/your/downloaded/google-services.json android/app/
+```
+
+### 9.4. Configure Gradle Files
+
+The Capacitor Push Notifications plugin automatically handles many of the Firebase SDK dependencies. However, you still need to ensure the Google Services plugin is applied.
+
+*   **Project-level `android/build.gradle`**:
+    Ensure the Google services plugin classpath is present in your project-level `build.gradle` file within the `buildscript` dependencies:
+
+    ```gradle
+    buildscript {
+        repositories {
+            google()
+            mavenCentral()
+        }
+        dependencies {
+            // ... other dependencies
+            classpath 'com.google.gms:google-services:4.4.2' // Use the latest version
+        }
+    }
+    ```
+
+*   **App-level `android/app/build.gradle`**:
+    The plugin for Google services is typically applied conditionally in your app-level `build.gradle` if `google-services.json` is found. Ensure this block exists:
+
+    ```gradle
+    try {
+        def servicesJSON = file('google-services.json')
+        if (servicesJSON.text) {
+            apply plugin: 'com.google.gms.google-services'
+        }
+    } catch(Exception e) {
+        logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+    }
+    ```
+    *You do not need to manually add Firebase BoM or `firebase-messaging` dependencies; the Capacitor Push Notifications plugin handles these.*
+
+### 9.5. Rebuild and Synchronize Capacitor Project
+
+After making these changes, rebuild your web assets and synchronize your Capacitor project to ensure the Android project is updated with the new configurations.
+
+```bash
+npm run build-live
+npx cap sync android
+```
+
+### 9.6. Implement Push Notifications in Your Application Code
+
+In your Angular application, you will use the Capacitor Push Notifications API to register for push notifications, receive tokens, and handle incoming notifications. Refer to the official Capacitor Push Notifications documentation for detailed code examples.
+
+```typescript
+import { PushNotifications } from '@capacitor/push-notifications';
+
+// Request permission to send notifications
+const addListeners = async () => {
+  await PushNotifications.requestPermissions();
+
+  await PushNotifications.addListener('registration', token => {
+    console.info('Registration token: ', token.value);
+  });
+
+  await PushNotifications.addListener('registrationError', err => {
+    console.error('Registration error: ', err.error);
+  });
+
+  await PushNotifications.addListener('pushNotificationReceived', notification => {
+    console.info('Push notification received: ', notification);
+  });
+
+  await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
+    console.info('Push notification action performed', notification.actionId, notification.inputValue);
+  });
+};
+
+addListeners();
+
+// Register for push notifications
+PushNotifications.register();
+
+
+
+## 10. Building the Debug Android APK
 
 To create an installable Android package (APK) for testing on a physical device, a debug build was performed. This does not require signing credentials, unlike a release build.
 
@@ -96,7 +209,7 @@ To create an installable Android package (APK) for testing on a physical device,
     The generated debug APK can be found at:
     `/Users/cyd/code/welfare/welfare-super/android/app/build/outputs/apk/debug/app-debug.apk`
 
-## 10. Installing the APK on a Device
+## 11. Installing the APK on a Device
 
 To test the application on your Android phone:
 

@@ -29,6 +29,7 @@ import {
   NgForOf,
   NgIf,
   NgModel,
+  Platform,
   Router,
   RouterModule,
   SELECT_OPEN_CASE_BY_APPLICANT_ID,
@@ -74,43 +75,43 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-YFWAEDLO.js";
-import "./chunk-54EHFMK3.js";
-import "./chunk-AXOFHZOB.js";
-import "./chunk-GLLWQ6IW.js";
-import "./chunk-NDFK44YX.js";
-import "./chunk-VQNBKA3N.js";
-import "./chunk-NHI4VGHO.js";
-import "./chunk-W6SC2ZZR.js";
-import "./chunk-VN2667RU.js";
-import "./chunk-6H7O3ZGC.js";
-import "./chunk-TZLVID7F.js";
-import "./chunk-PS2WLTKC.js";
-import "./chunk-EQ2GA6WQ.js";
-import "./chunk-Z4GA75BW.js";
-import "./chunk-7FFH6ZJ7.js";
-import "./chunk-W26RH5TH.js";
-import "./chunk-BYOQVAT4.js";
-import "./chunk-BCLF3UN2.js";
-import "./chunk-OLOXINNV.js";
-import "./chunk-SZBHOXEU.js";
-import "./chunk-JNZV46EC.js";
-import "./chunk-QYATNU66.js";
-import "./chunk-P3HQPATW.js";
-import "./chunk-4Y2RWIQT.js";
-import "./chunk-5LTWFEUH.js";
-import "./chunk-KFBF5L4X.js";
-import "./chunk-JUUZCNWN.js";
-import "./chunk-S457GDS4.js";
-import "./chunk-N7V3VD4X.js";
-import "./chunk-7I4W2NTL.js";
-import "./chunk-GIWC7F3R.js";
-import "./chunk-6NDCCITS.js";
+} from "./chunk-A6QNQV7E.js";
+import "./chunk-B7UJR2GH.js";
+import "./chunk-W7NNY2EY.js";
+import "./chunk-HTLDGIIN.js";
+import "./chunk-4VSZYFMW.js";
+import "./chunk-WFMQ6FSS.js";
+import "./chunk-CSKJ3OEL.js";
+import "./chunk-T5LCTCQ6.js";
+import "./chunk-ERN6DZWD.js";
+import "./chunk-3BYXFNWM.js";
+import "./chunk-ZNVIAQR7.js";
+import "./chunk-GEBZYO7I.js";
+import "./chunk-Y57NCBR3.js";
+import "./chunk-RH7KB5DO.js";
+import "./chunk-KJ4RTQDP.js";
+import "./chunk-F3JJ4YWB.js";
+import "./chunk-QOQL43QQ.js";
+import "./chunk-JF7NSFRE.js";
+import "./chunk-IVBL4Y7V.js";
+import "./chunk-2T2YJSEB.js";
+import "./chunk-OP56HYPY.js";
+import "./chunk-XRULW7VX.js";
+import "./chunk-3ZGDTXDI.js";
+import "./chunk-TV7O33EV.js";
+import "./chunk-DZBRP4UD.js";
+import "./chunk-7GPIVXJN.js";
+import "./chunk-CEAAMTO4.js";
+import "./chunk-256GWCFY.js";
+import "./chunk-5EU4VLVR.js";
+import "./chunk-GZ5BDCOT.js";
+import "./chunk-HUY7ESWV.js";
+import "./chunk-GXFEW35R.js";
 import {
   __spreadProps,
   __spreadValues,
   __toESM
-} from "./chunk-2RBMRLQD.js";
+} from "./chunk-C7TRL22M.js";
 
 // src/app/prompts.ts
 var SYSTEM_PROMPT_COMPLAINTS_ASSISTANT = `You are Welfare, a friendly AI assistant here to help Overseas Filipino Workers (OFWs) with their concerns. Your replies should be extremely concise, friendly, use Taglish, avoid deep or uncommon words, and focus on one point or question at a time. Many users just want someone to talk to, so be approachable and supportive.
@@ -239,13 +240,14 @@ var AiService = class _AiService {
 // src/app/auth.service.ts
 var CryptoJS = __toESM(require_crypto_js());
 var AuthService = class _AuthService {
+  http;
+  apiUrl = "api/database.php";
+  // Path to your PHP backend
+  encryptionKey;
   constructor(http) {
     this.http = http;
     this.encryptionKey = environment.encryptionKey;
   }
-  apiUrl = "api/database.php";
-  // Path to your PHP backend
-  encryptionKey;
   login(lastName, passportNumber) {
     const processedLastName = lastName.trim().toLowerCase();
     const processedPassportNumber = passportNumber.trim().toLowerCase();
@@ -297,6 +299,8 @@ var AuthService = class _AuthService {
 
 // src/app/case.service.ts
 var CaseService = class _CaseService {
+  databaseService;
+  aiService;
   constructor(databaseService, aiService) {
     this.databaseService = databaseService;
     this.aiService = aiService;
@@ -475,20 +479,13 @@ function ChatComponent_div_9_Template(rf, ctx) {
 var MAX_TEXTAREA_HEIGHT = 150;
 var ADMIN_AI_DISABLE_DURATION_MINUTES = 10;
 var ChatComponent = class _ChatComponent {
-  // New: Timestamp of last click for admin redirect
-  constructor(aiService, authService, databaseService, caseService, announcementService, cdRef, router) {
-    this.aiService = aiService;
-    this.authService = authService;
-    this.databaseService = databaseService;
-    this.caseService = caseService;
-    this.announcementService = announcementService;
-    this.cdRef = cdRef;
-    this.router = router;
-    this.systemPrompt = {
-      role: "system",
-      content: ""
-    };
-  }
+  aiService;
+  authService;
+  databaseService;
+  caseService;
+  announcementService;
+  cdRef;
+  router;
   title = "analytics-agent";
   chatContainer;
   messageInput;
@@ -517,6 +514,20 @@ var ChatComponent = class _ChatComponent {
   clickCount = 0;
   // New: Click counter for admin redirect
   lastClickTime = 0;
+  // New: Timestamp of last click for admin redirect
+  constructor(aiService, authService, databaseService, caseService, announcementService, cdRef, router) {
+    this.aiService = aiService;
+    this.authService = authService;
+    this.databaseService = databaseService;
+    this.caseService = caseService;
+    this.announcementService = announcementService;
+    this.cdRef = cdRef;
+    this.router = router;
+    this.systemPrompt = {
+      role: "system",
+      content: ""
+    };
+  }
   async ngOnInit() {
     let userId = localStorage.getItem("user_id");
     let agencyId = localStorage.getItem("agency_id");
@@ -1060,7 +1071,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
     IonButton,
     IonFooter,
     IonTextarea
-  ], styles: ["[_nghost-%COMP%]{display:flex;flex-direction:column;min-height:100vh;font-family:Inter,sans-serif;color:var(--ion-text-color)}ion-header[_ngcontent-%COMP%], ion-footer[_ngcontent-%COMP%]{box-shadow:none!important}ion-toolbar[_ngcontent-%COMP%]{--background: var(--ion-background-color);--color: var(--ion-text-color);--border-color: transparent;--min-height: 56px;padding:0 10px}ion-content[_ngcontent-%COMP%]{--background: var(--ion-background-color);display:flex;flex-direction:column;flex-grow:1;padding-top:10px;padding-bottom:10px;overflow-y:auto}ion-content[_ngcontent-%COMP%] > div[_ngcontent-%COMP%]{width:100%;display:flex;margin-bottom:10px}ion-content[_ngcontent-%COMP%] > div.justify-end[_ngcontent-%COMP%]{justify-content:flex-end}ion-content[_ngcontent-%COMP%] > div.justify-start[_ngcontent-%COMP%]{justify-content:flex-start}ion-content[_ngcontent-%COMP%] > div[_ngcontent-%COMP%] > div[_ngcontent-%COMP%]{padding:10px 15px;border-radius:20px;max-width:80%;word-wrap:break-word;color:var(--ion-text-color)}.user-message-bubble[_ngcontent-%COMP%]{background:var(--ion-color-primary);color:var(--ion-color-primary-contrast);box-shadow:0 2px 5px #0003;border-bottom-right-radius:5px;margin-right:10px}.assistant-message-bubble[_ngcontent-%COMP%]{background:var(--ion-color-success);color:var(--ion-color-success-contrast);box-shadow:0 2px 5px #0003;border:1px solid var(--ion-color-step-300);border-bottom-left-radius:5px;margin-left:10px}.chat-message-content[_ngcontent-%COMP%]{word-wrap:break-word;overflow-wrap:break-word;max-width:100%}.chat-message-content[_ngcontent-%COMP%]   pre[_ngcontent-%COMP%]{white-space:pre-wrap;word-break:break-all;background-color:var(--ion-color-step-200);padding:8px;border-radius:5px;color:var(--ion-text-color)}.chat-message-content[_ngcontent-%COMP%]   table[_ngcontent-%COMP%]{width:100%!important;table-layout:fixed;display:block;overflow-x:auto;border-collapse:collapse}.chat-message-content[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], .chat-message-content[_ngcontent-%COMP%]   td[_ngcontent-%COMP%]{max-width:none;word-break:break-word;padding:8px;border:1px solid var(--ion-color-step-300);color:var(--ion-text-color)}.chat-message-content[_ngcontent-%COMP%]   img[_ngcontent-%COMP%]{max-width:100%;height:auto;border-radius:8px}.ion-content[_ngcontent-%COMP%] > .flex.justify-center[_ngcontent-%COMP%]{margin-top:10px;margin-bottom:10px}ion-textarea[_ngcontent-%COMP%]{--padding-start: 10px;--padding-end: 10px;--padding-top: 10px;--padding-bottom: 10px;--background: var(--ion-background-color);border-radius:20px;color:var(--ion-text-color);min-height:40px;max-height:150px;overflow-y:auto;font-size:1rem;--placeholder-color: rgba(var(--ion-text-color-rgb), .5)}ion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar{width:8px}ion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-track{background:var(--ion-color-step-50);border-radius:10px}ion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-thumb{background:var(--ion-color-step-200);border-radius:10px}ion-button[_ngcontent-%COMP%]{--background: var(--ion-color-tertiary);--background-activated: var(--ion-color-tertiary-tint);--border-radius: 20px;height:40px;font-size:1rem;margin-left:10px;text-transform:none;color:var(--ion-color-tertiary-contrast)}.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar{width:8px}.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-track{background:var(--ion-color-step-50);border-radius:10px}.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-thumb{background:var(--ion-color-step-200);border-radius:10px}"] });
+  ], styles: ['\n\n[_nghost-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  min-height: 100vh;\n  font-family: "Inter", sans-serif;\n  color: var(--ion-text-color);\n}\nion-header[_ngcontent-%COMP%], \nion-footer[_ngcontent-%COMP%] {\n  box-shadow: none !important;\n}\nion-toolbar[_ngcontent-%COMP%] {\n  --background: var(--ion-background-color);\n  --color: var(--ion-text-color);\n  --border-color: transparent;\n  --min-height: 56px;\n  padding: 0 10px;\n}\nion-content[_ngcontent-%COMP%] {\n  --background: var(--ion-background-color);\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  overflow-y: auto;\n}\nion-content[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%] {\n  width: 100%;\n  display: flex;\n  margin-bottom: 10px;\n}\nion-content[_ngcontent-%COMP%]    > div.justify-end[_ngcontent-%COMP%] {\n  justify-content: flex-end;\n}\nion-content[_ngcontent-%COMP%]    > div.justify-start[_ngcontent-%COMP%] {\n  justify-content: flex-start;\n}\nion-content[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%]    > div[_ngcontent-%COMP%] {\n  padding: 10px 15px;\n  border-radius: 20px;\n  max-width: 80%;\n  word-wrap: break-word;\n  color: var(--ion-text-color);\n}\n.user-message-bubble[_ngcontent-%COMP%] {\n  background: var(--ion-color-primary);\n  color: var(--ion-color-primary-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border-bottom-right-radius: 5px;\n  margin-right: 10px;\n}\n.assistant-message-bubble[_ngcontent-%COMP%] {\n  background: var(--ion-color-success);\n  color: var(--ion-color-success-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border: 1px solid var(--ion-color-step-300);\n  border-bottom-left-radius: 5px;\n  margin-left: 10px;\n}\n.chat-message-content[_ngcontent-%COMP%] {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n.chat-message-content[_ngcontent-%COMP%]   pre[_ngcontent-%COMP%] {\n  white-space: pre-wrap;\n  word-break: break-all;\n  background-color: var(--ion-color-step-200);\n  padding: 8px;\n  border-radius: 5px;\n  color: var(--ion-text-color);\n}\n.chat-message-content[_ngcontent-%COMP%]   table[_ngcontent-%COMP%] {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n.chat-message-content[_ngcontent-%COMP%]   th[_ngcontent-%COMP%], \n.chat-message-content[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid var(--ion-color-step-300);\n  color: var(--ion-text-color);\n}\n.chat-message-content[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  max-width: 100%;\n  height: auto;\n  border-radius: 8px;\n}\n.ion-content[_ngcontent-%COMP%]    > .flex.justify-center[_ngcontent-%COMP%] {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\nion-textarea[_ngcontent-%COMP%] {\n  --padding-start: 10px;\n  --padding-end: 10px;\n  --padding-top: 10px;\n  --padding-bottom: 10px;\n  --background: var(--ion-background-color);\n  border-radius: 20px;\n  color: var(--ion-text-color);\n  min-height: 40px;\n  max-height: 150px;\n  overflow-y: auto;\n  font-size: 1rem;\n  --placeholder-color: rgba(var(--ion-text-color-rgb), 0.5);\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 8px;\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\nion-textarea.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\nion-button[_ngcontent-%COMP%] {\n  --background: var(--ion-color-tertiary);\n  --background-activated: var(--ion-color-tertiary-tint);\n  --border-radius: 20px;\n  height: 40px;\n  font-size: 1rem;\n  margin-left: 10px;\n  text-transform: none;\n  color: var(--ion-color-tertiary-contrast);\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 8px;\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\n.custom-scrollbar[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\n/*# sourceMappingURL=chat.css.map */'] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ChatComponent, [{
@@ -1143,7 +1154,7 @@ ${SYSTEM_PROMPT_FOLLOWUP_ASSISTANT}`;
       </ion-button>
     </div>
   </ion-toolbar>
-</ion-footer>`, styles: [":host{display:flex;flex-direction:column;min-height:100vh;font-family:Inter,sans-serif;color:var(--ion-text-color)}ion-header,ion-footer{box-shadow:none!important}ion-toolbar{--background: var(--ion-background-color);--color: var(--ion-text-color);--border-color: transparent;--min-height: 56px;padding:0 10px}ion-content{--background: var(--ion-background-color);display:flex;flex-direction:column;flex-grow:1;padding-top:10px;padding-bottom:10px;overflow-y:auto}ion-content>div{width:100%;display:flex;margin-bottom:10px}ion-content>div.justify-end{justify-content:flex-end}ion-content>div.justify-start{justify-content:flex-start}ion-content>div>div{padding:10px 15px;border-radius:20px;max-width:80%;word-wrap:break-word;color:var(--ion-text-color)}.user-message-bubble{background:var(--ion-color-primary);color:var(--ion-color-primary-contrast);box-shadow:0 2px 5px #0003;border-bottom-right-radius:5px;margin-right:10px}.assistant-message-bubble{background:var(--ion-color-success);color:var(--ion-color-success-contrast);box-shadow:0 2px 5px #0003;border:1px solid var(--ion-color-step-300);border-bottom-left-radius:5px;margin-left:10px}.chat-message-content{word-wrap:break-word;overflow-wrap:break-word;max-width:100%}.chat-message-content pre{white-space:pre-wrap;word-break:break-all;background-color:var(--ion-color-step-200);padding:8px;border-radius:5px;color:var(--ion-text-color)}.chat-message-content table{width:100%!important;table-layout:fixed;display:block;overflow-x:auto;border-collapse:collapse}.chat-message-content th,.chat-message-content td{max-width:none;word-break:break-word;padding:8px;border:1px solid var(--ion-color-step-300);color:var(--ion-text-color)}.chat-message-content img{max-width:100%;height:auto;border-radius:8px}.ion-content>.flex.justify-center{margin-top:10px;margin-bottom:10px}ion-textarea{--padding-start: 10px;--padding-end: 10px;--padding-top: 10px;--padding-bottom: 10px;--background: var(--ion-background-color);border-radius:20px;color:var(--ion-text-color);min-height:40px;max-height:150px;overflow-y:auto;font-size:1rem;--placeholder-color: rgba(var(--ion-text-color-rgb), .5)}ion-textarea.custom-scrollbar::-webkit-scrollbar{width:8px}ion-textarea.custom-scrollbar::-webkit-scrollbar-track{background:var(--ion-color-step-50);border-radius:10px}ion-textarea.custom-scrollbar::-webkit-scrollbar-thumb{background:var(--ion-color-step-200);border-radius:10px}ion-button{--background: var(--ion-color-tertiary);--background-activated: var(--ion-color-tertiary-tint);--border-radius: 20px;height:40px;font-size:1rem;margin-left:10px;text-transform:none;color:var(--ion-color-tertiary-contrast)}.custom-scrollbar::-webkit-scrollbar{width:8px}.custom-scrollbar::-webkit-scrollbar-track{background:var(--ion-color-step-50);border-radius:10px}.custom-scrollbar::-webkit-scrollbar-thumb{background:var(--ion-color-step-200);border-radius:10px}\n"] }]
+</ion-footer>`, styles: ['/* src/app/chat/chat.css */\n:host {\n  display: flex;\n  flex-direction: column;\n  min-height: 100vh;\n  font-family: "Inter", sans-serif;\n  color: var(--ion-text-color);\n}\nion-header,\nion-footer {\n  box-shadow: none !important;\n}\nion-toolbar {\n  --background: var(--ion-background-color);\n  --color: var(--ion-text-color);\n  --border-color: transparent;\n  --min-height: 56px;\n  padding: 0 10px;\n}\nion-content {\n  --background: var(--ion-background-color);\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  padding-top: 10px;\n  padding-bottom: 10px;\n  overflow-y: auto;\n}\nion-content > div {\n  width: 100%;\n  display: flex;\n  margin-bottom: 10px;\n}\nion-content > div.justify-end {\n  justify-content: flex-end;\n}\nion-content > div.justify-start {\n  justify-content: flex-start;\n}\nion-content > div > div {\n  padding: 10px 15px;\n  border-radius: 20px;\n  max-width: 80%;\n  word-wrap: break-word;\n  color: var(--ion-text-color);\n}\n.user-message-bubble {\n  background: var(--ion-color-primary);\n  color: var(--ion-color-primary-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border-bottom-right-radius: 5px;\n  margin-right: 10px;\n}\n.assistant-message-bubble {\n  background: var(--ion-color-success);\n  color: var(--ion-color-success-contrast);\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n  border: 1px solid var(--ion-color-step-300);\n  border-bottom-left-radius: 5px;\n  margin-left: 10px;\n}\n.chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n.chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n  background-color: var(--ion-color-step-200);\n  padding: 8px;\n  border-radius: 5px;\n  color: var(--ion-text-color);\n}\n.chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n.chat-message-content th,\n.chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid var(--ion-color-step-300);\n  color: var(--ion-text-color);\n}\n.chat-message-content img {\n  max-width: 100%;\n  height: auto;\n  border-radius: 8px;\n}\n.ion-content > .flex.justify-center {\n  margin-top: 10px;\n  margin-bottom: 10px;\n}\nion-textarea {\n  --padding-start: 10px;\n  --padding-end: 10px;\n  --padding-top: 10px;\n  --padding-bottom: 10px;\n  --background: var(--ion-background-color);\n  border-radius: 20px;\n  color: var(--ion-text-color);\n  min-height: 40px;\n  max-height: 150px;\n  overflow-y: auto;\n  font-size: 1rem;\n  --placeholder-color: rgba(var(--ion-text-color-rgb), 0.5);\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar {\n  width: 8px;\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\nion-textarea.custom-scrollbar::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\nion-button {\n  --background: var(--ion-color-tertiary);\n  --background-activated: var(--ion-color-tertiary-tint);\n  --border-radius: 20px;\n  height: 40px;\n  font-size: 1rem;\n  margin-left: 10px;\n  text-transform: none;\n  color: var(--ion-color-tertiary-contrast);\n}\n.custom-scrollbar::-webkit-scrollbar {\n  width: 8px;\n}\n.custom-scrollbar::-webkit-scrollbar-track {\n  background: var(--ion-color-step-50);\n  border-radius: 10px;\n}\n.custom-scrollbar::-webkit-scrollbar-thumb {\n  background: var(--ion-color-step-200);\n  border-radius: 10px;\n}\n/*# sourceMappingURL=chat.css.map */\n'] }]
   }], () => [{ type: AiService }, { type: AuthService }, { type: DatabaseService }, { type: CaseService }, { type: AnnouncementService }, { type: ChangeDetectorRef }, { type: Router }], { chatContainer: [{
     type: ViewChild,
     args: ["chatContainer", { static: false }]
@@ -1161,7 +1172,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-QHUJJQWJ.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-FPH3M7TM.js").then((m) => m.AdminModule)
   }
 ];
 
@@ -1174,17 +1185,562 @@ var appConfig = {
   ]
 };
 
+// node_modules/@capacitor/core/dist/index.js
+var ExceptionCode;
+(function(ExceptionCode2) {
+  ExceptionCode2["Unimplemented"] = "UNIMPLEMENTED";
+  ExceptionCode2["Unavailable"] = "UNAVAILABLE";
+})(ExceptionCode || (ExceptionCode = {}));
+var CapacitorException = class extends Error {
+  constructor(message, code, data) {
+    super(message);
+    this.message = message;
+    this.code = code;
+    this.data = data;
+  }
+};
+var getPlatformId = (win) => {
+  var _a, _b;
+  if (win === null || win === void 0 ? void 0 : win.androidBridge) {
+    return "android";
+  } else if ((_b = (_a = win === null || win === void 0 ? void 0 : win.webkit) === null || _a === void 0 ? void 0 : _a.messageHandlers) === null || _b === void 0 ? void 0 : _b.bridge) {
+    return "ios";
+  } else {
+    return "web";
+  }
+};
+var createCapacitor = (win) => {
+  const capCustomPlatform = win.CapacitorCustomPlatform || null;
+  const cap = win.Capacitor || {};
+  const Plugins = cap.Plugins = cap.Plugins || {};
+  const getPlatform = () => {
+    return capCustomPlatform !== null ? capCustomPlatform.name : getPlatformId(win);
+  };
+  const isNativePlatform = () => getPlatform() !== "web";
+  const isPluginAvailable = (pluginName) => {
+    const plugin = registeredPlugins.get(pluginName);
+    if (plugin === null || plugin === void 0 ? void 0 : plugin.platforms.has(getPlatform())) {
+      return true;
+    }
+    if (getPluginHeader(pluginName)) {
+      return true;
+    }
+    return false;
+  };
+  const getPluginHeader = (pluginName) => {
+    var _a;
+    return (_a = cap.PluginHeaders) === null || _a === void 0 ? void 0 : _a.find((h) => h.name === pluginName);
+  };
+  const handleError = (err) => win.console.error(err);
+  const registeredPlugins = /* @__PURE__ */ new Map();
+  const registerPlugin2 = (pluginName, jsImplementations = {}) => {
+    const registeredPlugin = registeredPlugins.get(pluginName);
+    if (registeredPlugin) {
+      console.warn(`Capacitor plugin "${pluginName}" already registered. Cannot register plugins twice.`);
+      return registeredPlugin.proxy;
+    }
+    const platform = getPlatform();
+    const pluginHeader = getPluginHeader(pluginName);
+    let jsImplementation;
+    const loadPluginImplementation = async () => {
+      if (!jsImplementation && platform in jsImplementations) {
+        jsImplementation = typeof jsImplementations[platform] === "function" ? jsImplementation = await jsImplementations[platform]() : jsImplementation = jsImplementations[platform];
+      } else if (capCustomPlatform !== null && !jsImplementation && "web" in jsImplementations) {
+        jsImplementation = typeof jsImplementations["web"] === "function" ? jsImplementation = await jsImplementations["web"]() : jsImplementation = jsImplementations["web"];
+      }
+      return jsImplementation;
+    };
+    const createPluginMethod = (impl, prop) => {
+      var _a, _b;
+      if (pluginHeader) {
+        const methodHeader = pluginHeader === null || pluginHeader === void 0 ? void 0 : pluginHeader.methods.find((m) => prop === m.name);
+        if (methodHeader) {
+          if (methodHeader.rtype === "promise") {
+            return (options) => cap.nativePromise(pluginName, prop.toString(), options);
+          } else {
+            return (options, callback) => cap.nativeCallback(pluginName, prop.toString(), options, callback);
+          }
+        } else if (impl) {
+          return (_a = impl[prop]) === null || _a === void 0 ? void 0 : _a.bind(impl);
+        }
+      } else if (impl) {
+        return (_b = impl[prop]) === null || _b === void 0 ? void 0 : _b.bind(impl);
+      } else {
+        throw new CapacitorException(`"${pluginName}" plugin is not implemented on ${platform}`, ExceptionCode.Unimplemented);
+      }
+    };
+    const createPluginMethodWrapper = (prop) => {
+      let remove;
+      const wrapper = (...args) => {
+        const p = loadPluginImplementation().then((impl) => {
+          const fn = createPluginMethod(impl, prop);
+          if (fn) {
+            const p2 = fn(...args);
+            remove = p2 === null || p2 === void 0 ? void 0 : p2.remove;
+            return p2;
+          } else {
+            throw new CapacitorException(`"${pluginName}.${prop}()" is not implemented on ${platform}`, ExceptionCode.Unimplemented);
+          }
+        });
+        if (prop === "addListener") {
+          p.remove = async () => remove();
+        }
+        return p;
+      };
+      wrapper.toString = () => `${prop.toString()}() { [capacitor code] }`;
+      Object.defineProperty(wrapper, "name", {
+        value: prop,
+        writable: false,
+        configurable: false
+      });
+      return wrapper;
+    };
+    const addListener = createPluginMethodWrapper("addListener");
+    const removeListener = createPluginMethodWrapper("removeListener");
+    const addListenerNative = (eventName, callback) => {
+      const call = addListener({ eventName }, callback);
+      const remove = async () => {
+        const callbackId = await call;
+        removeListener({
+          eventName,
+          callbackId
+        }, callback);
+      };
+      const p = new Promise((resolve) => call.then(() => resolve({ remove })));
+      p.remove = async () => {
+        console.warn(`Using addListener() without 'await' is deprecated.`);
+        await remove();
+      };
+      return p;
+    };
+    const proxy = new Proxy({}, {
+      get(_, prop) {
+        switch (prop) {
+          // https://github.com/facebook/react/issues/20030
+          case "$$typeof":
+            return void 0;
+          case "toJSON":
+            return () => ({});
+          case "addListener":
+            return pluginHeader ? addListenerNative : addListener;
+          case "removeListener":
+            return removeListener;
+          default:
+            return createPluginMethodWrapper(prop);
+        }
+      }
+    });
+    Plugins[pluginName] = proxy;
+    registeredPlugins.set(pluginName, {
+      name: pluginName,
+      proxy,
+      platforms: /* @__PURE__ */ new Set([...Object.keys(jsImplementations), ...pluginHeader ? [platform] : []])
+    });
+    return proxy;
+  };
+  if (!cap.convertFileSrc) {
+    cap.convertFileSrc = (filePath) => filePath;
+  }
+  cap.getPlatform = getPlatform;
+  cap.handleError = handleError;
+  cap.isNativePlatform = isNativePlatform;
+  cap.isPluginAvailable = isPluginAvailable;
+  cap.registerPlugin = registerPlugin2;
+  cap.Exception = CapacitorException;
+  cap.DEBUG = !!cap.DEBUG;
+  cap.isLoggingEnabled = !!cap.isLoggingEnabled;
+  return cap;
+};
+var initCapacitorGlobal = (win) => win.Capacitor = createCapacitor(win);
+var Capacitor = /* @__PURE__ */ initCapacitorGlobal(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : {});
+var registerPlugin = Capacitor.registerPlugin;
+var WebPlugin = class {
+  constructor() {
+    this.listeners = {};
+    this.retainedEventArguments = {};
+    this.windowListeners = {};
+  }
+  addListener(eventName, listenerFunc) {
+    let firstListener = false;
+    const listeners = this.listeners[eventName];
+    if (!listeners) {
+      this.listeners[eventName] = [];
+      firstListener = true;
+    }
+    this.listeners[eventName].push(listenerFunc);
+    const windowListener = this.windowListeners[eventName];
+    if (windowListener && !windowListener.registered) {
+      this.addWindowListener(windowListener);
+    }
+    if (firstListener) {
+      this.sendRetainedArgumentsForEvent(eventName);
+    }
+    const remove = async () => this.removeListener(eventName, listenerFunc);
+    const p = Promise.resolve({ remove });
+    return p;
+  }
+  async removeAllListeners() {
+    this.listeners = {};
+    for (const listener in this.windowListeners) {
+      this.removeWindowListener(this.windowListeners[listener]);
+    }
+    this.windowListeners = {};
+  }
+  notifyListeners(eventName, data, retainUntilConsumed) {
+    const listeners = this.listeners[eventName];
+    if (!listeners) {
+      if (retainUntilConsumed) {
+        let args = this.retainedEventArguments[eventName];
+        if (!args) {
+          args = [];
+        }
+        args.push(data);
+        this.retainedEventArguments[eventName] = args;
+      }
+      return;
+    }
+    listeners.forEach((listener) => listener(data));
+  }
+  hasListeners(eventName) {
+    var _a;
+    return !!((_a = this.listeners[eventName]) === null || _a === void 0 ? void 0 : _a.length);
+  }
+  registerWindowListener(windowEventName, pluginEventName) {
+    this.windowListeners[pluginEventName] = {
+      registered: false,
+      windowEventName,
+      pluginEventName,
+      handler: (event) => {
+        this.notifyListeners(pluginEventName, event);
+      }
+    };
+  }
+  unimplemented(msg = "not implemented") {
+    return new Capacitor.Exception(msg, ExceptionCode.Unimplemented);
+  }
+  unavailable(msg = "not available") {
+    return new Capacitor.Exception(msg, ExceptionCode.Unavailable);
+  }
+  async removeListener(eventName, listenerFunc) {
+    const listeners = this.listeners[eventName];
+    if (!listeners) {
+      return;
+    }
+    const index = listeners.indexOf(listenerFunc);
+    this.listeners[eventName].splice(index, 1);
+    if (!this.listeners[eventName].length) {
+      this.removeWindowListener(this.windowListeners[eventName]);
+    }
+  }
+  addWindowListener(handle) {
+    window.addEventListener(handle.windowEventName, handle.handler);
+    handle.registered = true;
+  }
+  removeWindowListener(handle) {
+    if (!handle) {
+      return;
+    }
+    window.removeEventListener(handle.windowEventName, handle.handler);
+    handle.registered = false;
+  }
+  sendRetainedArgumentsForEvent(eventName) {
+    const args = this.retainedEventArguments[eventName];
+    if (!args) {
+      return;
+    }
+    delete this.retainedEventArguments[eventName];
+    args.forEach((arg) => {
+      this.notifyListeners(eventName, arg);
+    });
+  }
+};
+var encode = (str) => encodeURIComponent(str).replace(/%(2[346B]|5E|60|7C)/g, decodeURIComponent).replace(/[()]/g, escape);
+var decode = (str) => str.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent);
+var CapacitorCookiesPluginWeb = class extends WebPlugin {
+  async getCookies() {
+    const cookies = document.cookie;
+    const cookieMap = {};
+    cookies.split(";").forEach((cookie) => {
+      if (cookie.length <= 0)
+        return;
+      let [key, value] = cookie.replace(/=/, "CAP_COOKIE").split("CAP_COOKIE");
+      key = decode(key).trim();
+      value = decode(value).trim();
+      cookieMap[key] = value;
+    });
+    return cookieMap;
+  }
+  async setCookie(options) {
+    try {
+      const encodedKey = encode(options.key);
+      const encodedValue = encode(options.value);
+      const expires = `; expires=${(options.expires || "").replace("expires=", "")}`;
+      const path = (options.path || "/").replace("path=", "");
+      const domain = options.url != null && options.url.length > 0 ? `domain=${options.url}` : "";
+      document.cookie = `${encodedKey}=${encodedValue || ""}${expires}; path=${path}; ${domain};`;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+  async deleteCookie(options) {
+    try {
+      document.cookie = `${options.key}=; Max-Age=0`;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+  async clearCookies() {
+    try {
+      const cookies = document.cookie.split(";") || [];
+      for (const cookie of cookies) {
+        document.cookie = cookie.replace(/^ +/, "").replace(/=.*/, `=;expires=${(/* @__PURE__ */ new Date()).toUTCString()};path=/`);
+      }
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+  async clearAllCookies() {
+    try {
+      await this.clearCookies();
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+};
+var CapacitorCookies = registerPlugin("CapacitorCookies", {
+  web: () => new CapacitorCookiesPluginWeb()
+});
+var readBlobAsBase64 = async (blob) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => {
+    const base64String = reader.result;
+    resolve(base64String.indexOf(",") >= 0 ? base64String.split(",")[1] : base64String);
+  };
+  reader.onerror = (error) => reject(error);
+  reader.readAsDataURL(blob);
+});
+var normalizeHttpHeaders = (headers = {}) => {
+  const originalKeys = Object.keys(headers);
+  const loweredKeys = Object.keys(headers).map((k) => k.toLocaleLowerCase());
+  const normalized = loweredKeys.reduce((acc, key, index) => {
+    acc[key] = headers[originalKeys[index]];
+    return acc;
+  }, {});
+  return normalized;
+};
+var buildUrlParams = (params, shouldEncode = true) => {
+  if (!params)
+    return null;
+  const output = Object.entries(params).reduce((accumulator, entry) => {
+    const [key, value] = entry;
+    let encodedValue;
+    let item;
+    if (Array.isArray(value)) {
+      item = "";
+      value.forEach((str) => {
+        encodedValue = shouldEncode ? encodeURIComponent(str) : str;
+        item += `${key}=${encodedValue}&`;
+      });
+      item.slice(0, -1);
+    } else {
+      encodedValue = shouldEncode ? encodeURIComponent(value) : value;
+      item = `${key}=${encodedValue}`;
+    }
+    return `${accumulator}&${item}`;
+  }, "");
+  return output.substr(1);
+};
+var buildRequestInit = (options, extra = {}) => {
+  const output = Object.assign({ method: options.method || "GET", headers: options.headers }, extra);
+  const headers = normalizeHttpHeaders(options.headers);
+  const type = headers["content-type"] || "";
+  if (typeof options.data === "string") {
+    output.body = options.data;
+  } else if (type.includes("application/x-www-form-urlencoded")) {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(options.data || {})) {
+      params.set(key, value);
+    }
+    output.body = params.toString();
+  } else if (type.includes("multipart/form-data") || options.data instanceof FormData) {
+    const form = new FormData();
+    if (options.data instanceof FormData) {
+      options.data.forEach((value, key) => {
+        form.append(key, value);
+      });
+    } else {
+      for (const key of Object.keys(options.data)) {
+        form.append(key, options.data[key]);
+      }
+    }
+    output.body = form;
+    const headers2 = new Headers(output.headers);
+    headers2.delete("content-type");
+    output.headers = headers2;
+  } else if (type.includes("application/json") || typeof options.data === "object") {
+    output.body = JSON.stringify(options.data);
+  }
+  return output;
+};
+var CapacitorHttpPluginWeb = class extends WebPlugin {
+  /**
+   * Perform an Http request given a set of options
+   * @param options Options to build the HTTP request
+   */
+  async request(options) {
+    const requestInit = buildRequestInit(options, options.webFetchExtra);
+    const urlParams = buildUrlParams(options.params, options.shouldEncodeUrlParams);
+    const url = urlParams ? `${options.url}?${urlParams}` : options.url;
+    const response = await fetch(url, requestInit);
+    const contentType = response.headers.get("content-type") || "";
+    let { responseType = "text" } = response.ok ? options : {};
+    if (contentType.includes("application/json")) {
+      responseType = "json";
+    }
+    let data;
+    let blob;
+    switch (responseType) {
+      case "arraybuffer":
+      case "blob":
+        blob = await response.blob();
+        data = await readBlobAsBase64(blob);
+        break;
+      case "json":
+        data = await response.json();
+        break;
+      case "document":
+      case "text":
+      default:
+        data = await response.text();
+    }
+    const headers = {};
+    response.headers.forEach((value, key) => {
+      headers[key] = value;
+    });
+    return {
+      data,
+      headers,
+      status: response.status,
+      url: response.url
+    };
+  }
+  /**
+   * Perform an Http GET request given a set of options
+   * @param options Options to build the HTTP request
+   */
+  async get(options) {
+    return this.request(Object.assign(Object.assign({}, options), { method: "GET" }));
+  }
+  /**
+   * Perform an Http POST request given a set of options
+   * @param options Options to build the HTTP request
+   */
+  async post(options) {
+    return this.request(Object.assign(Object.assign({}, options), { method: "POST" }));
+  }
+  /**
+   * Perform an Http PUT request given a set of options
+   * @param options Options to build the HTTP request
+   */
+  async put(options) {
+    return this.request(Object.assign(Object.assign({}, options), { method: "PUT" }));
+  }
+  /**
+   * Perform an Http PATCH request given a set of options
+   * @param options Options to build the HTTP request
+   */
+  async patch(options) {
+    return this.request(Object.assign(Object.assign({}, options), { method: "PATCH" }));
+  }
+  /**
+   * Perform an Http DELETE request given a set of options
+   * @param options Options to build the HTTP request
+   */
+  async delete(options) {
+    return this.request(Object.assign(Object.assign({}, options), { method: "DELETE" }));
+  }
+};
+var CapacitorHttp = registerPlugin("CapacitorHttp", {
+  web: () => new CapacitorHttpPluginWeb()
+});
+var SystemBarsStyle;
+(function(SystemBarsStyle2) {
+  SystemBarsStyle2["Dark"] = "DARK";
+  SystemBarsStyle2["Light"] = "LIGHT";
+  SystemBarsStyle2["Default"] = "DEFAULT";
+})(SystemBarsStyle || (SystemBarsStyle = {}));
+var SystemBarType;
+(function(SystemBarType2) {
+  SystemBarType2["StatusBar"] = "StatusBar";
+  SystemBarType2["NavigationBar"] = "NavigationBar";
+})(SystemBarType || (SystemBarType = {}));
+var SystemBarsPluginWeb = class extends WebPlugin {
+  async setStyle() {
+    this.unavailable("not available for web");
+  }
+  async setAnimation() {
+    this.unavailable("not available for web");
+  }
+  async show() {
+    this.unavailable("not available for web");
+  }
+  async hide() {
+    this.unavailable("not available for web");
+  }
+};
+var SystemBars = registerPlugin("SystemBars", {
+  web: () => new SystemBarsPluginWeb()
+});
+
+// node_modules/@capacitor/push-notifications/dist/esm/index.js
+var PushNotifications = registerPlugin("PushNotifications", {});
+
 // src/app/app.ts
 var AppComponent = class _AppComponent {
-  constructor(databaseService, aiService) {
+  databaseService;
+  aiService;
+  platform;
+  title = "welfare-super";
+  constructor(databaseService, aiService, platform) {
     this.databaseService = databaseService;
     this.aiService = aiService;
+    this.platform = platform;
+    this.initializeApp();
   }
-  title = "welfare-super";
   ngOnInit() {
   }
+  initializeApp() {
+    this.platform.ready().then(() => {
+      if (this.platform.is("android") || this.platform.is("ios")) {
+        this.registerPush();
+      }
+    });
+  }
+  registerPush() {
+    PushNotifications.requestPermissions().then((result) => {
+      if (result.receive === "granted") {
+        PushNotifications.register();
+      } else {
+        console.log("Push permission denied:", result.receive);
+      }
+    });
+    PushNotifications.addListener("registration", (token) => {
+      const placeholderEmployeeId = 1;
+      this.databaseService.savePushToken(placeholderEmployeeId, token.value).subscribe({
+        next: (response) => {
+          console.log("Push token saved successfully:", response);
+        },
+        error: (error) => {
+          console.error("Error saving push token:", error);
+        }
+      });
+    });
+    PushNotifications.addListener("registrationError", (error) => {
+      console.log("Registration error: " + JSON.stringify(error));
+    });
+  }
   static \u0275fac = function AppComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _AppComponent)(\u0275\u0275directiveInject(DatabaseService), \u0275\u0275directiveInject(AiService));
+    return new (__ngFactoryType__ || _AppComponent)(\u0275\u0275directiveInject(DatabaseService), \u0275\u0275directiveInject(AiService), \u0275\u0275directiveInject(Platform));
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], decls: 2, vars: 0, template: function AppComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -1192,26 +1748,26 @@ var AppComponent = class _AppComponent {
       \u0275\u0275element(1, "ion-router-outlet");
       \u0275\u0275elementEnd();
     }
-  }, dependencies: [RouterModule, CommonModule, IonicModule, IonApp, IonRouterOutlet], styles: ["[_nghost-%COMP%]{display:block;min-height:100vh;background-size:cover;background-position:center;font-family:Inter,sans-serif}.glass-container[_ngcontent-%COMP%]{background:#ffffff1a;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 32px #1f26875e}.glass-card[_ngcontent-%COMP%]{background:#fff3;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);border:1px solid rgba(255,255,255,.15)}[_nghost-%COMP%]  .chat-message-content{word-wrap:break-word;overflow-wrap:break-word;max-width:100%}[_nghost-%COMP%]  .chat-message-content pre{white-space:pre-wrap;word-break:break-all}[_nghost-%COMP%]  .chat-message-content table{width:100%!important;table-layout:fixed;display:block;overflow-x:auto;border-collapse:collapse}[_nghost-%COMP%]  .chat-message-content th, [_nghost-%COMP%]  .chat-message-content td{max-width:none;word-break:break-word;padding:8px;border:1px solid rgba(255,255,255,.2)}[_nghost-%COMP%]  .chat-message-content img{max-width:100%;height:auto}.user-message-bubble[_ngcontent-%COMP%]{background:#007bff4d;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);border:1px solid rgba(0,123,255,.25)}.glass-input[_ngcontent-%COMP%]{background:#ffffff26;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);box-shadow:0 4px 10px #0003;color:#fff}.glass-input[_ngcontent-%COMP%]::placeholder{color:#ffffffb3}.glass-button[_ngcontent-%COMP%]{background:#4caf5033;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);border:1px solid rgba(76,175,80,.3);box-shadow:0 4px 15px #0003}.glass-button[_ngcontent-%COMP%]:hover{background:#4caf504d}.log-container-plan[_ngcontent-%COMP%], .log-container-execution[_ngcontent-%COMP%]{max-height:60vh}@media (max-width: 768px){.log-container-plan[_ngcontent-%COMP%], .log-container-execution[_ngcontent-%COMP%]{max-height:30vh}}"] });
+  }, dependencies: [RouterModule, CommonModule, IonicModule, IonApp, IonRouterOutlet], styles: ['\n\n[_nghost-%COMP%] {\n  display: block;\n  min-height: 100vh;\n  background-size: cover;\n  background-position: center;\n  font-family: "Inter", sans-serif;\n}\n.glass-container[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.1);\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);\n}\n.glass-card[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(255, 255, 255, 0.15);\n}\n[_nghost-%COMP%]  .chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n[_nghost-%COMP%]  .chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n}\n[_nghost-%COMP%]  .chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n[_nghost-%COMP%]  .chat-message-content th, \n[_nghost-%COMP%]  .chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid rgba(255, 255, 255, 0.2);\n}\n[_nghost-%COMP%]  .chat-message-content img {\n  max-width: 100%;\n  height: auto;\n}\n.user-message-bubble[_ngcontent-%COMP%] {\n  background: rgba(0, 123, 255, 0.3);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(0, 123, 255, 0.25);\n}\n.glass-input[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.15);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n  border: 1px solid rgba(255, 255, 255, 0.2);\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);\n  color: white;\n}\n.glass-input[_ngcontent-%COMP%]::placeholder {\n  color: rgba(255, 255, 255, 0.7);\n}\n.glass-button[_ngcontent-%COMP%] {\n  background: rgba(76, 175, 80, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(76, 175, 80, 0.3);\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);\n}\n.glass-button[_ngcontent-%COMP%]:hover {\n  background: rgba(76, 175, 80, 0.3);\n}\n.log-container-plan[_ngcontent-%COMP%], \n.log-container-execution[_ngcontent-%COMP%] {\n  max-height: 60vh;\n}\n@media (max-width: 768px) {\n  .log-container-plan[_ngcontent-%COMP%], \n   .log-container-execution[_ngcontent-%COMP%] {\n    max-height: 30vh;\n  }\n}\n/*# sourceMappingURL=app.css.map */'] });
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AppComponent, [{
     type: Component,
-    args: [{ selector: "app-root", standalone: true, imports: [RouterModule, CommonModule, IonicModule], template: "<ion-app>\n  <ion-router-outlet></ion-router-outlet>\n</ion-app>\n", styles: [":host{display:block;min-height:100vh;background-size:cover;background-position:center;font-family:Inter,sans-serif}.glass-container{background:#ffffff1a;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 32px #1f26875e}.glass-card{background:#fff3;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);border:1px solid rgba(255,255,255,.15)}:host::ng-deep .chat-message-content{word-wrap:break-word;overflow-wrap:break-word;max-width:100%}:host::ng-deep .chat-message-content pre{white-space:pre-wrap;word-break:break-all}:host::ng-deep .chat-message-content table{width:100%!important;table-layout:fixed;display:block;overflow-x:auto;border-collapse:collapse}:host::ng-deep .chat-message-content th,:host::ng-deep .chat-message-content td{max-width:none;word-break:break-word;padding:8px;border:1px solid rgba(255,255,255,.2)}:host::ng-deep .chat-message-content img{max-width:100%;height:auto}.user-message-bubble{background:#007bff4d;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);border:1px solid rgba(0,123,255,.25)}.glass-input{background:#ffffff26;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);box-shadow:0 4px 10px #0003;color:#fff}.glass-input::placeholder{color:#ffffffb3}.glass-button{background:#4caf5033;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);border:1px solid rgba(76,175,80,.3);box-shadow:0 4px 15px #0003}.glass-button:hover{background:#4caf504d}.log-container-plan,.log-container-execution{max-height:60vh}@media (max-width: 768px){.log-container-plan,.log-container-execution{max-height:30vh}}\n"] }]
-  }], () => [{ type: DatabaseService }, { type: AiService }], null);
+    args: [{ selector: "app-root", standalone: true, imports: [RouterModule, CommonModule, IonicModule], template: "<ion-app>\n  <ion-router-outlet></ion-router-outlet>\n\n</ion-app>\n", styles: ['/* src/app/app.css */\n:host {\n  display: block;\n  min-height: 100vh;\n  background-size: cover;\n  background-position: center;\n  font-family: "Inter", sans-serif;\n}\n.glass-container {\n  background: rgba(255, 255, 255, 0.1);\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);\n}\n.glass-card {\n  background: rgba(255, 255, 255, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(255, 255, 255, 0.15);\n}\n:host::ng-deep .chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n:host::ng-deep .chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n}\n:host::ng-deep .chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n:host::ng-deep .chat-message-content th,\n:host::ng-deep .chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid rgba(255, 255, 255, 0.2);\n}\n:host::ng-deep .chat-message-content img {\n  max-width: 100%;\n  height: auto;\n}\n.user-message-bubble {\n  background: rgba(0, 123, 255, 0.3);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(0, 123, 255, 0.25);\n}\n.glass-input {\n  background: rgba(255, 255, 255, 0.15);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n  border: 1px solid rgba(255, 255, 255, 0.2);\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);\n  color: white;\n}\n.glass-input::placeholder {\n  color: rgba(255, 255, 255, 0.7);\n}\n.glass-button {\n  background: rgba(76, 175, 80, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(76, 175, 80, 0.3);\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);\n}\n.glass-button:hover {\n  background: rgba(76, 175, 80, 0.3);\n}\n.log-container-plan,\n.log-container-execution {\n  max-height: 60vh;\n}\n@media (max-width: 768px) {\n  .log-container-plan,\n  .log-container-execution {\n    max-height: 30vh;\n  }\n}\n/*# sourceMappingURL=app.css.map */\n'] }]
+  }], () => [{ type: DatabaseService }, { type: AiService }, { type: Platform }], null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AppComponent, { className: "AppComponent", filePath: "src/app/app.ts", lineNumber: 16 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AppComponent, { className: "AppComponent", filePath: "src/app/app.ts", lineNumber: 17 });
 })();
 
 // node_modules/zone.js/fesm2015/zone.js
-var global = globalThis;
+var global2 = globalThis;
 function __symbol__(name) {
-  const symbolPrefix = global["__Zone_symbol_prefix"] || "__zone_symbol__";
+  const symbolPrefix = global2["__Zone_symbol_prefix"] || "__zone_symbol__";
   return symbolPrefix + name;
 }
 function initZone() {
-  const performance = global["performance"];
+  const performance = global2["performance"];
   function mark(name) {
     performance && performance["mark"] && performance["mark"](name);
   }
@@ -1222,7 +1778,7 @@ function initZone() {
   class ZoneImpl {
     static __symbol__ = __symbol__;
     static assertZonePatched() {
-      if (global["Promise"] !== patches["ZoneAwarePromise"]) {
+      if (global2["Promise"] !== patches["ZoneAwarePromise"]) {
         throw new Error("Zone.js has detected that ZoneAwarePromise `(window|global).Promise` has been overwritten.\nMost likely cause is that a Promise polyfill has been loaded after Zone.js (Polyfilling Promise api is not necessary when zone.js is loaded. If you must load one, do so before loading zone.js.)");
       }
     }
@@ -1241,14 +1797,14 @@ function initZone() {
     }
     static __load_patch(name, fn, ignoreDuplicate = false) {
       if (patches.hasOwnProperty(name)) {
-        const checkDuplicate = global[__symbol__("forceDuplicateZoneCheck")] === true;
+        const checkDuplicate = global2[__symbol__("forceDuplicateZoneCheck")] === true;
         if (!ignoreDuplicate && checkDuplicate) {
           throw Error("Already loaded patch: " + name);
         }
-      } else if (!global["__Zone_disable_" + name]) {
+      } else if (!global2["__Zone_disable_" + name]) {
         const perfName = "Zone:" + name;
         mark(perfName);
-        patches[name] = fn(global, ZoneImpl, _api);
+        patches[name] = fn(global2, ZoneImpl, _api);
         performanceMeasure(perfName, perfName);
       }
     }
@@ -1624,7 +2180,7 @@ function initZone() {
         this.invoke = ZoneTask.invokeTask;
       } else {
         this.invoke = function() {
-          return ZoneTask.invokeTask.call(global, self2, this, arguments);
+          return ZoneTask.invokeTask.call(global2, self2, this, arguments);
         };
       }
     }
@@ -1689,8 +2245,8 @@ function initZone() {
   let nativeMicroTaskQueuePromise;
   function nativeScheduleMicroTask(func) {
     if (!nativeMicroTaskQueuePromise) {
-      if (global[symbolPromise]) {
-        nativeMicroTaskQueuePromise = global[symbolPromise].resolve(0);
+      if (global2[symbolPromise]) {
+        nativeMicroTaskQueuePromise = global2[symbolPromise].resolve(0);
       }
     }
     if (nativeMicroTaskQueuePromise) {
@@ -1700,7 +2256,7 @@ function initZone() {
       }
       nativeThen.call(nativeMicroTaskQueuePromise, func);
     } else {
-      global[symbolSetTimeout](func, 0);
+      global2[symbolSetTimeout](func, 0);
     }
   }
   function scheduleMicroTask(task) {
@@ -1769,13 +2325,13 @@ function initZone() {
   return ZoneImpl;
 }
 function loadZone() {
-  const global2 = globalThis;
-  const checkDuplicate = global2[__symbol__("forceDuplicateZoneCheck")] === true;
-  if (global2["Zone"] && (checkDuplicate || typeof global2["Zone"].__symbol__ !== "function")) {
+  const global3 = globalThis;
+  const checkDuplicate = global3[__symbol__("forceDuplicateZoneCheck")] === true;
+  if (global3["Zone"] && (checkDuplicate || typeof global3["Zone"].__symbol__ !== "function")) {
     throw new Error("Zone already loaded.");
   }
-  global2["Zone"] ??= initZone();
-  return global2["Zone"];
+  global3["Zone"] ??= initZone();
+  return global3["Zone"];
 }
 var ObjectGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 var ObjectDefineProperty = Object.defineProperty;
@@ -2585,8 +3141,8 @@ function findEventTasks(target, eventName) {
     return captureTrueTasks ? captureFalseTasks.concat(captureTrueTasks) : captureFalseTasks.slice();
   }
 }
-function patchEventPrototype(global2, api) {
-  const Event = global2["Event"];
+function patchEventPrototype(global3, api) {
+  const Event = global3["Event"];
   if (Event && Event.prototype) {
     api.patchMethod(Event.prototype, "stopImmediatePropagation", (delegate) => function(self2, args) {
       self2[IMMEDIATE_PROPAGATION_SYMBOL] = true;
@@ -2594,8 +3150,8 @@ function patchEventPrototype(global2, api) {
     });
   }
 }
-function patchQueueMicrotask(global2, api) {
-  api.patchMethod(global2, "queueMicrotask", (delegate) => {
+function patchQueueMicrotask(global3, api) {
+  api.patchMethod(global3, "queueMicrotask", (delegate) => {
     return function(self2, args) {
       Zone.current.scheduleMicroTask("queueMicrotask", args[0]);
     };
@@ -2739,8 +3295,8 @@ function eventTargetPatch(_global2, api) {
   api.patchEventTarget(_global2, api, [EVENT_TARGET && EVENT_TARGET.prototype]);
   return true;
 }
-function patchEvent(global2, api) {
-  api.patchEventPrototype(global2, api);
+function patchEvent(global3, api) {
+  api.patchEventPrototype(global3, api);
 }
 function filterProperties(target, onProperties, ignoreProperties) {
   if (!ignoreProperties || ignoreProperties.length === 0) {
@@ -2807,61 +3363,61 @@ function propertyDescriptorPatch(api, _global2) {
   }
 }
 function patchBrowser(Zone2) {
-  Zone2.__load_patch("legacy", (global2) => {
-    const legacyPatch = global2[Zone2.__symbol__("legacyPatch")];
+  Zone2.__load_patch("legacy", (global3) => {
+    const legacyPatch = global3[Zone2.__symbol__("legacyPatch")];
     if (legacyPatch) {
       legacyPatch();
     }
   });
-  Zone2.__load_patch("timers", (global2) => {
+  Zone2.__load_patch("timers", (global3) => {
     const set = "set";
     const clear = "clear";
-    patchTimer(global2, set, clear, "Timeout");
-    patchTimer(global2, set, clear, "Interval");
-    patchTimer(global2, set, clear, "Immediate");
+    patchTimer(global3, set, clear, "Timeout");
+    patchTimer(global3, set, clear, "Interval");
+    patchTimer(global3, set, clear, "Immediate");
   });
-  Zone2.__load_patch("requestAnimationFrame", (global2) => {
-    patchTimer(global2, "request", "cancel", "AnimationFrame");
-    patchTimer(global2, "mozRequest", "mozCancel", "AnimationFrame");
-    patchTimer(global2, "webkitRequest", "webkitCancel", "AnimationFrame");
+  Zone2.__load_patch("requestAnimationFrame", (global3) => {
+    patchTimer(global3, "request", "cancel", "AnimationFrame");
+    patchTimer(global3, "mozRequest", "mozCancel", "AnimationFrame");
+    patchTimer(global3, "webkitRequest", "webkitCancel", "AnimationFrame");
   });
-  Zone2.__load_patch("blocking", (global2, Zone3) => {
+  Zone2.__load_patch("blocking", (global3, Zone3) => {
     const blockingMethods = ["alert", "prompt", "confirm"];
     for (let i = 0; i < blockingMethods.length; i++) {
       const name = blockingMethods[i];
-      patchMethod(global2, name, (delegate, symbol, name2) => {
+      patchMethod(global3, name, (delegate, symbol, name2) => {
         return function(s, args) {
-          return Zone3.current.run(delegate, global2, args, name2);
+          return Zone3.current.run(delegate, global3, args, name2);
         };
       });
     }
   });
-  Zone2.__load_patch("EventTarget", (global2, Zone3, api) => {
-    patchEvent(global2, api);
-    eventTargetPatch(global2, api);
-    const XMLHttpRequestEventTarget = global2["XMLHttpRequestEventTarget"];
+  Zone2.__load_patch("EventTarget", (global3, Zone3, api) => {
+    patchEvent(global3, api);
+    eventTargetPatch(global3, api);
+    const XMLHttpRequestEventTarget = global3["XMLHttpRequestEventTarget"];
     if (XMLHttpRequestEventTarget && XMLHttpRequestEventTarget.prototype) {
-      api.patchEventTarget(global2, api, [XMLHttpRequestEventTarget.prototype]);
+      api.patchEventTarget(global3, api, [XMLHttpRequestEventTarget.prototype]);
     }
   });
-  Zone2.__load_patch("MutationObserver", (global2, Zone3, api) => {
+  Zone2.__load_patch("MutationObserver", (global3, Zone3, api) => {
     patchClass("MutationObserver");
     patchClass("WebKitMutationObserver");
   });
-  Zone2.__load_patch("IntersectionObserver", (global2, Zone3, api) => {
+  Zone2.__load_patch("IntersectionObserver", (global3, Zone3, api) => {
     patchClass("IntersectionObserver");
   });
-  Zone2.__load_patch("FileReader", (global2, Zone3, api) => {
+  Zone2.__load_patch("FileReader", (global3, Zone3, api) => {
     patchClass("FileReader");
   });
-  Zone2.__load_patch("on_property", (global2, Zone3, api) => {
-    propertyDescriptorPatch(api, global2);
+  Zone2.__load_patch("on_property", (global3, Zone3, api) => {
+    propertyDescriptorPatch(api, global3);
   });
-  Zone2.__load_patch("customElements", (global2, Zone3, api) => {
-    patchCustomElements(global2, api);
+  Zone2.__load_patch("customElements", (global3, Zone3, api) => {
+    patchCustomElements(global3, api);
   });
-  Zone2.__load_patch("XHR", (global2, Zone3) => {
-    patchXHR(global2);
+  Zone2.__load_patch("XHR", (global3, Zone3) => {
+    patchXHR(global3);
     const XHR_TASK = zoneSymbol("xhrTask");
     const XHR_SYNC = zoneSymbol("xhrSync");
     const XHR_LISTENER = zoneSymbol("xhrListener");
@@ -2985,17 +3541,17 @@ function patchBrowser(Zone2) {
       });
     }
   });
-  Zone2.__load_patch("geolocation", (global2) => {
-    if (global2["navigator"] && global2["navigator"].geolocation) {
-      patchPrototype(global2["navigator"].geolocation, ["getCurrentPosition", "watchPosition"]);
+  Zone2.__load_patch("geolocation", (global3) => {
+    if (global3["navigator"] && global3["navigator"].geolocation) {
+      patchPrototype(global3["navigator"].geolocation, ["getCurrentPosition", "watchPosition"]);
     }
   });
-  Zone2.__load_patch("PromiseRejectionEvent", (global2, Zone3) => {
+  Zone2.__load_patch("PromiseRejectionEvent", (global3, Zone3) => {
     function findPromiseRejectionHandler(evtName) {
       return function(e) {
-        const eventTasks = findEventTasks(global2, evtName);
+        const eventTasks = findEventTasks(global3, evtName);
         eventTasks.forEach((eventTask) => {
-          const PromiseRejectionEvent = global2["PromiseRejectionEvent"];
+          const PromiseRejectionEvent = global3["PromiseRejectionEvent"];
           if (PromiseRejectionEvent) {
             const evt = new PromiseRejectionEvent(evtName, {
               promise: e.promise,
@@ -3006,17 +3562,17 @@ function patchBrowser(Zone2) {
         });
       };
     }
-    if (global2["PromiseRejectionEvent"]) {
+    if (global3["PromiseRejectionEvent"]) {
       Zone3[zoneSymbol("unhandledPromiseRejectionHandler")] = findPromiseRejectionHandler("unhandledrejection");
       Zone3[zoneSymbol("rejectionHandledHandler")] = findPromiseRejectionHandler("rejectionhandled");
     }
   });
-  Zone2.__load_patch("queueMicrotask", (global2, Zone3, api) => {
-    patchQueueMicrotask(global2, api);
+  Zone2.__load_patch("queueMicrotask", (global3, Zone3, api) => {
+    patchQueueMicrotask(global3, api);
   });
 }
 function patchPromise(Zone2) {
-  Zone2.__load_patch("ZoneAwarePromise", (global2, Zone3, api) => {
+  Zone2.__load_patch("ZoneAwarePromise", (global3, Zone3, api) => {
     const ObjectGetOwnPropertyDescriptor2 = Object.getOwnPropertyDescriptor;
     const ObjectDefineProperty2 = Object.defineProperty;
     function readableObjectToString(obj) {
@@ -3028,7 +3584,7 @@ function patchPromise(Zone2) {
     }
     const __symbol__2 = api.symbol;
     const _uncaughtPromiseErrors = [];
-    const isDisableWrappingUncaughtPromiseRejection = global2[__symbol__2("DISABLE_WRAPPING_UNCAUGHT_PROMISE_REJECTION")] !== false;
+    const isDisableWrappingUncaughtPromiseRejection = global3[__symbol__2("DISABLE_WRAPPING_UNCAUGHT_PROMISE_REJECTION")] !== false;
     const symbolPromise = __symbol__2("Promise");
     const symbolThen = __symbol__2("then");
     const creationTrace = "__creationTrace__";
@@ -3224,7 +3780,7 @@ function patchPromise(Zone2) {
     const ZONE_AWARE_PROMISE_TO_STRING = "function ZoneAwarePromise() { [native code] }";
     const noop = function() {
     };
-    const AggregateError = global2.AggregateError;
+    const AggregateError = global3.AggregateError;
     class ZoneAwarePromise {
       static toString() {
         return ZONE_AWARE_PROMISE_TO_STRING;
@@ -3417,8 +3973,8 @@ function patchPromise(Zone2) {
     ZoneAwarePromise["reject"] = ZoneAwarePromise.reject;
     ZoneAwarePromise["race"] = ZoneAwarePromise.race;
     ZoneAwarePromise["all"] = ZoneAwarePromise.all;
-    const NativePromise = global2[symbolPromise] = global2["Promise"];
-    global2["Promise"] = ZoneAwarePromise;
+    const NativePromise = global3[symbolPromise] = global3["Promise"];
+    global3["Promise"] = ZoneAwarePromise;
     const symbolThenPatched = __symbol__2("thenPatched");
     function patchThen(Ctor) {
       const proto = Ctor.prototype;
@@ -3452,14 +4008,14 @@ function patchPromise(Zone2) {
     }
     if (NativePromise) {
       patchThen(NativePromise);
-      patchMethod(global2, "fetch", (delegate) => zoneify(delegate));
+      patchMethod(global3, "fetch", (delegate) => zoneify(delegate));
     }
     Promise[Zone3.__symbol__("uncaughtPromiseErrors")] = _uncaughtPromiseErrors;
     return ZoneAwarePromise;
   });
 }
 function patchToString(Zone2) {
-  Zone2.__load_patch("toString", (global2) => {
+  Zone2.__load_patch("toString", (global3) => {
     const originalFunctionToString = Function.prototype.toString;
     const ORIGINAL_DELEGATE_SYMBOL = zoneSymbol("OriginalDelegate");
     const PROMISE_SYMBOL = zoneSymbol("Promise");
@@ -3475,13 +4031,13 @@ function patchToString(Zone2) {
           }
         }
         if (this === Promise) {
-          const nativePromise = global2[PROMISE_SYMBOL];
+          const nativePromise = global3[PROMISE_SYMBOL];
           if (nativePromise) {
             return originalFunctionToString.call(nativePromise);
           }
         }
         if (this === Error) {
-          const nativeError = global2[ERROR_SYMBOL];
+          const nativeError = global3[ERROR_SYMBOL];
           if (nativeError) {
             return originalFunctionToString.call(nativeError);
           }
@@ -3533,19 +4089,19 @@ function patchCallbacks(api, target, targetName, method, callbacks) {
   api.attachOriginToPatched(target[method], nativeDelegate);
 }
 function patchUtil(Zone2) {
-  Zone2.__load_patch("util", (global2, Zone3, api) => {
-    const eventNames = getOnEventNames(global2);
+  Zone2.__load_patch("util", (global3, Zone3, api) => {
+    const eventNames = getOnEventNames(global3);
     api.patchOnProperties = patchOnProperties;
     api.patchMethod = patchMethod;
     api.bindArguments = bindArguments;
     api.patchMacroTask = patchMacroTask;
     const SYMBOL_BLACK_LISTED_EVENTS = Zone3.__symbol__("BLACK_LISTED_EVENTS");
     const SYMBOL_UNPATCHED_EVENTS = Zone3.__symbol__("UNPATCHED_EVENTS");
-    if (global2[SYMBOL_UNPATCHED_EVENTS]) {
-      global2[SYMBOL_BLACK_LISTED_EVENTS] = global2[SYMBOL_UNPATCHED_EVENTS];
+    if (global3[SYMBOL_UNPATCHED_EVENTS]) {
+      global3[SYMBOL_BLACK_LISTED_EVENTS] = global3[SYMBOL_UNPATCHED_EVENTS];
     }
-    if (global2[SYMBOL_BLACK_LISTED_EVENTS]) {
-      Zone3[SYMBOL_BLACK_LISTED_EVENTS] = Zone3[SYMBOL_UNPATCHED_EVENTS] = global2[SYMBOL_BLACK_LISTED_EVENTS];
+    if (global3[SYMBOL_BLACK_LISTED_EVENTS]) {
+      Zone3[SYMBOL_BLACK_LISTED_EVENTS] = Zone3[SYMBOL_UNPATCHED_EVENTS] = global3[SYMBOL_BLACK_LISTED_EVENTS];
     }
     api.patchEventPrototype = patchEventPrototype;
     api.patchEventTarget = patchEventTarget;
@@ -3586,3 +4142,16 @@ patchBrowser(Zone$1);
 
 // src/main.ts
 bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err));
+/*! Bundled license information:
+
+@capacitor/core/dist/index.js:
+  (*! Capacitor: https://capacitorjs.com/ - MIT License *)
+
+zone.js/fesm2015/zone.js:
+  (**
+   * @license Angular v<unknown>
+   * (c) 2010-2025 Google LLC. https://angular.io/
+   * License: MIT
+   *)
+*/
+//# sourceMappingURL=main.js.map
