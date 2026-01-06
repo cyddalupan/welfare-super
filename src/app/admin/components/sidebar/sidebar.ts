@@ -23,7 +23,7 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit(): void {
     this.applicantService.getStatuses().then(statuses => {
-      this.applicantStatuses = statuses;
+      this.applicantStatuses = statuses.filter(status => status !== 'RESOLVED');
     });
     this.isAdmin = this.authService.getUserType() === 'admin'; // Initialize isAdmin
   }

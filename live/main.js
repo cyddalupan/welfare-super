@@ -1172,7 +1172,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-FPH3M7TM.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-VQ2X6RVV.js").then((m) => m.AdminModule)
   }
 ];
 
@@ -1725,15 +1725,18 @@ var AppComponent = class _AppComponent {
       }
     });
     PushNotifications.addListener("registration", (token) => {
-      const placeholderEmployeeId = 1;
-      this.databaseService.savePushToken(placeholderEmployeeId, token.value).subscribe({
-        next: (response) => {
-          console.log("Push token saved successfully:", response);
-        },
-        error: (error) => {
-          console.error("Error saving push token:", error);
-        }
-      });
+      const userId = localStorage.getItem("user_id");
+      const employeeId = userId ? parseInt(userId, 10) : null;
+      if (employeeId) {
+        this.databaseService.savePushToken(employeeId, token.value).subscribe({
+          next: (response) => {
+            console.log("Push token saved successfully:", response);
+          },
+          error: (error) => {
+            console.error("Error saving push token:", error);
+          }
+        });
+      }
     });
     PushNotifications.addListener("registrationError", (error) => {
       console.log("Registration error: " + JSON.stringify(error));

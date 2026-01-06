@@ -19,6 +19,9 @@
         </ion-buttons>
         <ion-title>Admin Dashboard</ion-title>
         <ion-buttons slot="end">
+          <ion-button routerLink="/admin/applicants/status/RESOLVED">
+            <i class="fa-solid fa-check"></i>
+          </ion-button>
           <ion-button routerLink="/admin/applicants/complaints">
             <i class="fa-regular fa-bell"></i>
             <ion-badge color="danger" *ngIf="complaintCount > 0">{{ complaintCount }}</ion-badge>

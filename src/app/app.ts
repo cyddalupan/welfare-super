@@ -57,17 +57,19 @@ export class AppComponent implements OnInit {
           // CRITICAL: You must send this token to your backend/server to be stored
           // so you can send targeted notifications later.
           // IMPORTANT: The employeeId should come from the authenticated user.
-          // For demonstration purposes, we are using a placeholder employeeId (e.g., 1).
-          const placeholderEmployeeId = 1;
-          this.databaseService.savePushToken(placeholderEmployeeId, token.value).subscribe({
-            next: (response) => {
-              console.log('Push token saved successfully:', response);
-            },
-            error: (error) => {
-              console.error('Error saving push token:', error);
-            }
-          });
-        });
+          const userId = localStorage.getItem('user_id');
+          const employeeId = userId ? parseInt(userId, 10) : null;
+
+          if (employeeId) {
+            this.databaseService.savePushToken(employeeId, token.value).subscribe({
+              next: (response) => {
+                console.log('Push token saved successfully:', response);
+              },
+              error: (error) => {
+                              console.error('Error saving push token:', error);
+                            }
+                          });
+                        }        });
     PushNotifications.addListener('registrationError', (error) => {
       console.log('Registration error: ' + JSON.stringify(error));
     });
