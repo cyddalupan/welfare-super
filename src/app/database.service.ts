@@ -23,7 +23,7 @@ interface RawMemory {
 })
 export class DatabaseService {
 
-  private apiUrl = '/api/database.php';
+  private apiUrl = `${environment.apiUrl}/api/database.php`;
 
   constructor(private http: HttpClient) { }
 

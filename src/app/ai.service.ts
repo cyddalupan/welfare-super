@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap, catchError, throwError, map } from 'rxjs'; // Added map
 import { EncryptionService } from './encryption.service';
 import { ChatMessage } from './schemas';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AiService {
 
-  private apiUrl = '/api/ai.php';
+  private apiUrl = `${environment.apiUrl}/api/ai.php`;
   private http = inject(HttpClient);
   private encryptionService = inject(EncryptionService);
 

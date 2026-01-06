@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule, Platform } from '@ionic/angular'; // <--- Added this import
 import { DatabaseService } from './database.service';
 import { AiService } from './ai.service';
+import { AuthService } from './auth.service'; // Import AuthService
 import { ChatMessage } from './schemas';
 import { PushNotifications } from '@capacitor/push-notifications';
 
@@ -21,7 +22,8 @@ export class AppComponent implements OnInit {
   constructor(
     private databaseService: DatabaseService,
     private aiService: AiService,
-    private platform: Platform
+    private platform: Platform,
+    private authService: AuthService // Inject AuthService
   ) {
     this.initializeApp();
   }
@@ -57,22 +59,23 @@ export class AppComponent implements OnInit {
           // CRITICAL: You must send this token to your backend/server to be stored
           // so you can send targeted notifications later.
           // IMPORTANT: The employeeId should come from the authenticated user.
-          const userId = localStorage.getItem('user_id');
-          const employeeId = userId ? parseInt(userId, 10) : null;
+          const userId = this.authService.currentUser?.user_id; // Get the authenticated user's ID
 
-          if (employeeId) {
-            this.databaseService.savePushToken(employeeId, token.value).subscribe({
+          if (userId) {
+            this.databaseService.savePushToken(userId, token.value).subscribe({
               next: (response) => {
                 console.log('Push token saved successfully:', response);
               },
               error: (error) => {
-                              console.error('Error saving push token:', error);
-                            }
-                          });
-                        }        });
+                console.error('Error saving push token:', error);
+              }
+            });
+          } else {
+            console.warn('Cannot save push token: No authenticated user found.');
+          }
+        });
     PushNotifications.addListener('registrationError', (error) => {
       console.log('Registration error: ' + JSON.stringify(error));
     });
   }
 }
- 

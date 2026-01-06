@@ -75,7 +75,7 @@ import {
   ɵɵtwoWayListener,
   ɵɵtwoWayProperty,
   ɵɵviewQuery
-} from "./chunk-A6QNQV7E.js";
+} from "./chunk-JNW6TPLR.js";
 import "./chunk-B7UJR2GH.js";
 import "./chunk-W7NNY2EY.js";
 import "./chunk-HTLDGIIN.js";
@@ -112,6 +112,75 @@ import {
   __spreadValues,
   __toESM
 } from "./chunk-C7TRL22M.js";
+
+// src/app/auth.service.ts
+var CryptoJS = __toESM(require_crypto_js());
+var AuthService = class _AuthService {
+  http;
+  apiUrl = `${environment.apiUrl}/api/database.php`;
+  // Path to your PHP backend
+  encryptionKey;
+  constructor(http) {
+    this.http = http;
+    this.encryptionKey = environment.encryptionKey;
+  }
+  // Getter to retrieve current user information from localStorage
+  get currentUser() {
+    const userId = localStorage.getItem("user_id");
+    const agencyId = localStorage.getItem("agency_id");
+    if (userId) {
+      return { user_id: parseInt(userId, 10), agency_id: parseInt(agencyId ?? "0", 10) };
+    }
+    return null;
+  }
+  login(lastName, passportNumber) {
+    const processedLastName = lastName.trim().toLowerCase();
+    const processedPassportNumber = passportNumber.trim().toLowerCase();
+    const query = LOGIN_APPLICANT_QUERY;
+    const params = [processedLastName, processedPassportNumber];
+    const payload = { query, params };
+    const encryptedPayload = this.encryptPayload(JSON.stringify(payload));
+    return this.http.post(this.apiUrl, encryptedPayload).pipe(map((response) => {
+      console.log("Login response data:", response?.data[0]);
+      if (response && response.success && response.data && response.data.length > 0 && response.data[0].id) {
+        localStorage.setItem("user_id", response.data[0].id);
+        localStorage.setItem("agency_id", response.data[0].agency_id);
+        return true;
+      }
+      return false;
+    }), catchError((error) => {
+      console.error("Login API call failed:", error);
+      return of(false);
+    }));
+  }
+  logout() {
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("agency_id");
+  }
+  encryptPayload(payload) {
+    const key = CryptoJS.enc.Hex.parse(this.encryptionKey);
+    const iv = CryptoJS.lib.WordArray.random(16);
+    const encrypted = CryptoJS.AES.encrypt(payload, key, {
+      iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7
+    });
+    const combined = CryptoJS.lib.WordArray.create().concat(iv).concat(encrypted.ciphertext);
+    return combined.toString(CryptoJS.enc.Base64);
+  }
+  static \u0275fac = function AuthService_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _AuthService)(\u0275\u0275inject(HttpClient));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _AuthService, factory: _AuthService.\u0275fac, providedIn: "root" });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AuthService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], () => [{ type: HttpClient }], null);
+})();
 
 // src/app/prompts.ts
 var SYSTEM_PROMPT_COMPLAINTS_ASSISTANT = `You are Welfare, a friendly AI assistant here to help Overseas Filipino Workers (OFWs) with their concerns. Your replies should be extremely concise, friendly, use Taglish, avoid deep or uncommon words, and focus on one point or question at a time. Many users just want someone to talk to, so be approachable and supportive.
@@ -182,7 +251,7 @@ Instructions:
 
 // src/app/ai.service.ts
 var AiService = class _AiService {
-  apiUrl = "/api/ai.php";
+  apiUrl = `${environment.apiUrl}/api/ai.php`;
   http = inject(HttpClient);
   encryptionService = inject(EncryptionService);
   callAi(aiPayload, employeeId) {
@@ -235,66 +304,6 @@ var AiService = class _AiService {
       providedIn: "root"
     }]
   }], null, null);
-})();
-
-// src/app/auth.service.ts
-var CryptoJS = __toESM(require_crypto_js());
-var AuthService = class _AuthService {
-  http;
-  apiUrl = "api/database.php";
-  // Path to your PHP backend
-  encryptionKey;
-  constructor(http) {
-    this.http = http;
-    this.encryptionKey = environment.encryptionKey;
-  }
-  login(lastName, passportNumber) {
-    const processedLastName = lastName.trim().toLowerCase();
-    const processedPassportNumber = passportNumber.trim().toLowerCase();
-    const query = LOGIN_APPLICANT_QUERY;
-    const params = [processedLastName, processedPassportNumber];
-    const payload = { query, params };
-    const encryptedPayload = this.encryptPayload(JSON.stringify(payload));
-    return this.http.post(this.apiUrl, encryptedPayload).pipe(map((response) => {
-      console.log("Login response data:", response?.data[0]);
-      if (response && response.success && response.data && response.data.length > 0 && response.data[0].id) {
-        localStorage.setItem("user_id", response.data[0].id);
-        localStorage.setItem("agency_id", response.data[0].agency_id);
-        return true;
-      }
-      return false;
-    }), catchError((error) => {
-      console.error("Login API call failed:", error);
-      return of(false);
-    }));
-  }
-  logout() {
-    localStorage.removeItem("user_id");
-    localStorage.removeItem("agency_id");
-  }
-  encryptPayload(payload) {
-    const key = CryptoJS.enc.Hex.parse(this.encryptionKey);
-    const iv = CryptoJS.lib.WordArray.random(16);
-    const encrypted = CryptoJS.AES.encrypt(payload, key, {
-      iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
-    });
-    const combined = CryptoJS.lib.WordArray.create().concat(iv).concat(encrypted.ciphertext);
-    return combined.toString(CryptoJS.enc.Base64);
-  }
-  static \u0275fac = function AuthService_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _AuthService)(\u0275\u0275inject(HttpClient));
-  };
-  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _AuthService, factory: _AuthService.\u0275fac, providedIn: "root" });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AuthService, [{
-    type: Injectable,
-    args: [{
-      providedIn: "root"
-    }]
-  }], () => [{ type: HttpClient }], null);
 })();
 
 // src/app/case.service.ts
@@ -1172,7 +1181,7 @@ var routes = [
   { path: "", component: ChatComponent },
   {
     path: "admin",
-    loadChildren: () => import("./chunk-VQ2X6RVV.js").then((m) => m.AdminModule)
+    loadChildren: () => import("./chunk-PTKSYW35.js").then((m) => m.AdminModule)
   }
 ];
 
@@ -1181,7 +1190,9 @@ var appConfig = {
   providers: [
     provideIonicAngular({}),
     provideRouter(routes),
-    provideHttpClient()
+    provideHttpClient(),
+    AuthService
+    // Provide AuthService
   ]
 };
 
@@ -1700,11 +1711,13 @@ var AppComponent = class _AppComponent {
   databaseService;
   aiService;
   platform;
+  authService;
   title = "welfare-super";
-  constructor(databaseService, aiService, platform) {
+  constructor(databaseService, aiService, platform, authService) {
     this.databaseService = databaseService;
     this.aiService = aiService;
     this.platform = platform;
+    this.authService = authService;
     this.initializeApp();
   }
   ngOnInit() {
@@ -1725,10 +1738,9 @@ var AppComponent = class _AppComponent {
       }
     });
     PushNotifications.addListener("registration", (token) => {
-      const userId = localStorage.getItem("user_id");
-      const employeeId = userId ? parseInt(userId, 10) : null;
-      if (employeeId) {
-        this.databaseService.savePushToken(employeeId, token.value).subscribe({
+      const userId = this.authService.currentUser?.user_id;
+      if (userId) {
+        this.databaseService.savePushToken(userId, token.value).subscribe({
           next: (response) => {
             console.log("Push token saved successfully:", response);
           },
@@ -1736,6 +1748,8 @@ var AppComponent = class _AppComponent {
             console.error("Error saving push token:", error);
           }
         });
+      } else {
+        console.warn("Cannot save push token: No authenticated user found.");
       }
     });
     PushNotifications.addListener("registrationError", (error) => {
@@ -1743,7 +1757,7 @@ var AppComponent = class _AppComponent {
     });
   }
   static \u0275fac = function AppComponent_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _AppComponent)(\u0275\u0275directiveInject(DatabaseService), \u0275\u0275directiveInject(AiService), \u0275\u0275directiveInject(Platform));
+    return new (__ngFactoryType__ || _AppComponent)(\u0275\u0275directiveInject(DatabaseService), \u0275\u0275directiveInject(AiService), \u0275\u0275directiveInject(Platform), \u0275\u0275directiveInject(AuthService));
   };
   static \u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], decls: 2, vars: 0, template: function AppComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -1757,10 +1771,10 @@ var AppComponent = class _AppComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AppComponent, [{
     type: Component,
     args: [{ selector: "app-root", standalone: true, imports: [RouterModule, CommonModule, IonicModule], template: "<ion-app>\n  <ion-router-outlet></ion-router-outlet>\n\n</ion-app>\n", styles: ['/* src/app/app.css */\n:host {\n  display: block;\n  min-height: 100vh;\n  background-size: cover;\n  background-position: center;\n  font-family: "Inter", sans-serif;\n}\n.glass-container {\n  background: rgba(255, 255, 255, 0.1);\n  -webkit-backdrop-filter: blur(10px);\n  backdrop-filter: blur(10px);\n  border: 1px solid rgba(255, 255, 255, 0.1);\n  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);\n}\n.glass-card {\n  background: rgba(255, 255, 255, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(255, 255, 255, 0.15);\n}\n:host::ng-deep .chat-message-content {\n  word-wrap: break-word;\n  overflow-wrap: break-word;\n  max-width: 100%;\n}\n:host::ng-deep .chat-message-content pre {\n  white-space: pre-wrap;\n  word-break: break-all;\n}\n:host::ng-deep .chat-message-content table {\n  width: 100% !important;\n  table-layout: fixed;\n  display: block;\n  overflow-x: auto;\n  border-collapse: collapse;\n}\n:host::ng-deep .chat-message-content th,\n:host::ng-deep .chat-message-content td {\n  max-width: none;\n  word-break: break-word;\n  padding: 8px;\n  border: 1px solid rgba(255, 255, 255, 0.2);\n}\n:host::ng-deep .chat-message-content img {\n  max-width: 100%;\n  height: auto;\n}\n.user-message-bubble {\n  background: rgba(0, 123, 255, 0.3);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(0, 123, 255, 0.25);\n}\n.glass-input {\n  background: rgba(255, 255, 255, 0.15);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n  border: 1px solid rgba(255, 255, 255, 0.2);\n  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);\n  color: white;\n}\n.glass-input::placeholder {\n  color: rgba(255, 255, 255, 0.7);\n}\n.glass-button {\n  background: rgba(76, 175, 80, 0.2);\n  -webkit-backdrop-filter: blur(5px);\n  backdrop-filter: blur(5px);\n  border: 1px solid rgba(76, 175, 80, 0.3);\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);\n}\n.glass-button:hover {\n  background: rgba(76, 175, 80, 0.3);\n}\n.log-container-plan,\n.log-container-execution {\n  max-height: 60vh;\n}\n@media (max-width: 768px) {\n  .log-container-plan,\n  .log-container-execution {\n    max-height: 30vh;\n  }\n}\n/*# sourceMappingURL=app.css.map */\n'] }]
-  }], () => [{ type: DatabaseService }, { type: AiService }, { type: Platform }], null);
+  }], () => [{ type: DatabaseService }, { type: AiService }, { type: Platform }, { type: AuthService }], null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AppComponent, { className: "AppComponent", filePath: "src/app/app.ts", lineNumber: 17 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AppComponent, { className: "AppComponent", filePath: "src/app/app.ts", lineNumber: 18 });
 })();
 
 // node_modules/zone.js/fesm2015/zone.js

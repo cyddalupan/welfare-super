@@ -5,15 +5,27 @@ import { map, catchError } from 'rxjs/operators';
 import * as CryptoJS from 'crypto-js'; // For AES encryption
 import { environment } from '../environments/environment'; // Import environment
 import { LOGIN_APPLICANT_QUERY } from './queries'; // Import the login query
+import { User } from './schemas'; // Import the User interface
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'api/database.php'; // Path to your PHP backend
+  private apiUrl = `${environment.apiUrl}/api/database.php`; // Path to your PHP backend
   private encryptionKey: string;
+
   constructor(private http: HttpClient) {
     this.encryptionKey = environment.encryptionKey;
+  }
+
+  // Getter to retrieve current user information from localStorage
+  get currentUser(): User | null {
+    const userId = localStorage.getItem('user_id');
+    const agencyId = localStorage.getItem('agency_id');
+    if (userId) {
+      return { user_id: parseInt(userId, 10), agency_id: parseInt(agencyId ?? '0', 10) };
+    }
+    return null;
   }
 
   login(lastName: string, passportNumber: string): Observable<boolean> {

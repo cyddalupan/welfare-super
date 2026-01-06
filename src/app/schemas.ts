@@ -1,3 +1,8 @@
+export interface User {
+  user_id: number;
+  agency_id: number;
+}
+
 export interface AdminUser {
   id: number;
   email: string;
